@@ -5,7 +5,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATISprototype.client.ClientFormController" style="-fx-background-color: #f0f0f0;">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.ClientFormController" style="-fx-background-color: #f0f0f0;">
    <children>
       <Label layoutX="50.0" layoutY="122.0" text="Server IP:" />
       <Label layoutX="50.0" layoutY="227.0" text="Server Port:" />
