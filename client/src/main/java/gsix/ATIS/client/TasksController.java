@@ -12,15 +12,13 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import gsix.ATIS.client.common.GuiCommon;
+import gsix.ATIS.client.common.MessageEvent;
 import gsix.ATIS.entities.Message;
 import gsix.ATIS.entities.Task;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;

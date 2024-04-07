@@ -1,4 +1,4 @@
-package gsix.ATIS.client;
+package gsix.ATIS.client.common;
 
 import gsix.ATIS.entities.Message;
 

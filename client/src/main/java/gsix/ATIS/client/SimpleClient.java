@@ -1,12 +1,9 @@
 package gsix.ATIS.client;
 
-import gsix.ATIS.entities.Message;
-import gsix.ATIS.entities.Task;
-import org.greenrobot.eventbus.EventBus;import org.greenrobot.eventbus.Subscribe;
-
+import gsix.ATIS.client.common.MessageEvent;
 import gsix.ATIS.client.ocsf.AbstractClient;
-
-import java.util.List;
+import gsix.ATIS.entities.Message;
+import org.greenrobot.eventbus.EventBus;
 
 public class SimpleClient extends AbstractClient {
 	
@@ -44,6 +41,9 @@ public class SimpleClient extends AbstractClient {
 			System.out.println("I am in handle from server change task status done");
 			MessageEvent messageEvent=new MessageEvent(message);
 			//EventBus.getDefault().post(allTasks);
+			EventBus.getDefault().post(messageEvent);
+		}else if(message.getMessage().equals("login request: Done")){
+			MessageEvent messageEvent=new MessageEvent(message);
 			EventBus.getDefault().post(messageEvent);
 		}else {
 			EventBus.getDefault().post(new MessageEvent(message));

@@ -1,4 +1,4 @@
-package gsix.ATIS.client;
+package gsix.ATIS.client.ocsf;
 
 import gsix.ATIS.entities.Message;
 
