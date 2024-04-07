@@ -131,6 +131,12 @@ public class LoginFrameBoundary implements Initializable{
 				tasks_Lv.setItems(observableTasks); // Add received tasks
 			});
 */		}
+		if (event.getMessage().getMessage().equals("login request: Failed")) {
+			String errMsg = (String) loginMessage.getData();
+			Platform.runLater(() -> {
+				msgArea.setText(errMsg);
+			});
+		}
 	}
     
     public void loginMsg( String msg) {
