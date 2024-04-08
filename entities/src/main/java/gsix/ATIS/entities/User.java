@@ -7,7 +7,7 @@ import java.io.Serializable;
 @Table(name="users")
 public class User implements Serializable {
     @Id
-    private int user_id;
+    private String user_id;
     @Column(name = "user_type")
     private String user_type;  // CHANGE THIS TO ENUM
     @Column(name = "first_name")
@@ -18,20 +18,20 @@ public class User implements Serializable {
     private String user_name;
     @Column(name = "password")
     private String password;
-    @Column(name = "community")
-    private String community;
+    @Column(name = "community_id")
+    private int community_id;
 
     public User() {
     }
 
-    public User(int user_id, String user_type, String first_name, String last_name, String user_name, String password, String community) {
+    public User(String user_id, String user_type, String first_name, String last_name, String user_name, String password, int community_id) {
         this.user_id = user_id;
         this.user_type = user_type;
         this.first_name = first_name;
         this.last_name = last_name;
         this.user_name = user_name;
         this.password = password;
-        this.community = community;
+        this.community_id = community_id;
     }
 
     public User( String user_name, String password,String user_type) {
@@ -40,7 +40,7 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public int getUser_id() {
+    public String getUser_id() {
         return user_id;
     }
 
@@ -85,12 +85,12 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public String getCommunity() {
-        return community;
+    public int getCommunityId() {
+        return community_id;
     }
 
-    public void setCommunity(String community) {
-        this.community = community;
+    public void setCommunity(int community_id) {
+        this.community_id = community_id;
     }
 
     @Override
@@ -102,7 +102,7 @@ public class User implements Serializable {
                 ", last_name='" + last_name + '\'' +
                 ", user_name='" + user_name + '\'' +
                 ", password='" + password + '\'' +
-                ", community='" + community + '\'' +
+                ", community_id='" + community_id + '\'' +
                 '}';
     }
 }
