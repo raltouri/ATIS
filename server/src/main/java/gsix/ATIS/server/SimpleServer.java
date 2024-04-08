@@ -13,7 +13,9 @@ import java.util.List;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.NoResultException;
 
 import org.hibernate.*;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -75,6 +77,29 @@ public class SimpleServer extends AbstractServer {
         }
         TypedQuery<T> query = session.createQuery(criteriaQuery);
         return query.getSingleResult();
+    }
+    public static <T> T getUser(Class<T> object,String user_name, String password) {
+
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
+        Root<T> root = criteriaQuery.from(object);
+        if (object.equals(User.class)) {
+            Predicate condition1 = builder.equal(root.get("user_name"), user_name);
+            Predicate condition2 = builder.equal(root.get("password"), password);
+            Predicate finalCondition = builder.and(condition1, condition2);
+            criteriaQuery.select(root).where(finalCondition);
+        }
+        TypedQuery<T> query = session.createQuery(criteriaQuery);
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            // User not found
+            String result = "Username or password is incorrect";
+            Message message = new Message(1,result);
+            return (T) message; // or throw a custom exception, or handle it according to your requirement
+            // casting to T cause the func must return , maybe needed to be checked
+        }
     }
 
     public static void updateTask(Task updatedTask) {
@@ -189,6 +214,24 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("change task status: Done");
                 client.sendToClient(message);
 
+            }
+            else if (request.equals("login request")) {
+                User userData = (User) message.getData();
+                Object result = getUser(User.class,userData.getUser_name(),userData.getPassword());
+                if(result instanceof User){
+                    message.setMessage("login request: Done");
+                    User target = (User) result;
+                    message.setData(target);
+                }
+                //User target = getUser(User.class,userData.getUser_name(),userData.getPassword());
+                else /*if(result instanceof Message)*/{
+                    message.setMessage("login request: Failed");
+                    Message errMsgg = (Message) result;
+                    //String errMsg = errMsgg.getMessage();
+                    String errMsg ="Username or password is incorrect";
+                    message.setData(errMsg);
+                }
+                client.sendToClient(message);
             }
             /* else {
                 //add code here to send received message to all clients.

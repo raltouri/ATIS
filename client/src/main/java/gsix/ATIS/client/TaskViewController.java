@@ -7,16 +7,15 @@ package gsix.ATIS.client;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import gsix.ATIS.client.common.GuiCommon;
+import gsix.ATIS.client.common.MessageEvent;
 import gsix.ATIS.entities.Message;
 import gsix.ATIS.entities.Task;
 import gsix.ATIS.entities.TaskStatus;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;

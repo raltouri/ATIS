@@ -54,7 +54,7 @@ public class ClientFormController {
 
             client = SimpleClient.getClient(server, Integer.parseInt(port));
             client.openConnection();
-            scene = new Scene(loadFXML("Tasks"));
+            scene = new Scene(loadFXML("LoginForm")); /// maybe needed to add login.LoginForm
             stage.setScene(scene);
             stage.show();
             //ClientUI.connectToServer(server,Integer.parseInt(port));

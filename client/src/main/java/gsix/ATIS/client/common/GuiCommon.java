@@ -2,14 +2,11 @@ package gsix.ATIS.client.common;
 
 import java.io.IOException;
 
-import gsix.ATIS.entities.*;
-import gsix.ATIS.client.*;
+import gsix.ATIS.client.SimpleChatClient;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
