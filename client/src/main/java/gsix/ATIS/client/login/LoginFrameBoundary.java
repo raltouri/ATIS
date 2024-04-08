@@ -11,8 +11,10 @@ import client.ClientUI;
 import control_common.LoginController;*/
 
 
+import gsix.ATIS.client.TaskViewController;
 import gsix.ATIS.client.common.GuiCommon;
 import gsix.ATIS.client.common.MessageEvent;
+import gsix.ATIS.client.user.UserHomePageBoundary;
 import gsix.ATIS.entities.Message;
 import gsix.ATIS.entities.Task;
 import gsix.ATIS.entities.User;
@@ -43,6 +45,8 @@ import entity.Course;
 import entity.Lecturer;*/
 
 public class LoginFrameBoundary implements Initializable{
+
+	private Stage stage;
 	
 	@FXML
 	private AnchorPane window;
@@ -64,8 +68,10 @@ public class LoginFrameBoundary implements Initializable{
     
     @FXML 
 	public void Login( ActionEvent event) throws IOException {
-    	
-    	username = UsernameField.getText();
+
+		stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+
+		username = UsernameField.getText();
     	password = PasswordField.getText();
     	if (username.trim().isEmpty()) {
     		loginMsg( "Username is a required field.");
@@ -120,7 +126,19 @@ public class LoginFrameBoundary implements Initializable{
 			//GuiCommon.popUp(loggedInUser.toString());
 			Platform.runLater(() -> {
 				GuiCommon.popUp(loggedInUser.toString());
+
+				GuiCommon guiCommon = GuiCommon.getInstance();
+				if(loggedInUser.getUser_type().equals("community user")) {
+					UserHomePageBoundary userHomePageBoundary = (UserHomePageBoundary) guiCommon.displayNextScreen("UserHomePage.fxml",
+							"Community User Home Page", stage, true);  // Example for opening new screen
+					userHomePageBoundary.setLoggedInUser(loggedInUser);
+				} else if (loggedInUser.getUser_type().equals("manager")) {
+
+				}
+
 			});
+
+
 			/*List<Task> tasks = (List<Task>) event.getMessage().getData();
 			List<String> tasks_info = getTasksInfo(tasks);
 			System.out.println("handleTasksEvent");
