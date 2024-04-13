@@ -12,7 +12,7 @@ public class Task implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int task_id;
     @Column(name = "requester_id")
-    private int requester_id;
+    private String requester_id;
     @Column(name = "volunteer_id")
     private int volunteer_id;
     @Column(name = "requested_operation")
@@ -22,13 +22,16 @@ public class Task implements Serializable {
     private LocalDateTime time;
     @Column(name = "status")
     private String status; // CHANGE THIS TO ENUM
+    @ManyToOne
+    @JoinColumn(name = "requester_id", referencedColumnName = "user_id", insertable = false, updatable = false)
+    private User requester;
 
     private TaskStatus taskStatus;
 
     public Task() {
     }
 
-    public Task( int requester_id, int volunteer_id, String requested_operation, LocalDateTime time, TaskStatus taskStatus) {
+    public Task( String requester_id, int volunteer_id, String requested_operation, LocalDateTime time, TaskStatus taskStatus) {
         this.requester_id = requester_id;
         this.volunteer_id = volunteer_id;
         this.requested_operation = requested_operation;
@@ -47,11 +50,11 @@ public class Task implements Serializable {
     }
 
 
-    public int getRequester_id() {
+    public String getRequester_id() {
         return requester_id;
     }
 
-    public void setRequester_id(int requester_id) {
+    public void setRequester_id(String requester_id) {
         this.requester_id = requester_id;
     }
 

@@ -122,7 +122,7 @@ public class TasksController {
         }
     }
 
-    private static List<String> getTasksInfo(List<Task> tasks) {
+    public static List<String> getTasksInfo(List<Task> tasks) {
         List<String> tasks_info = new ArrayList<>();
         for (Task task : tasks) {
             tasks_info.add("Task ID:" + task.getTask_id() + ", Help Request Description: " + task.getRequested_operation());
@@ -144,7 +144,22 @@ public class TasksController {
                 ObservableList<String> observableTasks = FXCollections.observableArrayList(tasks_info);
                 tasks_Lv.setItems(observableTasks); // Add received tasks
             });
-        } else if (event.getMessage().getMessage().equals("view task info: Done")) {
+        }
+//        //ADDED BY AYAL
+//        else if(event.getMessage().getMessage().equals("get tasks for community: Done")){
+//            List<Task> communityTasks=(List<Task>) event.getMessage().getData();
+//            System.out.println("I am handling the tasks for community being brought back to server i think in tasks controller");
+//            List<String> tasks_info = getTasksInfo(communityTasks);
+//            // Update ListView with received tasks
+//            Platform.runLater(() -> {
+//                tasks_Lv.getItems().clear(); // Clear existing items
+//                ObservableList<String> observableTasks = FXCollections.observableArrayList(tasks_info);
+//                tasks_Lv.setItems(observableTasks); // Add received tasks
+//            });
+//        }
+
+
+        else if (event.getMessage().getMessage().equals("view task info: Done")) {
 
 
             Platform.runLater(() -> {
@@ -202,4 +217,15 @@ public class TasksController {
         }
     }
 
+//    public List<String> getTasksForCommunity(String userId) {
+//        List<String> list=null;
+//        Message message = new Message(2, LocalDateTime.now(), "get tasks for community", userId);
+//        System.out.println("TaskController:before send to server *Get Tasks for Community* command");
+//        try {
+//            SimpleClient.getClient("",0).sendToServer(message);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return list;
+//    }
 }
