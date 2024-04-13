@@ -7,9 +7,10 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.user.Volunteer">
    <children>
-      <TextField layoutX="211.0" layoutY="55.0" text="Available Tasks" />
-      <ListView fx:id="availableTaskListView" layoutX="186.0" layoutY="100.0" prefHeight="200.0" prefWidth="200.0" />
-      <Button fx:id="choose_Btn" layoutX="308.0" layoutY="329.0" mnemonicParsing="false" onAction="#doTask" text="Choose" />
-      <Button fx:id="back_Btn" layoutX="211.0" layoutY="329.0" mnemonicParsing="false" onAction="#backToUserHome" text="Back" />
+      <TextField editable="false" layoutX="211.0" layoutY="55.0" text="Available Tasks" />
+      <ListView fx:id="availableTaskListView" layoutX="80.0" layoutY="100.0" prefHeight="200.0" prefWidth="406.0" />
+      <Button fx:id="choose_Btn" layoutX="199.0" layoutY="329.0" mnemonicParsing="false" onAction="#showTasks" text="Click to see Community Tasks" />
+      <Button fx:id="back_Btn" layoutX="142.0" layoutY="329.0" mnemonicParsing="false" onAction="#backToUserHome" text="Back" />
+      <Button fx:id="pickTask_Btn" layoutX="389.0" layoutY="329.0" mnemonicParsing="false" onAction="#pickTask" text="Pick task" />
    </children>
 </AnchorPane>

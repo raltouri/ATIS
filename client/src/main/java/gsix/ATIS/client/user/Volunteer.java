@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import gsix.ATIS.client.common.GuiCommon;
+import javafx.event.ActionEvent;
+
 import gsix.ATIS.client.SimpleClient;
 import gsix.ATIS.client.TasksController;
 import gsix.ATIS.client.common.MessageEvent;
@@ -21,14 +24,18 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 public class Volunteer {
 
     private User loggedInUser=null;
+    private Stage stage;
 
 
     @FXML // ResourceBundle that was given to the FXMLLoader
@@ -45,6 +52,8 @@ public class Volunteer {
 
     @FXML // fx:id="choose_Btn"
     private Button choose_Btn; // Value injected by FXMLLoader
+    @FXML
+    private Button pickTask_Btn;
 
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -52,8 +61,16 @@ public class Volunteer {
         assert availableTaskListView != null : "fx:id=\"availableTaskListView\" was not injected: check your FXML file 'Untitled'.";
         assert back_Btn != null : "fx:id=\"back_Btn\" was not injected: check your FXML file 'Untitled'.";
         assert choose_Btn != null : "fx:id=\"choose_Btn\" was not injected: check your FXML file 'Untitled'.";
+        assert pickTask_Btn != null : "fx:id=\"pickTask_Btn\" was not injected: check your FXML file 'Volunteer.fxml'.";
 
         EventBus.getDefault().register(this);
+        // Fetch tasks when the page is initialized
+        if (loggedInUser != null) {
+            String userId = this.loggedInUser.getUser_id();
+            getTasksForCommunity(userId);
+        } else {
+            System.out.println("LoggedInUser is null in Volunteer Do task line 81");
+        }
 
     }
     @Subscribe
@@ -75,14 +92,88 @@ public class Volunteer {
 
     }
     @FXML
-    private void backToUserHome() {
+    private void backToUserHome(ActionEvent event) {
         // Implement logic to navigate back to the user's home page
+        //open a new page
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+        GuiCommon guiCommon = GuiCommon.getInstance();
+        UserHomePageBoundary userHomePage = (UserHomePageBoundary) guiCommon.displayNextScreen("UserHomePage.fxml",
+                "Community User Home Page", stage, true);  // Example for opening new screen
     }
+
     @FXML
-    private void doTask() {
+    void pickTask(ActionEvent actionEvent) {
+        //Implement logic to pick a Task
+        // Get the selected task from the ListView
+        String selectedTaskInfo = availableTaskListView.getSelectionModel().getSelectedItem();
+        if (selectedTaskInfo != null) {
+            // Parse the selected task information to get the task ID
+            int taskId = extractTaskId(selectedTaskInfo);
+            System.out.println("task id is : "+taskId);
+            // Update the task status in the database
+            updateTaskStatus(taskId, "done");
+
+            // Show a pop-up message to indicate success
+            showSuccessMessage();
+
+            // Implement logic to navigate back to the user's home page
+            //open a new page
+            stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow(); // first time stage takes value
+            GuiCommon guiCommon = GuiCommon.getInstance();
+            UserHomePageBoundary userHomePage = (UserHomePageBoundary) guiCommon.displayNextScreen("UserHomePage.fxml",
+                    "Community User Home Page", stage, true);  // Example for opening new screen
+            userHomePage.setLoggedInUser(loggedInUser);
+        } else {
+            // Handle the case when no task is selected
+            System.out.println("Please select a task to pick.");
+        }
+    }
+
+    // Method to display a pop-up message indicating success
+    private void showSuccessMessage() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Task Picked");
+        alert.setHeaderText(null);
+        alert.setContentText("You have successfully volunteered for this task!");
+
+        // Show the alert dialog
+        alert.showAndWait();
+    }
+
+    // Method to extract the task ID from the task information string
+    private int extractTaskId(String taskInfo) {
+        // Split the taskInfo string based on comma and colon to extract the task ID
+        String[] parts = taskInfo.split(","); // Split by comma
+        for (String part : parts) {
+            // Further split each part based on colon to check for "Task ID"
+            String[] keyValue = part.trim().split(":");
+            if (keyValue.length == 2 && keyValue[0].trim().equals("Task ID")) {
+                // Parse and return the task ID
+                return Integer.parseInt(keyValue[1].trim());
+            }
+        }
+        // Return 0 if task ID is not found (or handle error appropriately)
+        return 0;
+    }
+    private void updateTaskStatus(int taskId, String status) {
+        // Implement the logic to update the task status in the database
+        // Example: You may use JDBC or an ORM framework to execute an update query
+        // Example query: UPDATE tasks SET status = 'pending' WHERE id = taskId;
+        Message message = new Message(1, LocalDateTime.now(), "update task status",taskId);
+        System.out.println("Volunteer:before send to server *updateTaskStatus* command");
+        try {
+            SimpleClient.getClient("",0).sendToServer(message);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @FXML
+    private void showTasks() {
         if(loggedInUser!=null) {
             String userId = this.loggedInUser.getUser_id();
-            System.out.println("im inside doTask after pressing the button and loggedInUsere isnt null");
+            System.out.println("im inside showTasks after pressing the button and loggedInUsere isnt null");
             // Initialize the ListView with available tasks
             getTasksForCommunity(userId); //
         }
@@ -99,7 +190,7 @@ public class Volunteer {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("I HATE THIS COURSE");
+
 
     }
 

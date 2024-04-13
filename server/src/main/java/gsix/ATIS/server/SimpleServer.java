@@ -103,7 +103,10 @@ public class SimpleServer extends AbstractServer {
         int communityId = user.getCommunityId();
 
         // Adding condition to the criteria query based on communityId
-        criteriaQuery.where(builder.equal(userJoin.get("community_id"), communityId));
+        criteriaQuery.where(
+                builder.equal(userJoin.get("community_id"), communityId),
+                builder.equal(taskRoot.get("status"), "pending")
+        );
 
         // Executing the criteria query and returning the result
         List<T> list=session.createQuery(criteriaQuery).getResultList();
@@ -291,6 +294,17 @@ public class SimpleServer extends AbstractServer {
                 client.sendToClient(message);
 
             }
+            else if (request.equals("update task status")) {
+
+                int updatedTaskID = (int) message.getData();
+                updateTaskByID(updatedTaskID);
+
+                Task testUpdate = getEntityById(Task.class, updatedTaskID);
+                message.setData(testUpdate);
+                message.setMessage("change task status: Done");
+                client.sendToClient(message);
+
+            }
             else if (request.equals("login request")) {
                 System.out.println("*********INSIDE LOGING REQUEST*********");
                 User userData = (User) message.getData();
@@ -339,6 +353,32 @@ public class SimpleServer extends AbstractServer {
             }
         }
     }
+
+    private void updateTaskByID(int updatedTaskID) {
+        Transaction transaction = null;
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            Session session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+
+            // Retrieve the task entity by ID
+            Task task = session.get(Task.class, updatedTaskID);
+
+            // Update the task status to "done"
+            task.setStatus(TaskStatus.Done);
+
+            // Commit the transaction
+            session.update(task);
+            transaction.commit();
+            System.out.println("Task with ID " + updatedTaskID + " updated to 'done'.");
+        } catch (Exception e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        }
+    }
+
 
     public void sendToAllClients(Message message) {
         try {
