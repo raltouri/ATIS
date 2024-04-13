@@ -52,6 +52,13 @@ public class UserHomePageBoundary {
 
     @FXML
     void MyTasks(ActionEvent event) {
+        //open a new page
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+        GuiCommon guiCommon = GuiCommon.getInstance();
+        MyTasksPage myTasksPage = (MyTasksPage) guiCommon.displayNextScreen("MyTasksPage.fxml",
+                "Community User My Tasks Page", stage, true);  // Example for opening new screen
+
+        myTasksPage.setLoggedInUser(loggedInUser);
 
     }
 

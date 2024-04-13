@@ -64,13 +64,7 @@ public class Volunteer {
         assert pickTask_Btn != null : "fx:id=\"pickTask_Btn\" was not injected: check your FXML file 'Volunteer.fxml'.";
 
         EventBus.getDefault().register(this);
-        // Fetch tasks when the page is initialized
-        if (loggedInUser != null) {
-            String userId = this.loggedInUser.getUser_id();
-            getTasksForCommunity(userId);
-        } else {
-            System.out.println("LoggedInUser is null in Volunteer Do task line 81");
-        }
+
 
     }
     @Subscribe
