@@ -38,10 +38,10 @@ public class SimpleServer extends AbstractServer {
     private static void initializeData() throws Exception {
 
 
-        Task t1 = new Task(1,2,"car repair",LocalDateTime.now(),TaskStatus.Request);
-        Task t2 = new Task(2,3,"wash machine repair",LocalDateTime.now(),TaskStatus.Pending);
-        Task t3 = new Task(3,4,"fridge repair",LocalDateTime.now(),TaskStatus.Done);
-        Task t4 = new Task(4,5,"buy groceries",LocalDateTime.now(),TaskStatus.Request);
+        Task t1 = new Task("1","2","car repair",LocalDateTime.now(),TaskStatus.Request);
+        Task t2 = new Task("2","3","wash machine repair",LocalDateTime.now(),TaskStatus.Pending);
+        Task t3 = new Task("3","4","fridge repair",LocalDateTime.now(),TaskStatus.Done);
+        Task t4 = new Task("4","5","buy groceries",LocalDateTime.now(),TaskStatus.Request);
 
         session.save(t1);
         session.save(t2);
@@ -104,6 +104,10 @@ public class SimpleServer extends AbstractServer {
 
     public static void updateTask(Task updatedTask) {
         session.update(updatedTask); // Update the task
+        transaction.commit();
+    }
+    public static void addTask(Task newTask) {
+        session.save(newTask); // Add the task
         transaction.commit();
     }
 
@@ -232,6 +236,15 @@ public class SimpleServer extends AbstractServer {
                     message.setData(errMsg);
                 }
                 client.sendToClient(message);
+            }else if (request.equals("open request")) {
+
+                Task newTask = (Task) message.getData();
+                addTask(newTask);
+                Task testAdd = getEntityById(Task.class, newTask.getTask_id());
+                message.setData(testAdd);
+                message.setMessage("open request: Done");
+                client.sendToClient(message);
+
             }
             /* else {
                 //add code here to send received message to all clients.
