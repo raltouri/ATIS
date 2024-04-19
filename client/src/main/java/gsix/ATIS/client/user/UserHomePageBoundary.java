@@ -42,6 +42,13 @@ public class UserHomePageBoundary {
 
     @FXML
     void MessageToManager(ActionEvent event) {
+        //open a new page
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+        GuiCommon guiCommon = GuiCommon.getInstance();
+        SendMessageToManager sendMessageToManagerPage = (SendMessageToManager) guiCommon.displayNextScreen("SendMessageToManager.fxml",
+                "Community User Send Message to Manager Page", stage, true);  // Example for opening new screen
+
+        sendMessageToManagerPage.setLoggedInUser(loggedInUser);
 
     }
 

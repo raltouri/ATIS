@@ -1,5 +1,6 @@
 package gsix.ATIS.server;
 
+import gsix.ATIS.entities.*;
 import gsix.ATIS.server.ocsf.AbstractServer;
 import gsix.ATIS.server.ocsf.ConnectionToClient;
 import gsix.ATIS.server.ocsf.SubscribedClient;
@@ -18,11 +19,6 @@ import org.hibernate.*;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
-
-import gsix.ATIS.entities.Message;
-import gsix.ATIS.entities.Task;
-import gsix.ATIS.entities.TaskStatus;
-import gsix.ATIS.entities.User;
 
 public class SimpleServer extends AbstractServer {
     private static ArrayList<SubscribedClient> SubscribersList = new ArrayList<>();
@@ -289,6 +285,14 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("get tasks for community: Done");
                 client.sendToClient(message);
             }
+            else if(request.equals("get manager id")){ //Added by Ayal
+                System.out.println("inside SimpleServer get manager id");
+                String communityID = (String) message.getData();
+                message.setData(getManagerID((Task.class),communityID));// Should change this back to getAllByCommunity , it works on getAll
+                System.out.println(message.getData());
+                message.setMessage("manager id is here");
+                client.sendToClient(message);
+            }
             else if(request.equals("get requested tasks")){ //Added by Ayal
                 System.out.println("inside SimpleServer get requested tasks ");
                 String userId = (String) message.getData();
@@ -399,6 +403,21 @@ public class SimpleServer extends AbstractServer {
                 session.getSessionFactory().close();
             }
         }
+    }
+
+    private String getManagerID(Class<Task> taskClass, String communityID) {//added by Ayal
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<String> criteriaQuery = builder.createQuery(String.class);
+        Root<Community> root = criteriaQuery.from(Community.class);
+
+        // Adding a condition to select the manager_id where community_id matches the provided communityID
+        Predicate predicate = builder.equal(root.get("community_id"), Integer.parseInt(communityID));
+        criteriaQuery.select(root.get("manager_id")).where(predicate);
+
+        // Execute the criteria query and retrieve the manager_id
+        String managerID = session.createQuery(criteriaQuery).getSingleResult();
+        System.out.println("Manager ID for Community ID " + communityID + " is: " + managerID);
+        return managerID;
     }
 
     private void updateTaskByID(int updatedTaskID) {
