@@ -14,7 +14,7 @@ public class Task implements Serializable {
     @Column(name = "requester_id")
     private String requester_id;
     @Column(name = "volunteer_id")
-    private int volunteer_id;
+    private String volunteer_id;
     @Column(name = "requested_operation")
     private String requested_operation;
 
@@ -31,7 +31,22 @@ public class Task implements Serializable {
     public Task() {
     }
 
-    public Task( String requester_id, int volunteer_id, String requested_operation, LocalDateTime time, TaskStatus taskStatus) {
+
+    public Task(String requester_id, String requested_operation, TaskStatus taskStatus) {
+        this.requester_id = requester_id;
+        this.requested_operation = requested_operation;
+        this.time = LocalDateTime.now();
+        if (taskStatus == TaskStatus.Request){
+            this.status = "Request";
+        } else if (taskStatus == TaskStatus.Pending) {
+            this.status = "Pending";
+        }else if(taskStatus == TaskStatus.Done){
+            this.status = "Done";
+        }
+    }
+
+    public Task(String requester_id, String volunteer_id, String requested_operation, LocalDateTime time, TaskStatus taskStatus) {
+
         this.requester_id = requester_id;
         this.volunteer_id = volunteer_id;
         this.requested_operation = requested_operation;
@@ -58,11 +73,11 @@ public class Task implements Serializable {
         this.requester_id = requester_id;
     }
 
-    public int getVolunteer_id() {
+    public String getVolunteer_id() {
         return volunteer_id;
     }
 
-    public void setVolunteer_id(int volunteer_id) {
+    public void setVolunteer_id(String volunteer_id) {
         this.volunteer_id = volunteer_id;
     }
 

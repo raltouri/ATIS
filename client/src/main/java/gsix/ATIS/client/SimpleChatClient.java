@@ -1,6 +1,8 @@
 package gsix.ATIS.client;
 
+import gsix.ATIS.client.common.GuiCommon;
 import gsix.ATIS.client.common.MessageEvent;
+import gsix.ATIS.client.user.UserHomePageBoundary;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -25,9 +27,12 @@ public class SimpleChatClient extends Application {
     	EventBus.getDefault().register(this);
     	/*client = SimpleClient.getClient();
     	client.openConnection();*/
-        scene = new Scene(loadFXML("ClientForm"));
+        /*scene = new Scene(loadFXML("ClientForm"));
         stage.setScene(scene);
-        stage.show();
+        stage.show();*/
+        GuiCommon guiCommon = GuiCommon.getInstance();
+        ClientFormController clientFormController = (ClientFormController) guiCommon.displayNextScreen("ClientForm.fxml",
+                    "Client Connector", null, false);
     }
 
     static void setRoot(String fxml) throws IOException {

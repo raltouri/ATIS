@@ -31,7 +31,6 @@ public class SimpleServer extends AbstractServer {
 
     private static void initializeData() throws Exception {
 
-
         // Check if tasks exist before creating and saving
         if (!taskExists(1)) {
             Task t1 = new Task("1",2,"car repair",LocalDateTime.now(),TaskStatus.Request);
@@ -201,6 +200,10 @@ public class SimpleServer extends AbstractServer {
 
     public static void updateTask(Task updatedTask) {
         session.update(updatedTask); // Update the task
+        transaction.commit();
+    }
+    public static void addTask(Task newTask) {
+        session.save(newTask); // Add the task
         transaction.commit();
     }
 
@@ -374,6 +377,15 @@ public class SimpleServer extends AbstractServer {
                     message.setData(errMsg);
                 }
                 client.sendToClient(message);
+            }else if (request.equals("open request")) {
+
+                Task newTask = (Task) message.getData();
+                addTask(newTask);
+                Task testAdd = getEntityById(Task.class, newTask.getTask_id());
+                message.setData(testAdd);
+                message.setMessage("open request: Done");
+                client.sendToClient(message);
+
             }
             /* else {
                 //add code here to send received message to all clients.

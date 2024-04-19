@@ -2,11 +2,19 @@ package gsix.ATIS.client.user;
 
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+
+
+import gsix.ATIS.client.TaskViewController;
 
 import gsix.ATIS.client.common.GuiCommon;
 import gsix.ATIS.client.common.MessageEvent;
+import gsix.ATIS.entities.Task;
 import gsix.ATIS.entities.User;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -16,6 +24,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 public class UserHomePageBoundary {
+    private Stage stage;
     private User loggedInUser;
     private Stage stage;
 
@@ -72,6 +81,13 @@ public class UserHomePageBoundary {
     @FXML
     void OpenRequest(ActionEvent event) {
 
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        //System.out.println("stam");
+        GuiCommon guiCommon = GuiCommon.getInstance();
+        OpenRequestBoundary openRequestBoundary = (OpenRequestBoundary) guiCommon.displayNextScreen
+                ("OpenRequest.fxml", "Open Help Request", stage, true);
+        openRequestBoundary.setRequesterInfo(loggedInUser);
+        stage.close();
     }
 
     @FXML
@@ -87,12 +103,20 @@ public class UserHomePageBoundary {
 
     @Subscribe
     public void handleSomeEvent(MessageEvent event) {
+        if (event.getMessage().getMessage().equals("open request: Done")) {
+            Platform.runLater(() -> {
+                Task dbUpdatedTask = (Task) event.getMessage().getData();
+                GuiCommon.popUp(dbUpdatedTask.toString() +"\n Task opened successfully, pending for Manager approve!");
+            });
+        }
     }
 
-    public void setLoggedInUser(User loggedUser){
+    public void setLoggedInUser(User loggedUser) {
         this.loggedInUser = loggedUser;
     }
-    @FXML // This method is called by the FXMLLoader when initialization is complete
+
+    @FXML
+        // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
         assert message_to_manager_Btn != null : "fx:id=\"message_to_manager_Btn\" was not injected: check your FXML file 'UserHomePage.fxml'.";
         assert messages_inbox_Btn != null : "fx:id=\"messages_inbox_Btn\" was not injected: check your FXML file 'UserHomePage.fxml'.";
