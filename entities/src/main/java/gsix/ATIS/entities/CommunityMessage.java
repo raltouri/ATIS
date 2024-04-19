@@ -18,6 +18,7 @@ public class CommunityMessage implements Serializable {
 
     public int getMessage_id() {
         return message_id;
+
     }
 
     public void setMessage_id(int message_id) {
