@@ -62,7 +62,10 @@ public class OpenRequestBoundary {
     void backBtnClicked(MouseEvent event) {
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
-        GuiCommon.getInstance().displayNextScreen("UserHomePage.fxml", "Community User Home Page", stage, true);
+        //GuiCommon.getInstance().displayNextScreen("UserHomePage.fxml", "Community User Home Page", stage, true);
+        UserHomePageBoundary userHomePage = (UserHomePageBoundary) GuiCommon.getInstance().displayNextScreen("UserHomePage.fxml",
+                "Community User Home Page", stage, true);  // Example for opening new screen
+        userHomePage.setLoggedInUser(requester);
     }
 
     @FXML
@@ -77,7 +80,10 @@ public class OpenRequestBoundary {
             SimpleClient.getClient("",0).sendToServer(message);
             //System.out.println("after send to server GetAllTasks command");
 
-            GuiCommon.getInstance().displayNextScreen("UserHomePage.fxml", "Community User Home Page", stage, true);
+            //GuiCommon.getInstance().displayNextScreen("UserHomePage.fxml", "Community User Home Page", stage, true);
+            UserHomePageBoundary userHomePage = (UserHomePageBoundary) GuiCommon.getInstance().displayNextScreen("UserHomePage.fxml",
+                    "Community User Home Page", stage, true);  // Example for opening new screen
+            userHomePage.setLoggedInUser(requester);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

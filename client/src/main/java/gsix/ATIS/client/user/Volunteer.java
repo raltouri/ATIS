@@ -93,6 +93,7 @@ public class Volunteer {
         GuiCommon guiCommon = GuiCommon.getInstance();
         UserHomePageBoundary userHomePage = (UserHomePageBoundary) guiCommon.displayNextScreen("UserHomePage.fxml",
                 "Community User Home Page", stage, true);  // Example for opening new screen
+        userHomePage.setLoggedInUser(loggedInUser);
     }
 
     @FXML
@@ -106,6 +107,7 @@ public class Volunteer {
             System.out.println("task id is : "+taskId);
             // Update the task status in the database
             updateTaskStatus(taskId, "done");
+            updateTaskVolunteer(taskId,loggedInUser.getUser_id());
 
             // Show a pop-up message to indicate success
             showSuccessMessage();
@@ -120,6 +122,17 @@ public class Volunteer {
         } else {
             // Handle the case when no task is selected
             System.out.println("Please select a task to pick.");
+        }
+    }
+
+    private void updateTaskVolunteer(int taskId, String volunteerID) {
+        Task dummyTask=new Task(taskId,volunteerID);
+        Message message = new Message(1, LocalDateTime.now(), "update task volunteer",dummyTask);
+        System.out.println("Volunteer:before send to server *updateTaskVolunteer* command");
+        try {
+            SimpleClient.getClient("",0).sendToServer(message);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

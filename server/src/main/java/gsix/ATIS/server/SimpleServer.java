@@ -33,39 +33,39 @@ public class SimpleServer extends AbstractServer {
 
         // Check if tasks exist before creating and saving
         if (!taskExists(1)) {
-            Task t1 = new Task("1",2,"car repair",LocalDateTime.now(),TaskStatus.Request);
+            Task t1 = new Task("1","2","car repair",LocalDateTime.now(),TaskStatus.Request);
             session.save(t1);
         }
         if (!taskExists(2)) {
-            Task t2 = new Task("2",3,"wash machine repair",LocalDateTime.now(),TaskStatus.Pending);
+            Task t2 = new Task("2","3","wash machine repair",LocalDateTime.now(),TaskStatus.Pending);
             session.save(t2);
         }
         if (!taskExists(3)) {
-            Task t3 = new Task("3",8,"fridge repair",LocalDateTime.now(),TaskStatus.Done);
+            Task t3 = new Task("3","8","fridge repair",LocalDateTime.now(),TaskStatus.Done);
             session.save(t3);
         }
         if (!taskExists(4)) {
-            Task t4 = new Task("4",5,"buy groceries",LocalDateTime.now(),TaskStatus.Request);
+            Task t4 = new Task("4","5","buy groceries",LocalDateTime.now(),TaskStatus.Request);
             session.save(t4);
         }
         if (!taskExists(5)) {
-            Task t5 = new Task("5",6,"CHECK CODE PLEASE",LocalDateTime.now(),TaskStatus.Request);
+            Task t5 = new Task("5","6","CHECK CODE PLEASE",LocalDateTime.now(),TaskStatus.Request);
             session.save(t5);
         }
         if (!taskExists(6)) {
-            Task t6 = new Task("6",7,"VALIDATE CODE PLEASE",LocalDateTime.now(),TaskStatus.Request);
+            Task t6 = new Task("6","7","VALIDATE CODE PLEASE",LocalDateTime.now(),TaskStatus.Request);
             session.save(t6);
         }
         if (!taskExists(7)) {
-            Task t7 = new Task("7",8,"Task 7",LocalDateTime.now(),TaskStatus.Request);
+            Task t7 = new Task("7","8","Task 7",LocalDateTime.now(),TaskStatus.Request);
             session.save(t7);
         }
         if (!taskExists(8)) {
-            Task t8 = new Task("8",9,"Task 8",LocalDateTime.now(),TaskStatus.Request);
+            Task t8 = new Task("8","9","Task 8",LocalDateTime.now(),TaskStatus.Request);
             session.save(t8);
         }
         if (!taskExists(9)) {
-            Task t9 = new Task("9",8,"Task 9",LocalDateTime.now(),TaskStatus.Request);
+            Task t9 = new Task("9","8","Task 9",LocalDateTime.now(),TaskStatus.Request);
             session.save(t9);
         }
 
@@ -288,6 +288,15 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("get tasks for community: Done");
                 client.sendToClient(message);
             }
+            else if(request.equals("update task volunteer")){ //Added by Ayal
+                System.out.println("inside simple server update task volunteer");
+                Task dummyTask = (Task) message.getData();
+                Task taskTarget=getEntityById(Task.class,dummyTask.getTask_id());
+                taskTarget.setVolunteer_id(dummyTask.getVolunteer_id());
+                updateTask(taskTarget);
+                message.setMessage("update task volunteer : Done");
+                client.sendToClient(message);
+            }
             else if(request.equals("get manager id")){ //Added by Ayal
                 System.out.println("inside SimpleServer get manager id");
                 String communityID = (String) message.getData();
@@ -432,7 +441,7 @@ public class SimpleServer extends AbstractServer {
         return managerID;
     }
 
-    private void updateTaskByID(int updatedTaskID) {
+    private void updateTaskByID(int updatedTaskID) {//added by Ayal
         Transaction transaction = null;
         try {
             SessionFactory sessionFactory = getSessionFactory();

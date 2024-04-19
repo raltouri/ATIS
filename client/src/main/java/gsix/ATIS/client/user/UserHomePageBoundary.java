@@ -26,7 +26,7 @@ import org.greenrobot.eventbus.Subscribe;
 public class UserHomePageBoundary {
     private Stage stage;
     private User loggedInUser;
-    private Stage stage;
+
 
     @FXML // ResourceBundle that was given to the FXMLLoader
     private ResourceBundle resources;

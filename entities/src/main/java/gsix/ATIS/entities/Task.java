@@ -31,6 +31,10 @@ public class Task implements Serializable {
     public Task() {
     }
 
+    public Task(int task_id, String volunteer_id) {
+        this.task_id = task_id;
+        this.volunteer_id = volunteer_id;
+    }
 
     public Task(String requester_id, String requested_operation, TaskStatus taskStatus) {
         this.requester_id = requester_id;
