@@ -23,7 +23,15 @@ public class SimpleClient extends AbstractClient {
 			MessageEvent messageEvent=new MessageEvent(message);
 			//EventBus.getDefault().post(allTasks);
 			EventBus.getDefault().post(messageEvent);
-		}else if(message.getMessage().equals("get all users: Done")){
+		}
+		//ADDED BY Ayal
+		if(message.getMessage().equals("get tasks for community: Done")){
+			System.out.println("I am in SimpleClient handle from server get tasks for community done");
+			MessageEvent messageEvent=new MessageEvent(message);
+			EventBus.getDefault().post(messageEvent);
+		}
+
+		else if(message.getMessage().equals("get all users: Done")){
 			MessageEvent messageEvent=new MessageEvent(message);
 			//EventBus.getDefault().post(allTasks);
 			EventBus.getDefault().post(messageEvent);

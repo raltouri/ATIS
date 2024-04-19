@@ -2,6 +2,7 @@ package gsix.ATIS.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name="users")
@@ -20,6 +21,8 @@ public class User implements Serializable {
     private String password;
     @Column(name = "community_id")
     private int community_id;
+    @OneToMany(mappedBy = "requester")
+    private List<Task> tasks;
 
     public User() {
     }

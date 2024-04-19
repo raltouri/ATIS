@@ -22,11 +22,15 @@ public class Task implements Serializable {
     private LocalDateTime time;
     @Column(name = "status")
     private String status; // CHANGE THIS TO ENUM
+    @ManyToOne
+    @JoinColumn(name = "requester_id", referencedColumnName = "user_id", insertable = false, updatable = false)
+    private User requester;
 
     private TaskStatus taskStatus;
 
     public Task() {
     }
+
 
     public Task(String requester_id, String requested_operation, TaskStatus taskStatus) {
         this.requester_id = requester_id;
@@ -42,6 +46,7 @@ public class Task implements Serializable {
     }
 
     public Task(String requester_id, String volunteer_id, String requested_operation, LocalDateTime time, TaskStatus taskStatus) {
+
         this.requester_id = requester_id;
         this.volunteer_id = volunteer_id;
         this.requested_operation = requested_operation;

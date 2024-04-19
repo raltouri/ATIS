@@ -1,5 +1,6 @@
 package gsix.ATIS.server;
 
+import gsix.ATIS.entities.*;
 import gsix.ATIS.server.ocsf.AbstractServer;
 import gsix.ATIS.server.ocsf.ConnectionToClient;
 import gsix.ATIS.server.ocsf.SubscribedClient;
@@ -11,21 +12,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import javax.persistence.NoResultException;
 
 import org.hibernate.*;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
-
-import gsix.ATIS.entities.Message;
-import gsix.ATIS.entities.Task;
-import gsix.ATIS.entities.TaskStatus;
-import gsix.ATIS.entities.User;
 
 public class SimpleServer extends AbstractServer {
     private static ArrayList<SubscribedClient> SubscribersList = new ArrayList<>();
@@ -35,23 +28,95 @@ public class SimpleServer extends AbstractServer {
     private static Transaction transaction;
 
 
+
     private static void initializeData() throws Exception {
 
-
-        Task t1 = new Task("1","2","car repair",LocalDateTime.now(),TaskStatus.Request);
-        Task t2 = new Task("2","3","wash machine repair",LocalDateTime.now(),TaskStatus.Pending);
-        Task t3 = new Task("3","4","fridge repair",LocalDateTime.now(),TaskStatus.Done);
-        Task t4 = new Task("4","5","buy groceries",LocalDateTime.now(),TaskStatus.Request);
-
-        session.save(t1);
-        session.save(t2);
-        session.save(t3);
-        session.save(t4);
+        // Check if tasks exist before creating and saving
+        if (!taskExists(1)) {
+            Task t1 = new Task("1",2,"car repair",LocalDateTime.now(),TaskStatus.Request);
+            session.save(t1);
+        }
+        if (!taskExists(2)) {
+            Task t2 = new Task("2",3,"wash machine repair",LocalDateTime.now(),TaskStatus.Pending);
+            session.save(t2);
+        }
+        if (!taskExists(3)) {
+            Task t3 = new Task("3",8,"fridge repair",LocalDateTime.now(),TaskStatus.Done);
+            session.save(t3);
+        }
+        if (!taskExists(4)) {
+            Task t4 = new Task("4",5,"buy groceries",LocalDateTime.now(),TaskStatus.Request);
+            session.save(t4);
+        }
+        if (!taskExists(5)) {
+            Task t5 = new Task("5",6,"CHECK CODE PLEASE",LocalDateTime.now(),TaskStatus.Request);
+            session.save(t5);
+        }
+        if (!taskExists(6)) {
+            Task t6 = new Task("6",7,"VALIDATE CODE PLEASE",LocalDateTime.now(),TaskStatus.Request);
+            session.save(t6);
+        }
+        if (!taskExists(7)) {
+            Task t7 = new Task("7",8,"Task 7",LocalDateTime.now(),TaskStatus.Request);
+            session.save(t7);
+        }
+        if (!taskExists(8)) {
+            Task t8 = new Task("8",9,"Task 8",LocalDateTime.now(),TaskStatus.Request);
+            session.save(t8);
+        }
+        if (!taskExists(9)) {
+            Task t9 = new Task("9",8,"Task 9",LocalDateTime.now(),TaskStatus.Request);
+            session.save(t9);
+        }
 
         session.flush();
-
         session.getTransaction().commit();
     }
+
+    // Method to check if a task with a given ID exists
+    private static boolean taskExists(int taskId) {
+        Task task = session.get(Task.class, taskId);
+        return task != null;
+    }
+
+    public static <T> List<T> getAllByCommunity(Class<T> object, String userId) {
+
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
+        Root<Task> taskRoot = criteriaQuery.from(Task.class);
+
+        // Joining Task with User entity using the requester_id attribute
+        Join<Task, User> userJoin = taskRoot.join("requester"); // Assuming "requester" is the attribute in Task entity referring to User entity
+
+        // Fetching the User entity based on userId
+        CriteriaQuery<User> userQuery = builder.createQuery(User.class);
+        Root<User> userRoot = userQuery.from(User.class);
+        userQuery.select(userRoot).where(builder.equal(userRoot.get("user_id"), userId)); // Assuming the primary key in User entity is "userId"
+        User user = session.createQuery(userQuery).getSingleResult();
+
+        // Accessing communityId from the fetched User entity
+        int communityId = user.getCommunityId();
+
+        // Adding condition to the criteria query based on communityId
+        criteriaQuery.where(
+                builder.equal(userJoin.get("community_id"), communityId),
+                builder.equal(taskRoot.get("status"), "pending")
+        );
+
+        // Executing the criteria query and returning the result
+        List<T> list=session.createQuery(criteriaQuery).getResultList();
+        System.out.println("I am in getAllByCommunity"+list);
+        return list;
+    }
+
+
+//    private static String getCommunityIdByUserId(String userId) { //Made By Ayal
+//        // Your logic to fetch community ID based on user ID
+//        String queryString = "SELECT u.community_id FROM User u WHERE u.user_id = :userId";
+//        Query<String> query = session.createQuery(queryString, String.class);
+//        query.setParameter("userId", userId);
+//        return query.uniqueResult();
+//    }
 
     public static <T> List<T> getAll(Class<T> object) {
         CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -64,6 +129,37 @@ public class SimpleServer extends AbstractServer {
         System.out.println("I am in getAll"+lst);
         return lst;
     }
+    public static <T> List<T> getRequestedTasks(Class<T> object, String userID) {
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
+        Root<T> rootEntry = criteriaQuery.from(object);
+        CriteriaQuery<T> allCriteriaQuery = criteriaQuery.select(rootEntry);
+
+        // Add a condition to filter tasks based on requester_id
+        Predicate predicate = builder.equal(rootEntry.get("requester_id"), userID);
+        allCriteriaQuery.where(predicate);
+
+        TypedQuery<T> allQuery = session.createQuery(allCriteriaQuery);
+        List<T> lst = allQuery.getResultList();
+        System.out.println("I am in getRequested" + lst);
+        return lst;
+    }
+    public static <T> List<T> getVolunteeredTasks(Class<T> object, String userID) {
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
+        Root<T> rootEntry = criteriaQuery.from(object);
+        CriteriaQuery<T> allCriteriaQuery = criteriaQuery.select(rootEntry);
+
+        // Add a condition to filter tasks based on requester_id
+        Predicate predicate = builder.equal(rootEntry.get("volunteer_id"), userID);
+        allCriteriaQuery.where(predicate);
+
+        TypedQuery<T> allQuery = session.createQuery(allCriteriaQuery);
+        List<T> lst = allQuery.getResultList();
+        System.out.println("I am in getVolunteered" + lst);
+        return lst;
+    }
+
 
     public static <T> T getEntityById(Class<T> object, int Id) {
 
@@ -184,7 +280,40 @@ public class SimpleServer extends AbstractServer {
                 client.sendToClient(message);
                 //sendToAllClients(message);
 
-            } else if (request.equals("get all users")) {
+            }else if(request.equals("get tasks for community")){ //Added by Ayal
+                System.out.println("inside SimpleServer get task for community");
+                String userId = (String) message.getData();
+                message.setData(getAllByCommunity((Task.class),userId));// Should change this back to getAllByCommunity , it works on getAll
+                System.out.println(message.getData());
+                message.setMessage("get tasks for community: Done");
+                client.sendToClient(message);
+            }
+            else if(request.equals("get manager id")){ //Added by Ayal
+                System.out.println("inside SimpleServer get manager id");
+                String communityID = (String) message.getData();
+                message.setData(getManagerID((Task.class),communityID));// Should change this back to getAllByCommunity , it works on getAll
+                System.out.println(message.getData());
+                message.setMessage("manager id is here");
+                client.sendToClient(message);
+            }
+            else if(request.equals("get requested tasks")){ //Added by Ayal
+                System.out.println("inside SimpleServer get requested tasks ");
+                String userId = (String) message.getData();
+                message.setData(getRequestedTasks((Task.class),userId));// Should change this back to getAllByCommunity , it works on getAll
+                System.out.println(message.getData());
+                message.setMessage("get requested tasks: Done");
+                client.sendToClient(message);
+            }
+            else if(request.equals("get volunteered tasks")){ //Added by Ayal
+                System.out.println("inside SimpleServer get volunteered tasks ");
+                String userId = (String) message.getData();
+                message.setData(getVolunteeredTasks((Task.class),userId));// Should change this back to getAllByCommunity , it works on getAll
+                System.out.println(message.getData());
+                message.setMessage("get volunteered tasks: Done");
+                client.sendToClient(message);
+            }
+
+            else if (request.equals("get all users")) {
 
                 message.setData(getAll(User.class));
                 message.setMessage("get all users: Done");
@@ -219,7 +348,19 @@ public class SimpleServer extends AbstractServer {
                 client.sendToClient(message);
 
             }
+            else if (request.equals("update task status")) {
+
+                int updatedTaskID = (int) message.getData();
+                updateTaskByID(updatedTaskID);
+
+                Task testUpdate = getEntityById(Task.class, updatedTaskID);
+                message.setData(testUpdate);
+                message.setMessage("change task status: Done");
+                client.sendToClient(message);
+
+            }
             else if (request.equals("login request")) {
+                System.out.println("*********INSIDE LOGING REQUEST*********");
                 User userData = (User) message.getData();
                 Object result = getUser(User.class,userData.getUser_name(),userData.getPassword());
                 if(result instanceof User){
@@ -275,6 +416,47 @@ public class SimpleServer extends AbstractServer {
             }
         }
     }
+
+    private String getManagerID(Class<Task> taskClass, String communityID) {//added by Ayal
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<String> criteriaQuery = builder.createQuery(String.class);
+        Root<Community> root = criteriaQuery.from(Community.class);
+
+        // Adding a condition to select the manager_id where community_id matches the provided communityID
+        Predicate predicate = builder.equal(root.get("community_id"), Integer.parseInt(communityID));
+        criteriaQuery.select(root.get("manager_id")).where(predicate);
+
+        // Execute the criteria query and retrieve the manager_id
+        String managerID = session.createQuery(criteriaQuery).getSingleResult();
+        System.out.println("Manager ID for Community ID " + communityID + " is: " + managerID);
+        return managerID;
+    }
+
+    private void updateTaskByID(int updatedTaskID) {
+        Transaction transaction = null;
+        try {
+            SessionFactory sessionFactory = getSessionFactory();
+            Session session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+
+            // Retrieve the task entity by ID
+            Task task = session.get(Task.class, updatedTaskID);
+
+            // Update the task status to "done"
+            task.setStatus(TaskStatus.Done);
+
+            // Commit the transaction
+            session.update(task);
+            transaction.commit();
+            System.out.println("Task with ID " + updatedTaskID + " updated to 'done'.");
+        } catch (Exception e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        }
+    }
+
 
     public void sendToAllClients(Message message) {
         try {

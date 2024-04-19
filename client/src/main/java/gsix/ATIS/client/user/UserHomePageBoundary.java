@@ -5,7 +5,9 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+
 import gsix.ATIS.client.TaskViewController;
+
 import gsix.ATIS.client.common.GuiCommon;
 import gsix.ATIS.client.common.MessageEvent;
 import gsix.ATIS.entities.Task;
@@ -24,6 +26,7 @@ import org.greenrobot.eventbus.Subscribe;
 public class UserHomePageBoundary {
     private Stage stage;
     private User loggedInUser;
+    private Stage stage;
 
     @FXML // ResourceBundle that was given to the FXMLLoader
     private ResourceBundle resources;
@@ -48,6 +51,13 @@ public class UserHomePageBoundary {
 
     @FXML
     void MessageToManager(ActionEvent event) {
+        //open a new page
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+        GuiCommon guiCommon = GuiCommon.getInstance();
+        SendMessageToManager sendMessageToManagerPage = (SendMessageToManager) guiCommon.displayNextScreen("SendMessageToManager.fxml",
+                "Community User Send Message to Manager Page", stage, true);  // Example for opening new screen
+
+        sendMessageToManagerPage.setLoggedInUser(loggedInUser);
 
     }
 
@@ -58,6 +68,13 @@ public class UserHomePageBoundary {
 
     @FXML
     void MyTasks(ActionEvent event) {
+        //open a new page
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+        GuiCommon guiCommon = GuiCommon.getInstance();
+        MyTasksPage myTasksPage = (MyTasksPage) guiCommon.displayNextScreen("MyTasksPage.fxml",
+                "Community User My Tasks Page", stage, true);  // Example for opening new screen
+
+        myTasksPage.setLoggedInUser(loggedInUser);
 
     }
 
@@ -75,7 +92,13 @@ public class UserHomePageBoundary {
 
     @FXML
     void Volunteer(ActionEvent event) {
+        //open a new page
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+        GuiCommon guiCommon = GuiCommon.getInstance();
+        Volunteer volunteerPage = (Volunteer) guiCommon.displayNextScreen("Volunteer.fxml",
+                "Community User Volunteer Page", stage, true);  // Example for opening new screen
 
+        volunteerPage.setLoggedInUser(loggedInUser);
     }
 
     @Subscribe
@@ -100,6 +123,8 @@ public class UserHomePageBoundary {
         assert my_tasks_Btn != null : "fx:id=\"my_tasks_Btn\" was not injected: check your FXML file 'UserHomePage.fxml'.";
         assert open_request_Btn != null : "fx:id=\"open_request_Btn\" was not injected: check your FXML file 'UserHomePage.fxml'.";
         assert volunteer_Btn != null : "fx:id=\"volunteer_Btn\" was not injected: check your FXML file 'UserHomePage.fxml'.";
+
+
 
         EventBus.getDefault().register(this);
     }

@@ -85,6 +85,7 @@ public class LoginFrameBoundary implements Initializable{
 
 		User userDetails = new User(username,password, UserType.COMMUNITYUSER.toString());
 		LoginController.loginUser(userDetails);
+		System.out.println("Hey");
 
 		/*String loginCase = LoginController.loginUser(userDetails);
 //    	Msg msg1 = new Msg("login",MsgType.FROM_CLIENT,userDetails);
@@ -122,7 +123,7 @@ public class LoginFrameBoundary implements Initializable{
 		Message loginMessage = event.getMessage();
 		if (event.getMessage().getMessage().equals("login request: Done")) {
 			User loggedInUser = (User) loginMessage.getData();
-
+			System.out.println("I am in handle tasks event before opening userHomepage");
 			//GuiCommon.popUp(loggedInUser.toString());
 			Platform.runLater(() -> {
 				GuiCommon.popUp(loggedInUser.toString());
@@ -163,14 +164,16 @@ public class LoginFrameBoundary implements Initializable{
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		/*
 		Platform.runLater(() -> {
 			Stage stage = (Stage) window.getScene().getWindow();
 			stage.setOnCloseRequest(event -> {
 				/*event.consume(); // Consume the event to prevent automatic window closing
 				LoginController.disconnect();
-				stage.close();*/
+				stage.close();
 			});
 		});
+		*/
 		EventBus.getDefault().register(this);
 		
 	}
