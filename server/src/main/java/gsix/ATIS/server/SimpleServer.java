@@ -157,7 +157,7 @@ public class SimpleServer extends AbstractServer {
         Root<T> rootEntry = criteriaQuery.from(object);
         CriteriaQuery<T> allCriteriaQuery = criteriaQuery.select(rootEntry);
 
-        // Add a condition to filter tasks based on requester_id
+        // Add a condition to filter tasks based on volunteer_id
         Predicate predicate = builder.equal(rootEntry.get("volunteer_id"), userID);
         allCriteriaQuery.where(predicate);
 
@@ -166,6 +166,40 @@ public class SimpleServer extends AbstractServer {
         System.out.println("I am in getVolunteered" + lst);
         return lst;
     }
+
+    public static <T> List<T> getSentMessages(Class<T> object, String userID) {
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
+        Root<T> rootEntry = criteriaQuery.from(object);
+        CriteriaQuery<T> allCriteriaQuery = criteriaQuery.select(rootEntry);
+
+        // Add a condition to filter tasks based on requester_id
+        Predicate predicate = builder.equal(rootEntry.get("sender_id"), userID);
+        allCriteriaQuery.where(predicate);
+
+        TypedQuery<T> allQuery = session.createQuery(allCriteriaQuery);
+        List<T> lst = allQuery.getResultList();
+        System.out.println("I am in getSent" + lst);
+        return lst;
+    }
+    public static <T> List<T> getReceivedMessages(Class<T> object, String userID) {
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
+        Root<T> rootEntry = criteriaQuery.from(object);
+        CriteriaQuery<T> allCriteriaQuery = criteriaQuery.select(rootEntry);
+
+        // Add a condition to filter tasks based on requester_id
+        Predicate predicate = builder.equal(rootEntry.get("receiver_id"), userID);
+        allCriteriaQuery.where(predicate);
+
+        TypedQuery<T> allQuery = session.createQuery(allCriteriaQuery);
+        List<T> lst = allQuery.getResultList();
+        System.out.println("I am in getSent" + lst);
+        return lst;
+    }
+
+
+
 
 
     public static <T> T getEntityById(Class<T> object, int Id) {
@@ -340,6 +374,27 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("get volunteered tasks: Done");
                 client.sendToClient(message);
             }
+
+            else if(request.equals("get sent messages")){ //Added by Ayal
+                System.out.println("inside SimpleServer get sent messages ");
+                String userId = (String) message.getData();
+                message.setData(getSentMessages((CommunityMessage.class),userId));// Should change this back to getAllByCommunity , it works on getAll
+                System.out.println(message.getData());
+                message.setMessage("get sent messages: Done");
+                client.sendToClient(message);
+            }
+            else if(request.equals("get received messages")){ //Added by Ayal
+                System.out.println("inside SimpleServer get received messages ");
+                String userId = (String) message.getData();
+                message.setData(getReceivedMessages((CommunityMessage.class),userId));// Should change this back to getAllByCommunity , it works on getAll
+                System.out.println(message.getData());
+                message.setMessage("get received messages: Done");
+                client.sendToClient(message);
+            }
+
+
+
+
 
             else if (request.equals("get all users")) {
 
