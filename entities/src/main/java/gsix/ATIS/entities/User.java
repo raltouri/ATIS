@@ -8,6 +8,7 @@ import java.util.List;
 @Table(name="users")
 public class User implements Serializable {
     @Id
+    @Column(name = "user_id")
     private String user_id;
     @Column(name = "user_type")
     private String user_type;  // CHANGE THIS TO ENUM

@@ -22,7 +22,7 @@ public class Task implements Serializable {
     private LocalDateTime time;
     @Column(name = "status")
     private String status; // CHANGE THIS TO ENUM
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "requester_id", referencedColumnName = "user_id", insertable = false, updatable = false)
     private User requester;
 
@@ -55,6 +55,22 @@ public class Task implements Serializable {
         this.volunteer_id = volunteer_id;
         this.requested_operation = requested_operation;
         this.time = time;
+        if (taskStatus == TaskStatus.Request){
+            this.status = "Request";
+        } else if (taskStatus == TaskStatus.Pending) {
+            this.status = "Pending";
+        }else if(taskStatus == TaskStatus.Done){
+            this.status = "Done";
+        }
+    }
+
+
+    public Task(int task_id, String requester_id, String requested_operation, LocalDateTime time, TaskStatus status) {
+        this.task_id = task_id;
+        this.requester_id = requester_id;
+        this.requested_operation = requested_operation;
+        this.time = time;
+        this.taskStatus = status;
         if (taskStatus == TaskStatus.Request){
             this.status = "Request";
         } else if (taskStatus == TaskStatus.Pending) {
