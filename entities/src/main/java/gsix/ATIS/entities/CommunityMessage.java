@@ -6,6 +6,8 @@ import java.io.Serializable;
 @Table(name="community_message")
 public class CommunityMessage implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Specify auto-increment strategy
+    @Column(name = "message_id")
     private int message_id;
     @Column(name ="sender_id")
     private String sender_id;

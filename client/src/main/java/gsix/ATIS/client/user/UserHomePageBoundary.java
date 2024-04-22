@@ -63,6 +63,13 @@ public class UserHomePageBoundary {
 
     @FXML
     void MessagesInbox(ActionEvent event) {
+        //open a new page
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+        GuiCommon guiCommon = GuiCommon.getInstance();
+        ShowMessageBoxController showMessageBoxControllerPage = (ShowMessageBoxController) guiCommon.displayNextScreen("ShowMessageBoxPage.fxml",
+                "Community User Show Message Box Page", stage, true);  // Example for opening new screen
+
+        showMessageBoxControllerPage.setLoggedInUser(loggedInUser);
 
     }
 

@@ -11,6 +11,7 @@ import gsix.ATIS.client.common.GuiCommon;
 import gsix.ATIS.client.common.MessageEvent;
 import gsix.ATIS.entities.Message;
 import gsix.ATIS.entities.User;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -78,6 +79,7 @@ public class SendMessageToManager {
             throw new RuntimeException(e);
         }
 
+
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -93,6 +95,7 @@ public class SendMessageToManager {
         Message handledMessage=event.getMessage();
         //ADDED BY AYAL
         if(handledMessage.getMessage().equals("manager id is here")){
+            System.out.println("im inside SendToManager handle tasks manager id is here");
             //get the manager id from the handled message
             managerID=(String)handledMessage.getData();
 
@@ -100,9 +103,19 @@ public class SendMessageToManager {
             String message=message_TF.getText();
             //sending messages via CommunityMessageController
             CommunityMessageController.send(loggedInUser.getUser_id(),managerID,message);
+            // Display a pop-up message indicating that the message was sent to the manager
+            // Display a pop-up message indicating that the message was sent to the manager
+            Platform.runLater(() -> showAlert("Message Sent", "The message was successfully sent to the manager."));
 
 
         }
+    }
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
     public  void setLoggedInUser(User loggedUser){
         this.loggedInUser = loggedUser;

@@ -33,39 +33,39 @@ public class SimpleServer extends AbstractServer {
 
         // Check if tasks exist before creating and saving
         if (!taskExists(1)) {
-            Task t1 = new Task("1","2","car repair",LocalDateTime.now(),TaskStatus.Request);
+            Task t1 = new Task(1,"1","car repair",LocalDateTime.now(),TaskStatus.Request);
             session.save(t1);
         }
         if (!taskExists(2)) {
-            Task t2 = new Task("2","3","wash machine repair",LocalDateTime.now(),TaskStatus.Pending);
+            Task t2 = new Task(2,"2","wash machine repair",LocalDateTime.now(),TaskStatus.Pending);
             session.save(t2);
         }
         if (!taskExists(3)) {
-            Task t3 = new Task("3","8","fridge repair",LocalDateTime.now(),TaskStatus.Done);
+            Task t3 = new Task(3,"3","fridge repair",LocalDateTime.now(),TaskStatus.Pending);
             session.save(t3);
         }
         if (!taskExists(4)) {
-            Task t4 = new Task("4","5","buy groceries",LocalDateTime.now(),TaskStatus.Request);
+            Task t4 = new Task(4,"4","buy groceries",LocalDateTime.now(),TaskStatus.Pending);
             session.save(t4);
         }
         if (!taskExists(5)) {
-            Task t5 = new Task("5","6","CHECK CODE PLEASE",LocalDateTime.now(),TaskStatus.Request);
+            Task t5 = new Task(5,"5","CHECK CODE PLEASE",LocalDateTime.now(),TaskStatus.Pending);
             session.save(t5);
         }
         if (!taskExists(6)) {
-            Task t6 = new Task("6","7","VALIDATE CODE PLEASE",LocalDateTime.now(),TaskStatus.Request);
+            Task t6 = new Task(6,"6","VALIDATE CODE PLEASE",LocalDateTime.now(),TaskStatus.Pending);
             session.save(t6);
         }
         if (!taskExists(7)) {
-            Task t7 = new Task("7","8","Task 7",LocalDateTime.now(),TaskStatus.Request);
+            Task t7 = new Task(7,"7","Task 7",LocalDateTime.now(),TaskStatus.Pending);
             session.save(t7);
         }
         if (!taskExists(8)) {
-            Task t8 = new Task("8","9","Task 8",LocalDateTime.now(),TaskStatus.Request);
+            Task t8 = new Task(8,"8","Task 8",LocalDateTime.now(),TaskStatus.Pending);
             session.save(t8);
         }
         if (!taskExists(9)) {
-            Task t9 = new Task("9","8","Task 9",LocalDateTime.now(),TaskStatus.Request);
+            Task t9 = new Task(9,"9","Task 9",LocalDateTime.now(),TaskStatus.Pending);
             session.save(t9);
         }
 
@@ -100,12 +100,19 @@ public class SimpleServer extends AbstractServer {
         // Adding condition to the criteria query based on communityId
         criteriaQuery.where(
                 builder.equal(userJoin.get("community_id"), communityId),
-                builder.equal(taskRoot.get("status"), "pending")
+                builder.equal(taskRoot.get("status"), "pending"),
+                builder.notEqual(taskRoot.get("requester").get("user_id"), userId)
         );
-
+//
+//        // Executing the criteria query and returning the result
+//        List<T> list=session.createQuery(criteriaQuery).getResultList();
+//        System.out.println("I am in getAllByCommunity"+list);
+//        return list;
         // Executing the criteria query and returning the result
-        List<T> list=session.createQuery(criteriaQuery).getResultList();
-        System.out.println("I am in getAllByCommunity"+list);
+        List<T> list = session.createQuery(criteriaQuery).getResultList();
+        String sqlQuery = session.createQuery(criteriaQuery).unwrap(org.hibernate.query.Query.class).getQueryString();
+        System.out.println("Generated SQL Query: " + sqlQuery);
+        System.out.println("Result: " + list);
         return list;
     }
 
@@ -150,7 +157,7 @@ public class SimpleServer extends AbstractServer {
         Root<T> rootEntry = criteriaQuery.from(object);
         CriteriaQuery<T> allCriteriaQuery = criteriaQuery.select(rootEntry);
 
-        // Add a condition to filter tasks based on requester_id
+        // Add a condition to filter tasks based on volunteer_id
         Predicate predicate = builder.equal(rootEntry.get("volunteer_id"), userID);
         allCriteriaQuery.where(predicate);
 
@@ -159,6 +166,40 @@ public class SimpleServer extends AbstractServer {
         System.out.println("I am in getVolunteered" + lst);
         return lst;
     }
+
+    public static <T> List<T> getSentMessages(Class<T> object, String userID) {
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
+        Root<T> rootEntry = criteriaQuery.from(object);
+        CriteriaQuery<T> allCriteriaQuery = criteriaQuery.select(rootEntry);
+
+        // Add a condition to filter tasks based on requester_id
+        Predicate predicate = builder.equal(rootEntry.get("sender_id"), userID);
+        allCriteriaQuery.where(predicate);
+
+        TypedQuery<T> allQuery = session.createQuery(allCriteriaQuery);
+        List<T> lst = allQuery.getResultList();
+        System.out.println("I am in getSent" + lst);
+        return lst;
+    }
+    public static <T> List<T> getReceivedMessages(Class<T> object, String userID) {
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
+        Root<T> rootEntry = criteriaQuery.from(object);
+        CriteriaQuery<T> allCriteriaQuery = criteriaQuery.select(rootEntry);
+
+        // Add a condition to filter tasks based on requester_id
+        Predicate predicate = builder.equal(rootEntry.get("receiver_id"), userID);
+        allCriteriaQuery.where(predicate);
+
+        TypedQuery<T> allQuery = session.createQuery(allCriteriaQuery);
+        List<T> lst = allQuery.getResultList();
+        System.out.println("I am in getSent" + lst);
+        return lst;
+    }
+
+
+
 
 
     public static <T> T getEntityById(Class<T> object, int Id) {
@@ -217,6 +258,8 @@ public class SimpleServer extends AbstractServer {
 
         configuration.addAnnotatedClass(Task.class);
         configuration.addAnnotatedClass(User.class);
+        configuration.addAnnotatedClass(Community.class);
+        configuration.addAnnotatedClass(CommunityMessage.class);
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties())
@@ -280,12 +323,22 @@ public class SimpleServer extends AbstractServer {
                 client.sendToClient(message);
                 //sendToAllClients(message);
 
-            }else if(request.equals("get tasks for community")){ //Added by Ayal
+            }
+            else if(request.equals("get tasks for community")){ //Added by Ayal
                 System.out.println("inside SimpleServer get task for community");
                 String userId = (String) message.getData();
                 message.setData(getAllByCommunity((Task.class),userId));// Should change this back to getAllByCommunity , it works on getAll
                 System.out.println(message.getData());
                 message.setMessage("get tasks for community: Done");
+                client.sendToClient(message);
+            }
+            else if(request.equals("send message to manager")){ //Added by Ayal
+                System.out.println("inside SimpleServer send message to manager");
+                String messageString = (String) message.getData();
+
+                insertMessageToDataTable(messageString);
+
+                message.setMessage("send masage to manager: Done");
                 client.sendToClient(message);
             }
             else if(request.equals("update task volunteer")){ //Added by Ayal
@@ -299,9 +352,9 @@ public class SimpleServer extends AbstractServer {
             }
             else if(request.equals("get manager id")){ //Added by Ayal
                 System.out.println("inside SimpleServer get manager id");
-                String communityID = (String) message.getData();
-                message.setData(getManagerID((Task.class),communityID));// Should change this back to getAllByCommunity , it works on getAll
-                System.out.println(message.getData());
+                int communityID = (int) message.getData();
+                message.setData(getManagerID(communityID));// Should change this back to getAllByCommunity , it works on getAll
+                System.out.println(message.getData());//if it didnt reach here it means there is a problem
                 message.setMessage("manager id is here");
                 client.sendToClient(message);
             }
@@ -321,6 +374,27 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("get volunteered tasks: Done");
                 client.sendToClient(message);
             }
+
+            else if(request.equals("get sent messages")){ //Added by Ayal
+                System.out.println("inside SimpleServer get sent messages ");
+                String userId = (String) message.getData();
+                message.setData(getSentMessages((CommunityMessage.class),userId));// Should change this back to getAllByCommunity , it works on getAll
+                System.out.println(message.getData());
+                message.setMessage("get sent messages: Done");
+                client.sendToClient(message);
+            }
+            else if(request.equals("get received messages")){ //Added by Ayal
+                System.out.println("inside SimpleServer get received messages ");
+                String userId = (String) message.getData();
+                message.setData(getReceivedMessages((CommunityMessage.class),userId));// Should change this back to getAllByCommunity , it works on getAll
+                System.out.println(message.getData());
+                message.setMessage("get received messages: Done");
+                client.sendToClient(message);
+            }
+
+
+
+
 
             else if (request.equals("get all users")) {
 
@@ -426,20 +500,147 @@ public class SimpleServer extends AbstractServer {
         }
     }
 
-    private String getManagerID(Class<Task> taskClass, String communityID) {//added by Ayal
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<String> criteriaQuery = builder.createQuery(String.class);
-        Root<Community> root = criteriaQuery.from(Community.class);
+    private void insertMessageToDataTable(String messageString) {//MADE BY Ayal
+        //my messageString format is : senderID+","+receiverID+","+content
+        // Find the position of the first comma
+        int firstCommaIndex = messageString.indexOf(",");
 
-        // Adding a condition to select the manager_id where community_id matches the provided communityID
-        Predicate predicate = builder.equal(root.get("community_id"), Integer.parseInt(communityID));
-        criteriaQuery.select(root.get("manager_id")).where(predicate);
+        // Find the position of the second comma
+        int secondCommaIndex = messageString.indexOf(",", firstCommaIndex + 1);
 
-        // Execute the criteria query and retrieve the manager_id
-        String managerID = session.createQuery(criteriaQuery).getSingleResult();
-        System.out.println("Manager ID for Community ID " + communityID + " is: " + managerID);
+        // Extract senderID and receiverID
+        String senderID = messageString.substring(0, firstCommaIndex);
+        String receiverID = messageString.substring(firstCommaIndex + 1, secondCommaIndex);
+
+        // Extract message content (everything after the second comma)
+        String messageContent = messageString.substring(secondCommaIndex + 1);
+
+        System.out.println(senderID);
+        System.out.println(receiverID);
+        System.out.println(messageContent);
+        // Check if the session is available and open
+        if (session == null || !session.isOpen()) {
+            System.out.println("Session is null or closed.");
+            return;
+        }
+        // Check if there is an active transaction
+        if (session.getTransaction() != null && session.getTransaction().isActive()) {//should we roll back or commit?
+            System.out.println("There is an active transaction. Commiting...");
+            session.getTransaction().commit();
+        }
+
+        // Continue with transaction handling
+        try {
+            // Begin a new transaction
+            session.beginTransaction();
+            System.out.println("Transaction has BEGUN");
+
+            // Create a new CommunityMessage object
+            CommunityMessage communityMessage = new CommunityMessage();
+            communityMessage.setSender_id(senderID);
+            communityMessage.setReceiver_id(receiverID);
+            communityMessage.setContent(messageContent);
+
+            // Save the communityMessage object to the database
+            session.save(communityMessage);
+            System.out.println("After session.save");
+
+            // Commit the transaction
+            session.getTransaction().commit();
+            System.out.println("Message saved to the database.");
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            session.getTransaction().rollback();
+        }
+
+//        try {
+//            // Begin a new transaction
+//            if(session==null){
+//                System.out.println("InsertIntoDataTable :Session is null");
+//            }
+//            else {
+//                System.out.println("before beginning transaction");
+//                session.beginTransaction();
+//                System.out.println("Transaction has BEGUN");
+//
+//                // Create a new CommunityMessage object
+//                CommunityMessage communityMessage = new CommunityMessage();
+//                communityMessage.setSender_id(senderID);
+//                communityMessage.setReceiver_id(receiverID);
+//                communityMessage.setContent(messageContent);
+//
+//                System.out.println("Community message is :"+communityMessage);
+//
+//                // Save the communityMessage object to the database
+//                session.save(communityMessage);
+//                System.out.println("After session.save");
+//                // Commit the transaction
+//
+//                session.getTransaction().commit();
+//
+//
+//                System.out.println("Message saved to the database.");
+//            }
+//        } catch (HibernateException e) {
+//            e.printStackTrace();
+//            session.getTransaction().rollback();
+//        }
+
+
+
+
+    }
+
+//    private String getManagerID(Class<Task> taskClass, int communityID) {//added by Ayal
+//        CriteriaBuilder builder = session.getCriteriaBuilder();
+//        CriteriaQuery<String> criteriaQuery = builder.createQuery(String.class);
+//        Root<Community> root = criteriaQuery.from(Community.class);
+//
+//        // Adding a condition to select the manager_id where community_id matches the provided communityID
+//        Predicate predicate = builder.equal(root.get("community_id"), communityID);
+//        criteriaQuery.select(root.get("manager_id")).where(predicate);
+//
+//        // Execute the criteria query and retrieve the manager_id
+//        String managerID = session.createQuery(criteriaQuery).getSingleResult();
+//        System.out.println("Manager ID for Community ID " + communityID + " is: " + managerID);
+//        return managerID;
+//    }
+    private String getManagerID(int communityID) {//added by Ayal
+        String managerID = null;
+        Transaction transaction = null;
+        try {
+            Session session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<String> criteriaQuery = builder.createQuery(String.class);
+            Root<Community> root = criteriaQuery.from(Community.class);
+
+            Predicate predicate = builder.equal(root.get("community_id"), communityID);
+            criteriaQuery.select(root.get("manager_id")).where(predicate);
+
+            managerID = session.createQuery(criteriaQuery).getSingleResult();
+            System.out.println("Manager ID for Community ID " + communityID + " is: " + managerID);
+
+            transaction.commit();
+        } catch (NoResultException e) {
+            System.out.println("No manager found for Community ID: " + communityID);
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+        } finally {
+            if (session != null && session.isOpen()) {
+                session.close();
+            }
+        }
         return managerID;
     }
+
 
     private void updateTaskByID(int updatedTaskID) {//added by Ayal
         Transaction transaction = null;
