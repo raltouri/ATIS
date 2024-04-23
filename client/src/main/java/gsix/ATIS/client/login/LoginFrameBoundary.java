@@ -3,7 +3,6 @@ package gsix.ATIS.client.login;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 /*import client.CEMSClient;
@@ -11,29 +10,27 @@ import client.ClientUI;
 import control_common.LoginController;*/
 
 
-import gsix.ATIS.client.TaskViewController;
 import gsix.ATIS.client.common.GuiCommon;
 import gsix.ATIS.client.common.MessageEvent;
+import gsix.ATIS.client.manager.ManagerHomePageBoundary;
 import gsix.ATIS.client.user.UserHomePageBoundary;
 import gsix.ATIS.entities.Message;
-import gsix.ATIS.entities.Task;
 import gsix.ATIS.entities.User;
 import gsix.ATIS.entities.UserType;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
 
 /*import entity.LoggedInUser;
 import entity.Profession;
@@ -64,6 +61,12 @@ public class LoginFrameBoundary implements Initializable{
     private Button loginButton;
     private String username;
     private String password;
+	private String userType;
+	@FXML // fx:id="roleSpinner"
+	private Spinner<String> roleSpinner; // Value injected by FXMLLoader
+
+	@FXML // fx:id="roleText"
+	private TextField roleText; // Value injected by FXMLLoader
     ArrayList<String> userDetails = new ArrayList<String>();
     
     @FXML 
@@ -81,9 +84,8 @@ public class LoginFrameBoundary implements Initializable{
 			 loginMsg("Password is a required field.");
 			 return;
 		}
-		
 
-		User userDetails = new User(username,password, UserType.COMMUNITYUSER.toString());
+		User userDetails = new User(username,password, userType);
 		LoginController.loginUser(userDetails);
 		System.out.println("Hey");
 
@@ -126,7 +128,7 @@ public class LoginFrameBoundary implements Initializable{
 			System.out.println("I am in handle tasks event before opening userHomepage");
 			//GuiCommon.popUp(loggedInUser.toString());
 			Platform.runLater(() -> {
-				GuiCommon.popUp(loggedInUser.toString());
+				//GuiCommon.popUp(loggedInUser.toString());
 
 				GuiCommon guiCommon = GuiCommon.getInstance();
 				if(loggedInUser.getUser_type().equals("community user")) {
@@ -134,7 +136,9 @@ public class LoginFrameBoundary implements Initializable{
 							"Community User Home Page", stage, true);  // Example for opening new screen
 					userHomePageBoundary.setLoggedInUser(loggedInUser);
 				} else if (loggedInUser.getUser_type().equals("manager")) {
-
+					ManagerHomePageBoundary managerHomePageBoundary = (ManagerHomePageBoundary) guiCommon.
+							displayNextScreen("ManagerHomePage.fxml", "Manager Home Page", stage, true);
+					managerHomePageBoundary.setLoggedInUser(loggedInUser);
 				}
 
 			});
@@ -174,6 +178,23 @@ public class LoginFrameBoundary implements Initializable{
 			});
 		});
 		*/
+		ObservableList<String> roleList = FXCollections.observableArrayList("Manager", "Community User");
+		SpinnerValueFactory<String> valueFactory = new SpinnerValueFactory.ListSpinnerValueFactory<String>(roleList);
+		roleSpinner.setValueFactory(valueFactory);
+
+		roleSpinner.valueProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
+				if(newValue.equals("Manager")){
+					userType = UserType.MANAGER.toString();
+				}
+				if(newValue.equals("Community User")){
+					userType = UserType.COMMUNITYUSER.toString();
+				}
+				roleText.setText(userType);
+			}
+		});
+
 		EventBus.getDefault().register(this);
 		
 	}

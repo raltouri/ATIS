@@ -56,6 +56,9 @@ public class SimpleClient extends AbstractClient {
 		}else if(message.getMessage().equals("open request: Done")){
 			MessageEvent messageEvent=new MessageEvent(message);
 			EventBus.getDefault().post(messageEvent);
+		}else if(message.getMessage().equals("get pending tasks: Done")){
+			MessageEvent messageEvent=new MessageEvent(message);
+			EventBus.getDefault().post(messageEvent);
 		}else {
 			EventBus.getDefault().post(new MessageEvent(message));
 		}

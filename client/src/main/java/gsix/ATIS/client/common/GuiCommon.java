@@ -32,14 +32,18 @@ public class GuiCommon {//singleton
 	 */
 	public Object displayNextScreen(String fxmlName,String title,Stage stage, boolean hide) {
 		if(hide)
-			stage.hide(); //hiding primary window
+			stage.close();
+			//stage.hide(); //hiding primary window
 		System.out.println("Target window path:  "+fxmlName);
 
 		FXMLLoader loader = new FXMLLoader(SimpleChatClient.class.getResource(fxmlName));
 		//FXMLLoader loader = new FXMLLoader(getClass().getResource("../"+fxmlName));
 		//FXMLLoader loader = new FXMLLoader(getClass().getResource("../"+fxmlName));
 		//FXMLLoader loader = new FXMLLoader(SimpleChatClient.class.getResource("/"+fxmlName));
-		Stage primaryStage = new Stage();
+		Stage primaryStage = stage;
+		if(stage == null){
+			primaryStage = new Stage();
+		}
 			Pane root;
 			try {
 				//root = loader.load(getClass().getResource(fxmlName).openStream());

@@ -10,6 +10,7 @@ import gsix.ATIS.client.TaskViewController;
 
 import gsix.ATIS.client.common.GuiCommon;
 import gsix.ATIS.client.common.MessageEvent;
+import gsix.ATIS.client.login.LoginFrameBoundary;
 import gsix.ATIS.entities.Task;
 import gsix.ATIS.entities.User;
 import javafx.application.Platform;
@@ -48,6 +49,9 @@ public class UserHomePageBoundary {
 
     @FXML // fx:id="volunteer_Btn"
     private Button volunteer_Btn; // Value injected by FXMLLoader
+
+    @FXML // fx:id="logOut"
+    private Button logOut; // Value injected by FXMLLoader
 
     @FXML
     void MessageToManager(ActionEvent event) {
@@ -116,6 +120,15 @@ public class UserHomePageBoundary {
                 GuiCommon.popUp(dbUpdatedTask.toString() +"\n Task opened successfully, pending for Manager approve!");
             });
         }
+    }
+
+    @FXML
+    void LogOut(ActionEvent event) {
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+        GuiCommon guiCommon = GuiCommon.getInstance();
+        /*LoginFrameBoundary loginFrameBoundary = (LoginFrameBoundary)*/ guiCommon.displayNextScreen("LoginForm.fxml",
+                "Login Screen", stage, true);  // Example for opening new screen
+
     }
 
     public void setLoggedInUser(User loggedUser) {
