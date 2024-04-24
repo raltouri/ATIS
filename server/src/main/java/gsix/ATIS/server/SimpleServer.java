@@ -394,7 +394,7 @@ public class SimpleServer extends AbstractServer {
                 message.setData(testAdd);
                 message.setMessage("open request: Done");
                 client.sendToClient(message);
-
+                //// Send message to current task requester's community manager to approve message
             }
             /* else {
                 //add code here to send received message to all clients.
