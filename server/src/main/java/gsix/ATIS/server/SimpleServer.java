@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
@@ -279,6 +280,20 @@ public class SimpleServer extends AbstractServer {
         session.save(newTask); // Add the task
         transaction.commit();
     }
+    public static void deleteTask(Task taskToDelete) {
+        try {
+            transaction = session.beginTransaction();
+            session.delete(taskToDelete); // Delete the task
+            transaction.commit();
+            System.out.println("Task deleted successfully.");
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback(); // Rollback the transaction if an exception occurs
+            }
+            e.printStackTrace();
+        }
+    }
+
 
     public static void printTasksTest(List<Task> lst){
         for (Task task:lst){
@@ -431,11 +446,6 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("get received messages: Done");
                 client.sendToClient(message);
             }
-
-
-
-
-
             else if (request.equals("get all users")) {
 
                 message.setData(getAll(User.class));
@@ -461,6 +471,14 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("get task by id: Done");
                 client.sendToClient(message);
 
+            }else if (request.equals("get task for decline")) {
+
+                int taskId = (Integer) message.getData();
+                Task declinedTask = getEntityById(Task.class, taskId);
+                message.setData(declinedTask);
+                message.setMessage("get task for decline: Done");
+                client.sendToClient(message);
+
             }else if (request.equals("change task status")) {
 
                 Task updatedTask = (Task) message.getData();
@@ -473,12 +491,27 @@ public class SimpleServer extends AbstractServer {
             }
             else if (request.equals("update task status")) {
 
-                int updatedTaskID = (int) message.getData();
-                updateTaskByID(updatedTaskID);
+                String updatedTaskIDInfo = (String) message.getData(); // string="taskID,status"
+                String[] parts = updatedTaskIDInfo.split(",");
+                System.out.println(Arrays.toString(parts)); //////////////////
+                int updatedTaskID = Integer.parseInt(parts[0]);
+                String newStatus = parts[1];
+
+                updateTaskByID(updatedTaskID, newStatus);
 
                 Task testUpdate = getEntityById(Task.class, updatedTaskID);
                 message.setData(testUpdate);
                 message.setMessage("change task status: Done");
+                client.sendToClient(message);
+
+            } else if (request.equals("delete task")) {
+
+                int taskID = (int) message.getData();
+
+                Task taskToDelete = getEntityById(Task.class, taskID);
+                deleteTask(taskToDelete);
+                message.setData(taskID);
+                message.setMessage("delete task: Done");
                 client.sendToClient(message);
 
             }
@@ -683,7 +716,7 @@ public class SimpleServer extends AbstractServer {
     }
 
 
-    private void updateTaskByID(int updatedTaskID) {//added by Ayal
+    private void updateTaskByID(int updatedTaskID, String newStatus) {//added by Ayal
         Transaction transaction = null;
         try {
             SessionFactory sessionFactory = getSessionFactory();
@@ -692,14 +725,18 @@ public class SimpleServer extends AbstractServer {
 
             // Retrieve the task entity by ID
             Task task = session.get(Task.class, updatedTaskID);
-
             // Update the task status to "done"
-            task.setStatus(TaskStatus.Done);
+            if(newStatus.equals("Done")){
+                task.setStatus(TaskStatus.Done);
+            }
+            if(newStatus.equals("Pending")){
+                task.setStatus(TaskStatus.Pending);
+            }
 
             // Commit the transaction
             session.update(task);
             transaction.commit();
-            System.out.println("Task with ID " + updatedTaskID + " updated to 'done'.");
+            System.out.println("Task with ID " + updatedTaskID + " updated to "+newStatus+".");
         } catch (Exception e) {
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();

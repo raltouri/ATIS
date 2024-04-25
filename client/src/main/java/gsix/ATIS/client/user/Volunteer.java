@@ -166,7 +166,8 @@ public class Volunteer {
         // Implement the logic to update the task status in the database
         // Example: You may use JDBC or an ORM framework to execute an update query
         // Example query: UPDATE tasks SET status = 'pending' WHERE id = taskId;
-        Message message = new Message(1, LocalDateTime.now(), "update task status",taskId);
+        String info = taskId +","+ status;
+        Message message = new Message(1, LocalDateTime.now(), "update task status",info);
         System.out.println("Volunteer:before send to server *updateTaskStatus* command");
         try {
             SimpleClient.getClient("",0).sendToServer(message);

@@ -41,7 +41,7 @@ public class GuiCommon {//singleton
 		//FXMLLoader loader = new FXMLLoader(getClass().getResource("../"+fxmlName));
 		//FXMLLoader loader = new FXMLLoader(SimpleChatClient.class.getResource("/"+fxmlName));
 		Stage primaryStage = stage;
-		if(stage == null){
+		if(stage == null || !hide){
 			primaryStage = new Stage();
 		}
 			Pane root;

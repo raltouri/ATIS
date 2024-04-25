@@ -98,7 +98,7 @@ public class UserHomePageBoundary {
         OpenRequestBoundary openRequestBoundary = (OpenRequestBoundary) guiCommon.displayNextScreen
                 ("OpenRequest.fxml", "Open Help Request", stage, true);
         openRequestBoundary.setRequesterInfo(loggedInUser);
-        stage.close();
+        //stage.close();
     }
 
     @FXML
