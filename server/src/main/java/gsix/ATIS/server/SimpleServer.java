@@ -281,17 +281,11 @@ public class SimpleServer extends AbstractServer {
         transaction.commit();
     }
     public static void deleteTask(Task taskToDelete) {
-        try {
-            transaction = session.beginTransaction();
-            session.delete(taskToDelete); // Delete the task
-            transaction.commit();
-            System.out.println("Task deleted successfully.");
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback(); // Rollback the transaction if an exception occurs
-            }
-            e.printStackTrace();
-        }
+        System.out.println("in server in delete task from DB function");
+
+        session.delete(taskToDelete); // Delete the task
+        transaction.commit();
+        System.out.println("Task deleted successfully.");
     }
 
 
@@ -507,7 +501,7 @@ public class SimpleServer extends AbstractServer {
             } else if (request.equals("delete task")) {
 
                 int taskID = (int) message.getData();
-
+                System.out.println("in server in delete task command");
                 Task taskToDelete = getEntityById(Task.class, taskID);
                 deleteTask(taskToDelete);
                 message.setData(taskID);

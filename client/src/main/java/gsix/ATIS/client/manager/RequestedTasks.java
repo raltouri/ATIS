@@ -252,7 +252,7 @@ public class RequestedTasks {
                 sendMessageToUser.setTaskID(declinedTask.getTask_id());
                 System.out.println(declinedTask.getTask_id());
             });
-
+            System.out.println("before calling delete task in handle");
             deleteTask(declinedTask.getTask_id());  /*
             //call function to refresh list view
             int communityID = this.loggedInManager.getCommunityId();

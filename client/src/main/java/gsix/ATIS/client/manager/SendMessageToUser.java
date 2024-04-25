@@ -50,6 +50,7 @@ public class SendMessageToUser {
     private int taskID;
     public void setTaskID(int taskID) {
         this.taskID = taskID;
+        taskIdTV.setText(taskID+"");
     }
 
 
@@ -100,8 +101,8 @@ public class SendMessageToUser {
         assert BtnSend != null : "fx:id=\"send_Btn\" was not injected: check your FXML file 'SendMsgToUser.fxml'.";
         assert taskIdTV != null : "fx:id=\"taskIdTV\" was not injected: check your FXML file 'SendMsgToUser.fxml'.";
 
-        taskIdTV.setText(taskID+"");
-        System.out.println(taskID+" inside send msg to user initialize" );
+
+        //System.out.println(taskID+" inside send msg to user initialize" );
         EventBus.getDefault().register(this);
     }
 
