@@ -38,10 +38,6 @@ public class ManagerHomePageBoundary {
         this.loggedInUser = loggedUser;
     }
 
-    @FXML
-    void MessageToUser(ActionEvent event) {
-
-    }
 
     @FXML
     void ViewApprovedRequests(ActionEvent event) {

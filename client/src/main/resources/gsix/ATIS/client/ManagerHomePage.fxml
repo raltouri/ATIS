@@ -8,7 +8,6 @@
    <children>
       <Button fx:id="RequestedTask" layoutX="84.0" layoutY="69.0" mnemonicParsing="false" onAction="#ViewRequestedTasks" prefHeight="26.0" prefWidth="120.0" text="Requested Tasks" />
       <Button fx:id="approvedRequests" layoutX="84.0" layoutY="148.0" mnemonicParsing="false" onAction="#ViewApprovedRequests" text="Approved Requests" />
-      <Button fx:id="msgToUser" layoutX="59.0" layoutY="325.0" mnemonicParsing="false" onAction="#MessageToUser" prefHeight="26.0" prefWidth="120.0" text="message to user" />
       <Button fx:id="viewMsges" layoutX="327.0" layoutY="103.0" mnemonicParsing="false" onAction="#ViewMessages" prefHeight="26.0" prefWidth="150.0" text="View Messages" />
       <Button fx:id="viewReports" layoutX="327.0" layoutY="174.0" mnemonicParsing="false" onAction="#ViewCommunityReports" text="View Community Reports" />
       <Button fx:id="logOut" layoutX="85.0" layoutY="250.0" mnemonicParsing="false" onAction="#logOut" prefHeight="26.0" prefWidth="120.0" text="Log Out" />
