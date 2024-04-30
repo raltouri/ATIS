@@ -127,12 +127,13 @@ public class SendMessageToUser {
             Platform.runLater(() -> {
 
                 showDeclineMessageSentAlert();
+                GuiCommon guiCommon = GuiCommon.getInstance();
+                RequestedTasks requestedTasks = (RequestedTasks) guiCommon.displayNextScreen("RequestedTasks.fxml",
+                        "Manager Home Page", stage, true);  // Example for opening new screen
+                requestedTasks.setLoggedInUser(loggedInManager);
             });
 
-            GuiCommon guiCommon = GuiCommon.getInstance();
-            RequestedTasks requestedTasks = (RequestedTasks) guiCommon.displayNextScreen("RequestedTasks.fxml",
-                    "Manager Home Page", stage, true);  // Example for opening new screen
-            requestedTasks.setLoggedInUser(loggedInManager);
+
 
 
 
@@ -146,7 +147,6 @@ public class SendMessageToUser {
         alert.setTitle("Message Sent");
         alert.setHeaderText(null);
         alert.setContentText("decline message has been sent!");
-
         // Show the alert dialog
         alert.showAndWait();
     }
