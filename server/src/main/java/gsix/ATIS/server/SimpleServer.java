@@ -200,6 +200,19 @@ public class SimpleServer extends AbstractServer {
 
 
 
+    public static <T> T getUserById(Class<T> object, String Id) {
+
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
+        Root<T> root = criteriaQuery.from(object);
+        if (object.equals(Task.class)) {
+            criteriaQuery.select(root).where(builder.equal(root.get("task_id"), Id));
+        } else {
+            criteriaQuery.select(root).where(builder.equal(root.get("user_id"), Id));
+        }
+        TypedQuery<T> query = session.createQuery(criteriaQuery);
+        return query.getSingleResult();
+    }
 
 
     public static <T> T getEntityById(Class<T> object, int Id) {
@@ -468,21 +481,12 @@ public class SimpleServer extends AbstractServer {
                 message.setData(testAdd);
                 message.setMessage("open request: Done");
                 client.sendToClient(message);
-
+                //// Send message to current task requester's community manager to approve message
+                User requester = getUserById(User.class,testAdd.getRequester_id());
+                String managerID = getManagerID(requester.getCommunityId());
+                String messageContent = "New task has been received. Task ID: "+testAdd.getTask_id()+"\nPlease approve it so your community users can volunteer to do it\n";
+                saveMessage(requester.getUser_id(),managerID,messageContent);
             }
-            /* else {
-                //add code here to send received message to all clients.
-                //The string we received in the message is the message we will send back to all clients subscribed.
-                //Example:
-                // message received: "Good morning"
-                // message sent: "Good morning"
-                //see code for changing submitters IDs for help
-                message.setMessage(request);
-                sendToAllClients(message);
-            }*/
-
-            //session.save(entity);
-
             // Commit the transaction
             System.out.println("server before transaction commit");
             transaction.commit();
@@ -497,6 +501,43 @@ public class SimpleServer extends AbstractServer {
                 session.close();
                 session.getSessionFactory().close();
             }
+        }
+    }
+
+    private void saveMessage(String senderID,String receiverID, String messageContent) {
+
+        // Check if the session is available and open
+        if (session == null || !session.isOpen()) {
+            session = sessionFactory.openSession();
+        }
+        // Check if there is an active transaction
+        if (session.getTransaction() != null && session.getTransaction().isActive()) {//should we roll back or commit?
+            System.out.println("There is an active transaction. Commiting...");
+            session.getTransaction().commit();
+        }
+
+        // Continue with transaction handling
+        try {
+            // Begin a new transaction
+            session.beginTransaction();
+            System.out.println("Transaction has BEGUN");
+
+            // Create a new CommunityMessage object
+            CommunityMessage communityMessage = new CommunityMessage();
+            communityMessage.setSender_id(senderID);
+            communityMessage.setReceiver_id(receiverID);
+            communityMessage.setContent(messageContent);
+
+            // Save the communityMessage object to the database
+            session.save(communityMessage);
+            System.out.println("After session.save");
+
+            // Commit the transaction
+            session.getTransaction().commit();
+            System.out.println("Message saved to the database.");
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            session.getTransaction().rollback();
         }
     }
 
@@ -553,58 +594,9 @@ public class SimpleServer extends AbstractServer {
             session.getTransaction().rollback();
         }
 
-//        try {
-//            // Begin a new transaction
-//            if(session==null){
-//                System.out.println("InsertIntoDataTable :Session is null");
-//            }
-//            else {
-//                System.out.println("before beginning transaction");
-//                session.beginTransaction();
-//                System.out.println("Transaction has BEGUN");
-//
-//                // Create a new CommunityMessage object
-//                CommunityMessage communityMessage = new CommunityMessage();
-//                communityMessage.setSender_id(senderID);
-//                communityMessage.setReceiver_id(receiverID);
-//                communityMessage.setContent(messageContent);
-//
-//                System.out.println("Community message is :"+communityMessage);
-//
-//                // Save the communityMessage object to the database
-//                session.save(communityMessage);
-//                System.out.println("After session.save");
-//                // Commit the transaction
-//
-//                session.getTransaction().commit();
-//
-//
-//                System.out.println("Message saved to the database.");
-//            }
-//        } catch (HibernateException e) {
-//            e.printStackTrace();
-//            session.getTransaction().rollback();
-//        }
-
-
-
 
     }
 
-//    private String getManagerID(Class<Task> taskClass, int communityID) {//added by Ayal
-//        CriteriaBuilder builder = session.getCriteriaBuilder();
-//        CriteriaQuery<String> criteriaQuery = builder.createQuery(String.class);
-//        Root<Community> root = criteriaQuery.from(Community.class);
-//
-//        // Adding a condition to select the manager_id where community_id matches the provided communityID
-//        Predicate predicate = builder.equal(root.get("community_id"), communityID);
-//        criteriaQuery.select(root.get("manager_id")).where(predicate);
-//
-//        // Execute the criteria query and retrieve the manager_id
-//        String managerID = session.createQuery(criteriaQuery).getSingleResult();
-//        System.out.println("Manager ID for Community ID " + communityID + " is: " + managerID);
-//        return managerID;
-//    }
     private String getManagerID(int communityID) {//added by Ayal
         String managerID = null;
         Transaction transaction = null;

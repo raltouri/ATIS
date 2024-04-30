@@ -129,7 +129,7 @@ public class LoginFrameBoundary implements Initializable{
 				GuiCommon.popUp(loggedInUser.toString());
 
 				GuiCommon guiCommon = GuiCommon.getInstance();
-				if(loggedInUser.getUser_type().equals("community user")) {
+				if(loggedInUser.getUser_type().equals("community user")||loggedInUser.getUser_type().equals("manager")) {
 					UserHomePageBoundary userHomePageBoundary = (UserHomePageBoundary) guiCommon.displayNextScreen("UserHomePage.fxml",
 							"Community User Home Page", stage, true);  // Example for opening new screen
 					userHomePageBoundary.setLoggedInUser(loggedInUser);

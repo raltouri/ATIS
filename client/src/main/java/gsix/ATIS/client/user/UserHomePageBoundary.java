@@ -94,7 +94,7 @@ public class UserHomePageBoundary {
         OpenRequestBoundary openRequestBoundary = (OpenRequestBoundary) guiCommon.displayNextScreen
                 ("OpenRequest.fxml", "Open Help Request", stage, true);
         openRequestBoundary.setRequesterInfo(loggedInUser);
-        stage.close();
+        //stage.close();
     }
 
     @FXML
@@ -113,7 +113,7 @@ public class UserHomePageBoundary {
         if (event.getMessage().getMessage().equals("open request: Done")) {
             Platform.runLater(() -> {
                 Task dbUpdatedTask = (Task) event.getMessage().getData();
-                GuiCommon.popUp(dbUpdatedTask.toString() +"\n Task opened successfully, pending for Manager approve!");
+                //GuiCommon.popUp(dbUpdatedTask.toString() +"\n Task opened successfully, pending for Manager approve!");
             });
         }
     }

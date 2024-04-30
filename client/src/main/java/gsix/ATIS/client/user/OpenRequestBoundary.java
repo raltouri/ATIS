@@ -84,6 +84,7 @@ public class OpenRequestBoundary {
             UserHomePageBoundary userHomePage = (UserHomePageBoundary) GuiCommon.getInstance().displayNextScreen("UserHomePage.fxml",
                     "Community User Home Page", stage, true);  // Example for opening new screen
             userHomePage.setLoggedInUser(requester);
+            /// make (UserHome page) or (Server) send the manager message to approve the task
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
