@@ -28,8 +28,8 @@ public class ManagerHomePageBoundary {
     @FXML // fx:id="viewMsges"
     private Button viewMsges; // Value injected by FXMLLoader
 
-    @FXML // fx:id="viewReports"
-    private Button viewReports; // Value injected by FXMLLoader
+    @FXML // fx:id="btnViewReports"
+    private Button btnViewReports; // Value injected by FXMLLoader
 
     @FXML // fx:id="logOut"
     private Button logOut; // Value injected by FXMLLoader
@@ -71,6 +71,16 @@ public class ManagerHomePageBoundary {
         GuiCommon guiCommon = GuiCommon.getInstance();
         /*LoginFrameBoundary loginFrameBoundary = (LoginFrameBoundary)*/ guiCommon.displayNextScreen("LoginForm.fxml",
                 "Login Screen", stage, true);
+    }
+
+    @FXML // This method is called by the FXMLLoader when initialization is complete
+    void initialize() {
+        assert RequestedTask != null : "fx:id=\"RequestedTask\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
+        assert approvedRequests != null : "fx:id=\"approvedRequests\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
+        assert btnViewReports != null : "fx:id=\"btnViewReports\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
+        assert logOut != null : "fx:id=\"logOut\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
+        assert viewMsges != null : "fx:id=\"viewMsges\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
+
     }
 
 }
