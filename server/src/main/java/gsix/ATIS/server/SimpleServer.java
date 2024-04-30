@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
@@ -78,6 +79,38 @@ public class SimpleServer extends AbstractServer {
         Task task = session.get(Task.class, taskId);
         return task != null;
     }
+
+    public static <T> List<T> getAllRequestedTasksByCommunity(Class<T> object, int communityID) {
+
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
+        Root<Task> taskRoot = criteriaQuery.from(Task.class);
+
+        // Joining Task with User entity using the requester_id attribute
+        Join<Task, User> userJoin = taskRoot.join("requester"); // Assuming "requester" is the attribute in Task entity referring to User entity
+
+        // Fetching the User entity based on userId
+        CriteriaQuery<User> userQuery = builder.createQuery(User.class);
+        /*Root<User> userRoot = userQuery.from(User.class);
+        userQuery.select(userRoot).where(builder.equal(userRoot.get("user_id"), userId)); // Assuming the primary key in User entity is "userId"
+        User user = session.createQuery(userQuery).getSingleResult();
+
+        // Accessing communityId from the fetched User entity
+        int communityId = user.getCommunityId();*/
+
+        // Adding condition to the criteria query based on communityId
+        criteriaQuery.where(
+                builder.equal(userJoin.get("community_id"), communityID),
+                builder.equal(taskRoot.get("status"), "Request")
+        );
+
+        List<T> list = session.createQuery(criteriaQuery).getResultList();
+        String sqlQuery = session.createQuery(criteriaQuery).unwrap(org.hibernate.query.Query.class).getQueryString();
+        System.out.println("Generated SQL Query: " + sqlQuery);
+        System.out.println("Result: " + list);
+        return list;
+    }
+
 
     public static <T> List<T> getAllByCommunity(Class<T> object, String userId) {
 
@@ -260,6 +293,14 @@ public class SimpleServer extends AbstractServer {
         session.save(newTask); // Add the task
         transaction.commit();
     }
+    public static void deleteTask(Task taskToDelete) {
+        System.out.println("in server in delete task from DB function");
+
+        session.delete(taskToDelete); // Delete the task
+        transaction.commit();
+        System.out.println("Task deleted successfully.");
+    }
+
 
     public static void printTasksTest(List<Task> lst){
         for (Task task:lst){
@@ -345,13 +386,30 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("get tasks for community: Done");
                 client.sendToClient(message);
             }
-            else if(request.equals("send message to manager")){ //Added by Ayal
-                System.out.println("inside SimpleServer send message to manager");
+            else if(request.equals("get pending tasks")){
+                System.out.println("inside SimpleServer get task for community");
+                int communityID = (int) message.getData();
+                message.setData(getAllRequestedTasksByCommunity((Task.class),communityID));
+                System.out.println(message.getData());
+                message.setMessage("get pending tasks: Done");
+                client.sendToClient(message);
+            }
+            else if(request.equals("send message")){ //Added by Ayal
+                System.out.println("inside SimpleServer send message");
                 String messageString = (String) message.getData();
 
                 insertMessageToDataTable(messageString);
 
                 message.setMessage("send masage to manager: Done");
+                client.sendToClient(message);
+            }
+            // added by waheeb modified by ayal
+            else if(request.equals("delete requested task")){
+                System.out.println("inside SimpleServer delete requested task");
+                int taskID = (int) message.getData();
+                Task task=getEntityById(Task.class,taskID);//get task by id
+                deleteTask(task);
+                message.setMessage("delete requested task: Done");
                 client.sendToClient(message);
             }
             else if(request.equals("update task volunteer")){ //Added by Ayal
@@ -404,11 +462,6 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("get received messages: Done");
                 client.sendToClient(message);
             }
-
-
-
-
-
             else if (request.equals("get all users")) {
 
                 message.setData(getAll(User.class));
@@ -434,6 +487,14 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("get task by id: Done");
                 client.sendToClient(message);
 
+            }else if (request.equals("get task for decline")) {
+
+                int taskId = (Integer) message.getData();
+                Task declinedTask = getEntityById(Task.class, taskId);
+                message.setData(declinedTask);
+                message.setMessage("get task for decline: Done");
+                client.sendToClient(message);
+
             }else if (request.equals("change task status")) {
 
                 Task updatedTask = (Task) message.getData();
@@ -446,12 +507,27 @@ public class SimpleServer extends AbstractServer {
             }
             else if (request.equals("update task status")) {
 
-                int updatedTaskID = (int) message.getData();
-                updateTaskByID(updatedTaskID);
+                String updatedTaskIDInfo = (String) message.getData(); // string="taskID,status"
+                String[] parts = updatedTaskIDInfo.split(",");
+                System.out.println(Arrays.toString(parts)); //////////////////
+                int updatedTaskID = Integer.parseInt(parts[0]);
+                String newStatus = parts[1];
+
+                updateTaskByID(updatedTaskID, newStatus);
 
                 Task testUpdate = getEntityById(Task.class, updatedTaskID);
                 message.setData(testUpdate);
                 message.setMessage("change task status: Done");
+                client.sendToClient(message);
+
+            } else if (request.equals("delete task")) {
+
+                int taskID = (int) message.getData();
+                System.out.println("in server in delete task command");
+                Task taskToDelete = getEntityById(Task.class, taskID);
+                deleteTask(taskToDelete);
+                message.setData(taskID);
+                message.setMessage("delete task: Done");
                 client.sendToClient(message);
 
             }
@@ -476,6 +552,7 @@ public class SimpleServer extends AbstractServer {
             }else if (request.equals("open request")) {
 
                 Task newTask = (Task) message.getData();
+                System.out.println(newTask.toString());
                 addTask(newTask);
                 Task testAdd = getEntityById(Task.class, newTask.getTask_id());
                 message.setData(testAdd);
@@ -634,7 +711,7 @@ public class SimpleServer extends AbstractServer {
     }
 
 
-    private void updateTaskByID(int updatedTaskID) {//added by Ayal
+    private void updateTaskByID(int updatedTaskID, String newStatus) {//added by Ayal
         Transaction transaction = null;
         try {
             SessionFactory sessionFactory = getSessionFactory();
@@ -643,14 +720,18 @@ public class SimpleServer extends AbstractServer {
 
             // Retrieve the task entity by ID
             Task task = session.get(Task.class, updatedTaskID);
-
             // Update the task status to "done"
-            task.setStatus(TaskStatus.Done);
+            if(newStatus.equals("Done")){
+                task.setStatus(TaskStatus.Done);
+            }
+            if(newStatus.equals("Pending")){
+                task.setStatus(TaskStatus.Pending);
+            }
 
             // Commit the transaction
             session.update(task);
             transaction.commit();
-            System.out.println("Task with ID " + updatedTaskID + " updated to 'done'.");
+            System.out.println("Task with ID " + updatedTaskID + " updated to "+newStatus+".");
         } catch (Exception e) {
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();

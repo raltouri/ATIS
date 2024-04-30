@@ -54,6 +54,14 @@ public class SendMessageToManager {
 
     }
 
+    private void showEmptyMessageBoxAlert() {
+
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Empty Message");
+        alert.setHeaderText(null);
+        alert.setContentText("Please enter a message before sending.");
+        alert.showAndWait();
+    }
     @FXML
     void SendMessageForManager(ActionEvent event) {
         //get the message from the text field
@@ -61,11 +69,7 @@ public class SendMessageToManager {
 
         if (givenMessage.isEmpty()) {
             // If the message is empty, show an alert to the user
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Empty Message");
-            alert.setHeaderText(null);
-            alert.setContentText("Please enter a message before sending.");
-            alert.showAndWait();
+            showEmptyMessageBoxAlert();
             return; // Exit the method, don't proceed further
         }
         communityID= loggedInUser.getCommunityId();
