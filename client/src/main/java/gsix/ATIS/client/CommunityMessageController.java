@@ -19,11 +19,19 @@ public class CommunityMessageController {//By Ayal
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
-
-
     }
+
+    public static void sendToUser(String managerID, String requesterID, String msg) {
+        String msgString = managerID+","+ requesterID+","+msg;
+        Message message = new Message(1, LocalDateTime.now(), "send decline message to user", msgString);
+        //System.out.println("Community Message Controller : sending msg to user");
+        try {
+            SimpleClient.getClient("",0).sendToServer(message);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void getMessageBox(String receiverID){
         //get all the messages that the receiverID has received.(using mySQL)
         //need to use the server to access the data base

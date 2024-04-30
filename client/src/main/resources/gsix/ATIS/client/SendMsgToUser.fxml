@@ -9,8 +9,8 @@
 <AnchorPane prefHeight="371.0" prefWidth="463.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.manager.SendMessageToUser">
    <children>
       <TextField fx:id="messageTB" alignment="TOP_LEFT" layoutX="65.0" layoutY="109.0" prefHeight="182.0" prefWidth="326.0" promptText="Decline reason:" />
-      <Button fx:id="BtnBack" layoutX="121.0" layoutY="298.0" mnemonicParsing="false" onAction="#BackToRequestedTasksScreen" prefHeight="45.0" prefWidth="79.0" text="Back" />
-      <Button fx:id="BtnSend" layoutX="264.0" layoutY="298.0" mnemonicParsing="false" onAction="#SendMessageForUser" prefHeight="45.0" prefWidth="79.0" text="Send" />
+      <Button fx:id="BtnClose" layoutX="121.0" layoutY="298.0" mnemonicParsing="false" onAction="#Close" prefHeight="45.0" prefWidth="79.0" text="Close" />
+      <Button fx:id="BtnSend" layoutX="264.0" layoutY="298.0" mnemonicParsing="false" onAction="#SendMsgToUser" prefHeight="45.0" prefWidth="79.0" text="Send" />
       <Text layoutX="65.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sending Decline message to:" wrappingWidth="310.3999389648436">
          <font>
             <Font size="24.0" />

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import com.mysql.cj.ServerPreparedQuery;
+import gsix.ATIS.client.CommunityMessageController;
 import gsix.ATIS.client.TasksController;
 import gsix.ATIS.client.common.GuiCommon;
 import gsix.ATIS.client.common.MessageEvent;
@@ -33,8 +34,8 @@ public class SendMessageToUser {
     @FXML // URL location of the FXML file that was given to the FXMLLoader
     private URL location;
 
-    @FXML // fx:id="BtnBack"
-    private Button BtnBack; // Value injected by FXMLLoader
+    @FXML // fx:id="BtnClose"
+    private Button BtnClose; // Value injected by FXMLLoader
 
     @FXML // fx:id="messageTB"
     private TextField messageTB; // Value injected by FXMLLoader
@@ -47,6 +48,12 @@ public class SendMessageToUser {
     private Stage stage;
     private User loggedInManager;
     private String requesterID;
+    RequestedTasks requestedTasks = null;
+    public void setRequestedTasks(RequestedTasks requestedTasks) {
+        this.requestedTasks = requestedTasks;
+    }
+
+
     private int taskID;
     public void setTaskID(int taskID) {
         this.taskID = taskID;
@@ -64,8 +71,11 @@ public class SendMessageToUser {
     }
 
     @FXML
-    void BackToRequestedTasksScreen(ActionEvent event) {
-       /* stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+    void Close(ActionEvent event) {
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+        requestedTasks.setDeclineMsgSent(false);
+        stage.close();
+        /*
         GuiCommon guiCommon = GuiCommon.getInstance();
         RequestedTasks requestedTasks = (RequestedTasks) guiCommon.displayNextScreen("RequestedTasks.fxml",
                 "Manager Home Page", stage, true);  // Example for opening new screen
@@ -73,7 +83,7 @@ public class SendMessageToUser {
     }
 
     private void showEmptyMessageBoxAlert() {
-        // Handle the case when no task is selected
+
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Fill in a message");
         alert.setHeaderText(null);
@@ -83,20 +93,49 @@ public class SendMessageToUser {
         alert.showAndWait();
     }
     @FXML
-    void SendMessageForUser(ActionEvent event) {
-        if(messageTB.getText().isEmpty()){
+    void SendMsgToUser(ActionEvent event) {
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+        String msg = messageTB.getText();
+        if(msg.isEmpty()){
             showEmptyMessageBoxAlert();
+            return;
         }
+        String managerID = loggedInManager.getUser_id();
+        CommunityMessageController.sendToUser(managerID,requesterID,msg);
+        stage.close();
     }
     @Subscribe
     public void handleTasksEvent(MessageEvent event){
         Message handledMessage=event.getMessage();
+        if(handledMessage.getMessage().equals("send decline message: Done")){
+            System.out.println("SendToMsgToUser Class in handleTasksEvent");
+            requestedTasks.setDeclineMsgSent(true);
+            // Display a pop-up indicating that the message was sent to the user
+            //Platform.runLater(() -> showAlert("Message Sent", "The message was successfully sent to the manager."));
+            Platform.runLater(() -> {
 
+                showDeclineMessageSentAlert();
+            });
+
+
+        }
+
+    }
+
+    private void showDeclineMessageSentAlert() {
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Message Sent");
+        alert.setHeaderText(null);
+        alert.setContentText("decline message has been sent!");
+
+        // Show the alert dialog
+        alert.showAndWait();
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
-        assert BtnBack != null : "fx:id=\"back_Btn\" was not injected: check your FXML file 'SendMsgToUser.fxml'.";
+        assert BtnClose != null : "fx:id=\"back_Btn\" was not injected: check your FXML file 'SendMsgToUser.fxml'.";
         assert messageTB != null : "fx:id=\"message_TF\" was not injected: check your FXML file 'SendMsgToUser.fxml'.";
         assert BtnSend != null : "fx:id=\"send_Btn\" was not injected: check your FXML file 'SendMsgToUser.fxml'.";
         assert taskIdTV != null : "fx:id=\"taskIdTV\" was not injected: check your FXML file 'SendMsgToUser.fxml'.";

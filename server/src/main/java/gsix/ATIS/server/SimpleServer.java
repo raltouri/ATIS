@@ -390,6 +390,15 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("send masage to manager: Done");
                 client.sendToClient(message);
             }
+            else if(request.equals("send decline message to user")){
+                System.out.println("inside SimpleServer send decline message to user");
+                String messageString = (String) message.getData();
+
+                insertMessageToDataTable(messageString);
+
+                message.setMessage("send decline message: Done");
+                client.sendToClient(message);
+            }
             else if(request.equals("update task volunteer")){ //Added by Ayal
                 System.out.println("inside simple server update task volunteer");
                 Task dummyTask = (Task) message.getData();

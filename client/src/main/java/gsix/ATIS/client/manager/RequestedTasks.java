@@ -44,6 +44,13 @@ public class RequestedTasks {
 
     @FXML // fx:id="showPending"
     private Button showRequested; // Value injected by FXMLLoader
+    private boolean isDeclineMsgSent = false;
+
+    public void setDeclineMsgSent(boolean declineMsgSent) {
+        isDeclineMsgSent = declineMsgSent;
+    }
+
+
 
     public void setLoggedInUser(User loggedInUser) {
         this.loggedInManager=loggedInUser;
@@ -185,23 +192,17 @@ public class RequestedTasks {
         // Show the alert dialog
         alert.showAndWait();
     }
+    private String selectedTaskInfo = null ;
     @FXML
     void DeclineTask(ActionEvent event) {
-        String selectedTaskInfo = requestedLV.getSelectionModel().getSelectedItem();
+        selectedTaskInfo = requestedLV.getSelectionModel().getSelectedItem();
         if (selectedTaskInfo != null) {
             // Parse the selected task information to get the task ID
             int taskId = extractTaskId(selectedTaskInfo);
             getTaskByID(taskId);
             System.out.println("declined task id is : "+taskId);
 
-            // Assuming tasksList is the ObservableList backing the ListView
-            ObservableList<String> tasksList = requestedLV.getItems();
 
-            // Remove the pending task from the data model
-            tasksList.remove(selectedTaskInfo);
-
-            // Refresh the ListView to reflect the changes
-            requestedLV.refresh();
 
             //deleteTask(taskId);
             // Implement logic to navigate back to the user's home page
@@ -239,6 +240,7 @@ public class RequestedTasks {
                 requestedLV.setItems(observableTasks); // Add received tasks
             });
         }
+
         if(event.getMessage().getMessage().equals("get task for decline: Done")) {
             Task declinedTask = (Task) event.getMessage().getData();
             String requesterID = declinedTask.getRequester_id();
@@ -250,14 +252,26 @@ public class RequestedTasks {
                 sendMessageToUser.setRequesterID(requesterID);
                 sendMessageToUser.setLoggedInManager(loggedInManager);
                 sendMessageToUser.setTaskID(declinedTask.getTask_id());
-                System.out.println(declinedTask.getTask_id());
+                sendMessageToUser.setRequestedTasks(this);
+                //System.out.println(declinedTask.getTask_id());
+
             });
-            System.out.println("before calling delete task in handle");
-            deleteTask(declinedTask.getTask_id());  /*
-            //call function to refresh list view
-            int communityID = this.loggedInManager.getCommunityId();
-            // refresh tasks
-            getRequestedTasksForCommunity(communityID);*/
+
+            //System.out.println("before calling delete task in handle");
+            System.out.println("before if statement, isDeclineMsgSent = "+isDeclineMsgSent);
+            //isDeclineMsgSent=true;
+            if(isDeclineMsgSent){ //call function to refresh list view and delete task from DB
+                // Assuming tasksList is the ObservableList backing the ListView
+                ObservableList<String> tasksList = requestedLV.getItems();
+                System.out.println("inside isDeclineMsgSent = True ");
+                // Remove the pending task from the data model
+                tasksList.remove(selectedTaskInfo);
+
+                // Refresh the ListView to reflect the changes
+                requestedLV.refresh();
+                deleteTask(declinedTask.getTask_id());
+
+            }
 
         }
 
