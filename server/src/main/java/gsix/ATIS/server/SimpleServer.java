@@ -381,8 +381,8 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("get pending tasks: Done");
                 client.sendToClient(message);
             }
-            else if(request.equals("send message to manager")){ //Added by Ayal
-                System.out.println("inside SimpleServer send message to manager");
+            else if(request.equals("send message")){ //Added by Ayal
+                System.out.println("inside SimpleServer send message");
                 String messageString = (String) message.getData();
 
                 insertMessageToDataTable(messageString);
@@ -390,13 +390,13 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("send masage to manager: Done");
                 client.sendToClient(message);
             }
-            else if(request.equals("send decline message to user")){
-                System.out.println("inside SimpleServer send decline message to user");
-                String messageString = (String) message.getData();
-
-                insertMessageToDataTable(messageString);
-
-                message.setMessage("send decline message: Done");
+            // added by waheeb modified by ayal
+            else if(request.equals("delete requested task")){
+                System.out.println("inside SimpleServer delete requested task");
+                int taskID = (int) message.getData();
+                Task task=getEntityById(Task.class,taskID);//get task by id
+                deleteTask(task);
+                message.setMessage("delete requested task: Done");
                 client.sendToClient(message);
             }
             else if(request.equals("update task volunteer")){ //Added by Ayal

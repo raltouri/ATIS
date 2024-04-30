@@ -199,15 +199,23 @@ public class RequestedTasks {
         if (selectedTaskInfo != null) {
             // Parse the selected task information to get the task ID
             int taskId = extractTaskId(selectedTaskInfo);
+            stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
             getTaskByID(taskId);
             System.out.println("declined task id is : "+taskId);
 
+            // Assuming tasksList is the ObservableList backing the ListView
+            ObservableList<String> tasksList = requestedLV.getItems();
+
+            // Remove the pending task from the data model
+            tasksList.remove(selectedTaskInfo);
+
+            // Refresh the ListView to reflect the changes
+            requestedLV.refresh();
 
 
-            //deleteTask(taskId);
-            // Implement logic to navigate back to the user's home page
-            //open a new page
-            stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+
+
+
             //userHomePage.setLoggedInUser(loggedInUser);
         } else {
             // Handle the case when no task is selected
@@ -256,6 +264,7 @@ public class RequestedTasks {
                 //System.out.println(declinedTask.getTask_id());
 
             });
+
 
             //System.out.println("before calling delete task in handle");
             System.out.println("before if statement, isDeclineMsgSent = "+isDeclineMsgSent);

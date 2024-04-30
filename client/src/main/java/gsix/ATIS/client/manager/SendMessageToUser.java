@@ -1,11 +1,14 @@
 package gsix.ATIS.client.manager;
 
+import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import com.mysql.cj.ServerPreparedQuery;
 import gsix.ATIS.client.CommunityMessageController;
+import gsix.ATIS.client.SimpleClient;
 import gsix.ATIS.client.TasksController;
 import gsix.ATIS.client.common.GuiCommon;
 import gsix.ATIS.client.common.MessageEvent;
@@ -73,13 +76,10 @@ public class SendMessageToUser {
     @FXML
     void Close(ActionEvent event) {
         stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
-        requestedTasks.setDeclineMsgSent(false);
-        stage.close();
-        /*
         GuiCommon guiCommon = GuiCommon.getInstance();
         RequestedTasks requestedTasks = (RequestedTasks) guiCommon.displayNextScreen("RequestedTasks.fxml",
                 "Manager Home Page", stage, true);  // Example for opening new screen
-        requestedTasks.setLoggedInUser(loggedInManager);*/
+        requestedTasks.setLoggedInUser(loggedInManager);
     }
 
     private void showEmptyMessageBoxAlert() {
@@ -101,13 +101,25 @@ public class SendMessageToUser {
             return;
         }
         String managerID = loggedInManager.getUser_id();
-        CommunityMessageController.sendToUser(managerID,requesterID,msg);
+        CommunityMessageController.send(managerID,requesterID,msg);
+        //need code to delete
+
+
+        //send task ID to server to delete it from server
+        Message message2 = new Message(1, LocalDateTime.now(), "delete requested task",taskID);
+        System.out.println("Community Message Controller : sending the message");
+        try {
+            SimpleClient.getClient("",0).sendToServer(message2);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         stage.close();
     }
     @Subscribe
     public void handleTasksEvent(MessageEvent event){
         Message handledMessage=event.getMessage();
-        if(handledMessage.getMessage().equals("send decline message: Done")){
+        if(handledMessage.getMessage().equals("delete requested task: Done")){
             System.out.println("SendToMsgToUser Class in handleTasksEvent");
             requestedTasks.setDeclineMsgSent(true);
             // Display a pop-up indicating that the message was sent to the user
@@ -116,6 +128,12 @@ public class SendMessageToUser {
 
                 showDeclineMessageSentAlert();
             });
+
+            GuiCommon guiCommon = GuiCommon.getInstance();
+            RequestedTasks requestedTasks = (RequestedTasks) guiCommon.displayNextScreen("RequestedTasks.fxml",
+                    "Manager Home Page", stage, true);  // Example for opening new screen
+            requestedTasks.setLoggedInUser(loggedInManager);
+
 
 
         }
