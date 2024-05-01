@@ -87,7 +87,7 @@ public class LoginFrameBoundary implements Initializable{
 
 		User userDetails = new User(username,password, userType);
 		LoginController.loginUser(userDetails);
-		System.out.println("Hey");
+		System.out.println("Hey from LoginFrameBoundary");
 
 		/*String loginCase = LoginController.loginUser(userDetails);
 //    	Msg msg1 = new Msg("login",MsgType.FROM_CLIENT,userDetails);
@@ -131,7 +131,7 @@ public class LoginFrameBoundary implements Initializable{
 				//GuiCommon.popUp(loggedInUser.toString());
 
 				GuiCommon guiCommon = GuiCommon.getInstance();
-				if(loggedInUser.getUser_type().equals("community user")||loggedInUser.getUser_type().equals("manager")) {
+				if( loggedInUser.getUser_type().equals("community user")) {
 					UserHomePageBoundary userHomePageBoundary = (UserHomePageBoundary) guiCommon.displayNextScreen("UserHomePage.fxml",
 							"Community User Home Page", stage, true);  // Example for opening new screen
 					userHomePageBoundary.setLoggedInUser(loggedInUser);
