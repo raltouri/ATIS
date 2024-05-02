@@ -5,6 +5,7 @@
 package gsix.ATIS.client.manager;
 
 import gsix.ATIS.client.common.GuiCommon;
+import gsix.ATIS.client.login.LoginFrameBoundary;
 import gsix.ATIS.entities.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -69,8 +70,11 @@ public class ManagerHomePageBoundary {
     void logOut(ActionEvent event) {
         stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
         GuiCommon guiCommon = GuiCommon.getInstance();
-        /*LoginFrameBoundary loginFrameBoundary = (LoginFrameBoundary)*/ guiCommon.displayNextScreen("LoginForm.fxml",
-                "Login Screen", stage, true);
+        // Create a new instance to ensure proper reinitialization
+        LoginFrameBoundary loginFrameBoundary = new LoginFrameBoundary();
+
+        guiCommon.displayNextScreen("LoginForm.fxml", "Login Screen", stage, true);
+
     }
 
 }

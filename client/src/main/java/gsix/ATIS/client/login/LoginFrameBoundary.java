@@ -79,6 +79,13 @@ public class LoginFrameBoundary implements Initializable{
 	@FXML
 	private ComboBox<String> roleComboBox;
     ArrayList<String> userDetails = new ArrayList<String>();
+	public void resetLoginForm() {
+		roleComboBox.setValue("User"); // Reset to default
+		UsernameField.clear(); // Clear any existing text
+		PasswordField.clear(); // Clear any existing text
+		msgArea.setText(""); // Clear any messages
+		selectedRole = "User"; // Reset selected role
+	}
     
     @FXML 
 	public void Login( ActionEvent event) throws IOException {
@@ -190,19 +197,32 @@ public class LoginFrameBoundary implements Initializable{
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		ObservableList<String> roles = FXCollections.observableArrayList("User", "Manager");
+		roleComboBox.setItems(roles);
 
-
-		// Set default value and listen for changes
+		// Set default value
 		roleComboBox.setValue("User");
+
+		// Listener to update selectedRole when ComboBox value changes
 		roleComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-			selectedRole = newValue; // Update the selected role
+			selectedRole = newValue;
 			System.out.println("Selected role changed to: " + selectedRole);
 		});
 
-
-
 		EventBus.getDefault().register(this);
+
+
+//		// Set default value and listen for changes
+//		roleComboBox.setValue("User");
+//		roleComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+//			selectedRole = newValue; // Update the selected role
+//			System.out.println("Selected role changed to: " + selectedRole);
+//		});
+//		EventBus.getDefault().register(this);
 		
 	}
-    
+
+	public LoginFrameBoundary() {
+		selectedRole="User";
+	}
 }
