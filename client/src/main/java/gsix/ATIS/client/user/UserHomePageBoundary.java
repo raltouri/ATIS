@@ -117,7 +117,7 @@ public class UserHomePageBoundary {
         if (event.getMessage().getMessage().equals("open request: Done")) {
             Platform.runLater(() -> {
                 Task dbUpdatedTask = (Task) event.getMessage().getData();
-                GuiCommon.popUp(dbUpdatedTask.toString() +"\n Task opened successfully, pending for Manager approve!");
+                //GuiCommon.popUp(dbUpdatedTask.toString() +"\n Task opened successfully, pending for Manager approve!");
             });
         }
     }

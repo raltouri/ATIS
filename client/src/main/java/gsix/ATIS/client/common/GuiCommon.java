@@ -50,14 +50,14 @@ public class GuiCommon {//singleton
 				root = loader.load();
 				Scene scene = new Scene(root);
 				primaryStage.setTitle(title);
-				primaryStage.setScene(scene);		
+				primaryStage.setScene(scene);
 				primaryStage.show();
 			} catch (IOException e) {
 				System.out.println("Couldnt load!");
 				e.printStackTrace();
 			}
 			return loader.getController();
-			
+
 		}
 	
 
