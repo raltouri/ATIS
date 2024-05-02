@@ -9,7 +9,7 @@
       <Button fx:id="RequestedTask" layoutX="84.0" layoutY="69.0" mnemonicParsing="false" onAction="#ViewRequestedTasks" prefHeight="26.0" prefWidth="120.0" text="Requested Tasks" />
       <Button fx:id="approvedRequests" layoutX="84.0" layoutY="148.0" mnemonicParsing="false" onAction="#ViewApprovedRequests" text="Approved Requests" />
       <Button fx:id="viewMsges" layoutX="320.0" layoutY="69.0" mnemonicParsing="false" onAction="#ViewMessages" prefHeight="26.0" prefWidth="150.0" text="View Messages" />
-      <Button fx:id="btnViewReports" layoutX="319.0" layoutY="148.0" mnemonicParsing="false" onAction="#ViewCommunityReports" text="View Community Reports" />
+      <Button fx:id="btnViewMembers" layoutX="319.0" layoutY="148.0" mnemonicParsing="false" onAction="#ViewCommunityMembers" text="View Community Members" />
       <Button fx:id="logOut" layoutX="85.0" layoutY="250.0" mnemonicParsing="false" onAction="#logOut" prefHeight="26.0" prefWidth="120.0" text="Log Out" />
    </children>
 </AnchorPane>

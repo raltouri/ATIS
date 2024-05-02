@@ -28,8 +28,8 @@ public class ManagerHomePageBoundary {
     @FXML // fx:id="viewMsges"
     private Button viewMsges; // Value injected by FXMLLoader
 
-    @FXML // fx:id="btnViewReports"
-    private Button btnViewReports; // Value injected by FXMLLoader
+    @FXML // fx:id="btnViewMembers"
+    private Button btnViewMembers; // Value injected by FXMLLoader
 
     @FXML // fx:id="logOut"
     private Button logOut; // Value injected by FXMLLoader
@@ -45,8 +45,13 @@ public class ManagerHomePageBoundary {
     }
 
     @FXML
-    void ViewCommunityReports(ActionEvent event) {
+    void ViewCommunityMembers(ActionEvent event) {
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+        GuiCommon guiCommon = GuiCommon.getInstance();
+        CommunityMembers communityMembers = (CommunityMembers) guiCommon.displayNextScreen
+                ("CommunityMembers.fxml", "Community Members", stage, true);  // Example for opening new screen
 
+        communityMembers.setLoggedInUser(loggedInUser);
     }
 
     @FXML
@@ -77,7 +82,7 @@ public class ManagerHomePageBoundary {
     void initialize() {
         assert RequestedTask != null : "fx:id=\"RequestedTask\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
         assert approvedRequests != null : "fx:id=\"approvedRequests\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
-        assert btnViewReports != null : "fx:id=\"btnViewReports\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
+        assert btnViewMembers != null : "fx:id=\"btnViewReports\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
         assert logOut != null : "fx:id=\"logOut\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
         assert viewMsges != null : "fx:id=\"viewMsges\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
 

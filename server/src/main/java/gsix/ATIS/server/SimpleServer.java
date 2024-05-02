@@ -79,36 +79,25 @@ public class SimpleServer extends AbstractServer {
         Task task = session.get(Task.class, taskId);
         return task != null;
     }
-
-    public static <T> List<T> getAllRequestedTasksByCommunity(Class<T> object, int communityID) {
-
+    public static List<Task> getAllRequestedTasksByCommunity(int communityID) {
         CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
+        CriteriaQuery<Task> criteriaQuery = builder.createQuery(Task.class);
         Root<Task> taskRoot = criteriaQuery.from(Task.class);
 
         // Joining Task with User entity using the requester_id attribute
-        Join<Task, User> userJoin = taskRoot.join("requester"); // Assuming "requester" is the attribute in Task entity referring to User entity
+        Join<Task, User> userJoin = taskRoot.join("requester");
 
-        // Fetching the User entity based on userId
-        CriteriaQuery<User> userQuery = builder.createQuery(User.class);
-        /*Root<User> userRoot = userQuery.from(User.class);
-        userQuery.select(userRoot).where(builder.equal(userRoot.get("user_id"), userId)); // Assuming the primary key in User entity is "userId"
-        User user = session.createQuery(userQuery).getSingleResult();
-
-        // Accessing communityId from the fetched User entity
-        int communityId = user.getCommunityId();*/
-
-        // Adding condition to the criteria query based on communityId
+        // Adding condition to the criteria query based on communityId and status
         criteriaQuery.where(
                 builder.equal(userJoin.get("community_id"), communityID),
                 builder.equal(taskRoot.get("status"), "Request")
         );
 
-        List<T> list = session.createQuery(criteriaQuery).getResultList();
-        String sqlQuery = session.createQuery(criteriaQuery).unwrap(org.hibernate.query.Query.class).getQueryString();
-        System.out.println("Generated SQL Query: " + sqlQuery);
-        System.out.println("Result: " + list);
-        return list;
+        /*List<Task> list =*/return session.createQuery(criteriaQuery).getResultList();
+        //String sqlQuery = session.createQuery(criteriaQuery).unwrap(org.hibernate.query.Query.class).getQueryString();
+        //System.out.println("Generated SQL Query: " + sqlQuery);
+        //System.out.println("Result: " + list);
+        //return list;
     }
 
 
@@ -373,12 +362,12 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("get tasks for community: Done");
                 client.sendToClient(message);
             }
-            else if(request.equals("get pending tasks")){
+            else if(request.equals("get requested tasks by community")){
                 System.out.println("inside SimpleServer get task for community");
                 int communityID = (int) message.getData();
-                message.setData(getAllRequestedTasksByCommunity((Task.class),communityID));
+                message.setData(getAllRequestedTasksByCommunity(communityID));
                 System.out.println(message.getData());
-                message.setMessage("get pending tasks: Done");
+                message.setMessage("get requested tasks by community: Done");
                 client.sendToClient(message);
             }
             else if(request.equals("send message")){ //Added by Ayal
@@ -455,7 +444,14 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("get all users: Done");
                 client.sendToClient(message);
 
-            } else if (request.equals("view task info")) {
+            }
+            else if (request.equals("get all community users")) {
+                String community_id = (String) message.getData();
+                message.setData(getAllByCommunity(User.class, community_id));
+                message.setMessage("get all community users: Done");
+                client.sendToClient(message);
+
+            }else if (request.equals("view task info")) {
 
                 int taskId = (Integer) message.getData();
                 Task task = getEntityById(Task.class, taskId);
@@ -515,6 +511,15 @@ public class SimpleServer extends AbstractServer {
                 deleteTask(taskToDelete);
                 message.setData(taskID);
                 message.setMessage("delete task: Done");
+                client.sendToClient(message);
+
+            }else if (request.equals("get user by id")) {
+
+                int userID = (Integer) message.getData();
+                User user = getEntityById(User.class, userID);
+
+                message.setData(user);
+                message.setMessage("get user by id: Done");
                 client.sendToClient(message);
 
             }

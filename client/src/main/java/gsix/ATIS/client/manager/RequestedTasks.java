@@ -71,7 +71,7 @@ public class RequestedTasks {
     }
     public void getRequestedTasksForCommunity(int communityID) {
 
-        Message message = new Message(1, LocalDateTime.now(), "get pending tasks", communityID);
+        Message message = new Message(1, LocalDateTime.now(), "get requested tasks by community", communityID);
         System.out.println("requestedTasks:before send to server");
         try {
             SimpleClient.getClient("",0).sendToServer(message);
@@ -236,7 +236,7 @@ public class RequestedTasks {
     @Subscribe
     public void handleTasksEvent(MessageEvent event){
         Message handledMessage=event.getMessage();
-        if(event.getMessage().getMessage().equals("get pending tasks: Done")){
+        if(event.getMessage().getMessage().equals("get requested tasks by community: Done")){
             List<Task> communityTasks=(List<Task>) event.getMessage().getData();
             //System.out.println("I am handling the tasks for community being brought back from eventbus in Volunteer class");
             List<String> tasks_info = TasksController.getTasksInfo(communityTasks);
