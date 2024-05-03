@@ -10,6 +10,7 @@ import gsix.ATIS.client.TaskViewController;
 
 import gsix.ATIS.client.common.GuiCommon;
 import gsix.ATIS.client.common.MessageEvent;
+import gsix.ATIS.client.common.SosBoundary;
 import gsix.ATIS.client.login.LoginFrameBoundary;
 import gsix.ATIS.entities.Task;
 import gsix.ATIS.entities.User;
@@ -35,6 +36,11 @@ public class UserHomePageBoundary {
     @FXML // URL location of the FXML file that was given to the FXMLLoader
     private URL location;
 
+    //  SOS
+    @FXML
+    private Button SoS_Btn;
+    //  SOS
+
     @FXML // fx:id="message_to_manager_Btn"
     private Button message_to_manager_Btn; // Value injected by FXMLLoader
 
@@ -52,6 +58,17 @@ public class UserHomePageBoundary {
 
     @FXML // fx:id="logOut"
     private Button logOut; // Value injected by FXMLLoader
+
+    //  SOS
+    @FXML
+    void OpenSosCall(ActionEvent event) {
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+        GuiCommon guiCommon = GuiCommon.getInstance();
+        SosBoundary sosBoundary = (SosBoundary) guiCommon.displayNextScreen("SosWindow.fxml",
+                "SoS Call", stage, false);  // Example for opening new screen
+        sosBoundary.setRequester(loggedInUser);
+    }
+    //  SOS
 
     @FXML
     void MessageToManager(ActionEvent event) {
@@ -138,6 +155,7 @@ public class UserHomePageBoundary {
     @FXML
         // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
+        assert SoS_Btn != null : "fx:id=\"SoS_Btn\" was not injected: check your FXML file 'UserHomePage.fxml'.";
         assert message_to_manager_Btn != null : "fx:id=\"message_to_manager_Btn\" was not injected: check your FXML file 'UserHomePage.fxml'.";
         assert messages_inbox_Btn != null : "fx:id=\"messages_inbox_Btn\" was not injected: check your FXML file 'UserHomePage.fxml'.";
         assert my_tasks_Btn != null : "fx:id=\"my_tasks_Btn\" was not injected: check your FXML file 'UserHomePage.fxml'.";

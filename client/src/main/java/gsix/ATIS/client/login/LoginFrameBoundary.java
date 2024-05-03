@@ -10,8 +10,10 @@ import client.ClientUI;
 import control_common.LoginController;*/
 
 
+import gsix.ATIS.client.common.DeviceIdentifier;
 import gsix.ATIS.client.common.GuiCommon;
 import gsix.ATIS.client.common.MessageEvent;
+import gsix.ATIS.client.common.SosBoundary;
 import gsix.ATIS.client.manager.ManagerHomePageBoundary;
 import gsix.ATIS.client.user.UserHomePageBoundary;
 import gsix.ATIS.entities.Message;
@@ -57,6 +59,8 @@ public class LoginFrameBoundary implements Initializable{
     @FXML
     private Label msgArea;
 
+	@FXML
+	private Button SoS_Btn;
     @FXML
     private Button loginButton;
     private String username;
@@ -68,7 +72,19 @@ public class LoginFrameBoundary implements Initializable{
 	@FXML // fx:id="roleText"
 	private TextField roleText; // Value injected by FXMLLoader
     ArrayList<String> userDetails = new ArrayList<String>();
-    
+
+	@FXML
+	void OpenSosCall(ActionEvent event) {
+		stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+		GuiCommon guiCommon = GuiCommon.getInstance();
+		SosBoundary sosBoundary = (SosBoundary) guiCommon.displayNextScreen("SosWindow.fxml",
+				"SoS Call", stage, false);  // Example for opening new screen
+		String macID = DeviceIdentifier.getMACAddress();
+		System.out.println("SOS Call button was clicked. Your device MAC Addess: "+macID);
+		User unKnown = new User(macID, "community user","MAC Addess", "MAC Addess"
+				, "MAC Addess", "MAC Addess", 0);
+		sosBoundary.setRequester(unKnown);
+	}
     @FXML 
 	public void Login( ActionEvent event) throws IOException {
 
@@ -131,7 +147,7 @@ public class LoginFrameBoundary implements Initializable{
 				//GuiCommon.popUp(loggedInUser.toString());
 
 				GuiCommon guiCommon = GuiCommon.getInstance();
-				if(loggedInUser.getUser_type().equals("community user")||loggedInUser.getUser_type().equals("manager")) {
+				if(loggedInUser.getUser_type().equals("community user")) {
 					UserHomePageBoundary userHomePageBoundary = (UserHomePageBoundary) guiCommon.displayNextScreen("UserHomePage.fxml",
 							"Community User Home Page", stage, true);  // Example for opening new screen
 					userHomePageBoundary.setLoggedInUser(loggedInUser);
