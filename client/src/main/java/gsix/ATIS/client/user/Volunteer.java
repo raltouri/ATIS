@@ -106,7 +106,7 @@ public class Volunteer {
             int taskId = extractTaskId(selectedTaskInfo);
             System.out.println("task id is : "+taskId);
             // Update the task status in the database
-            updateTaskStatus(taskId, "done");
+            updateTaskStatus(taskId, "in process");
             updateTaskVolunteer(taskId,loggedInUser.getUser_id());
 
             // Show a pop-up message to indicate success

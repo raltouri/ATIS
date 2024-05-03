@@ -346,6 +346,26 @@ public class SimpleServer extends AbstractServer {
             }
         }
     }
+    public static <T> List<T> getUnfinishedTasks(Class<T> object, String userID) {
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
+        Root<T> rootEntry = criteriaQuery.from(object);
+        CriteriaQuery<T> allCriteriaQuery = criteriaQuery.select(rootEntry);
+
+        // Create predicates for the volunteer_id and status
+        Predicate volunteerPredicate = builder.equal(rootEntry.get("volunteer_id"), userID);
+        Predicate statusPredicate = builder.equal(rootEntry.get("status"), "in process");
+
+        // Combine predicates with "and" to create the final condition
+        Predicate combinedPredicate = builder.and(volunteerPredicate, statusPredicate);
+
+        allCriteriaQuery.where(combinedPredicate);
+
+        TypedQuery<T> allQuery = session.createQuery(allCriteriaQuery);
+        List<T> lst = allQuery.getResultList();
+        System.out.println("I am in getUnfinishedTasks" + lst);
+        return lst;
+    }
 
     @Override
     protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
@@ -454,6 +474,16 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("get sent messages: Done");
                 client.sendToClient(message);
             }
+
+            else if(request.equals("get unfinished tasks")){ //Added by Ayal
+                System.out.println("inside SimpleServer get unfinished tasks");
+                String userId = (String) message.getData();
+                message.setData(getUnfinishedTasks((Task.class),userId));// Should change this back to getAllByCommunity , it works on getAll
+                System.out.println(message.getData());
+                message.setMessage("get unfinished tasks: Done");
+                client.sendToClient(message);
+            }
+
             else if(request.equals("get received messages")){ //Added by Ayal
                 System.out.println("inside SimpleServer get received messages ");
                 String userId = (String) message.getData();
@@ -726,6 +756,11 @@ public class SimpleServer extends AbstractServer {
             }
             if(newStatus.equals("Pending")){
                 task.setStatus(TaskStatus.Pending);
+            }
+            if(newStatus.equals("in process")){
+                task.setStatus(TaskStatus.inProcess);
+            }if(newStatus.equals("Declined")){
+                task.setStatus(TaskStatus.Declined);
             }
 
             // Commit the transaction
