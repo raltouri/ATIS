@@ -256,7 +256,7 @@ public class RequestedTasks {
             Platform.runLater(() -> {
                 GuiCommon guiCommon = GuiCommon.getInstance();
                 SendMessageToUser sendMessageToUser = (SendMessageToUser) guiCommon.displayNextScreen("SendMsgToUser.fxml",
-                        "Send Decline Message", stage, false);
+                        "Send Decline Message", null, false);//null was stage
                 sendMessageToUser.setRequesterID(requesterID);
                 sendMessageToUser.setLoggedInManager(loggedInManager);
                 sendMessageToUser.setTaskID(declinedTask.getTask_id());

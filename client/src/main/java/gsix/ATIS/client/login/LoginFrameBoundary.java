@@ -79,19 +79,22 @@ public class LoginFrameBoundary implements Initializable{
 	@FXML
 	private ComboBox<String> roleComboBox;
     ArrayList<String> userDetails = new ArrayList<String>();
-	public void resetLoginForm() {
-		roleComboBox.setValue("User"); // Reset to default
-		UsernameField.clear(); // Clear any existing text
-		PasswordField.clear(); // Clear any existing text
-		msgArea.setText(""); // Clear any messages
-		selectedRole = "User"; // Reset selected role
-	}
+
     
     @FXML 
 	public void Login( ActionEvent event) throws IOException {
 
 		stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+		// Set an event handler for the stage's close request
+		stage.setOnCloseRequest(e -> {
+			// Custom logic before the stage closes
+			System.out.println("Stage is closing. Unregistering from EventBus.");
 
+			// Unregister from EventBus to avoid memory leaks
+			if (EventBus.getDefault().isRegistered(this)) {
+				EventBus.getDefault().unregister(this);
+			}
+		});
 		username = UsernameField.getText();
     	password = PasswordField.getText();
     	if (username.trim().isEmpty()) {
@@ -116,7 +119,7 @@ public class LoginFrameBoundary implements Initializable{
 		Message loginMessage = event.getMessage();
 		if (event.getMessage().getMessage().equals("login request: Done")) {
 			User loggedInUser = (User) loginMessage.getData();
-			System.out.println("I am in handle tasks event before opening userHomepage");
+			System.out.println("I am in handle tasks event before opening ANY PAGE WHATSOEVER");
 			System.out.println("Selected Role is : "+selectedRole);
 			//check if user is manager or normal user
 			if(selectedRole.equals("Manager")){
@@ -137,10 +140,13 @@ public class LoginFrameBoundary implements Initializable{
 					//else it means manager is logging in as manager
 					Platform.runLater(() -> {
 						GuiCommon guiCommon = GuiCommon.getInstance();
+
 						System.out.println("Manager entering as Manager");
 						ManagerHomePageBoundary managerHomePageBoundary = (ManagerHomePageBoundary) guiCommon.
-								displayNextScreen("ManagerHomePage.fxml", "Manager Home Page", stage, true);
+								displayNextScreen("ManagerHomePage.fxml", "Manager Home Page", null, false);//reminder to return stage normal
 						managerHomePageBoundary.setLoggedInUser(loggedInUser);
+						stage.close();
+						EventBus.getDefault().unregister(this);
 					});
 				}
 
@@ -153,22 +159,23 @@ public class LoginFrameBoundary implements Initializable{
 					//GuiCommon.popUp(loggedInUser.toString());
 
 					GuiCommon guiCommon = GuiCommon.getInstance();
+
+					//user entering as a user
 					if (loggedInUser.getUser_type().equals("community user")) {
 						System.out.println("Community user entering");
 						UserHomePageBoundary userHomePageBoundary = (UserHomePageBoundary) guiCommon.displayNextScreen("UserHomePage.fxml",
-								"Community User Home Page", stage, true);  // Example for opening new screen
+								"Community User Home Page", null, false);  // Example for opening new screen
 						userHomePageBoundary.setLoggedInUser(loggedInUser);
-					} else if (loggedInUser.getUser_type().equals("manager") && selectedRole.equals("Manager")) {
-						System.out.println("Manager entering as Manager");
-						ManagerHomePageBoundary managerHomePageBoundary = (ManagerHomePageBoundary) guiCommon.
-								displayNextScreen("ManagerHomePage.fxml", "Manager Home Page", stage, true);
-						managerHomePageBoundary.setLoggedInUser(loggedInUser);
+						stage.close();
+						EventBus.getDefault().unregister(this);
 					}
 					else{
 						//this handles case where Manager is trying to enter as a user
 						UserHomePageBoundary userHomePageBoundary = (UserHomePageBoundary) guiCommon.displayNextScreen("UserHomePage.fxml",
-								"Community User Home Page", stage, true);  // Example for opening new screen
+								"Community User Home Page", null, false);  // Example for opening new screen
 						userHomePageBoundary.setLoggedInUser(loggedInUser);
+						stage.close();
+						EventBus.getDefault().unregister(this);
 					}
 
 				});
@@ -208,8 +215,13 @@ public class LoginFrameBoundary implements Initializable{
 			selectedRole = newValue;
 			System.out.println("Selected role changed to: " + selectedRole);
 		});
+		selectedRole="User";
 
-		EventBus.getDefault().register(this);
+		// Register with EventBus if not already registered
+		if (!EventBus.getDefault().isRegistered(this)) {
+			EventBus.getDefault().register(this);
+		}
+
 
 
 //		// Set default value and listen for changes
@@ -224,5 +236,7 @@ public class LoginFrameBoundary implements Initializable{
 
 	public LoginFrameBoundary() {
 		selectedRole="User";
+
 	}
+
 }
