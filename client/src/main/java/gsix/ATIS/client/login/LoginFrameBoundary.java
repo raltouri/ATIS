@@ -94,7 +94,7 @@ public class LoginFrameBoundary implements Initializable{
 		String macID = DeviceIdentifier.getMACAddress();
 		System.out.println("SOS Call button was clicked. Your device MAC Addess: "+macID);
 		User unKnown = new User(macID, "community user","MAC Addess", "MAC Addess"
-				, "MAC Addess", "MAC Addess", 0);
+				, "MAC Addess", "MAC Addess", 0,0);
 		sosBoundary.setRequester(unKnown);
 	}
 
