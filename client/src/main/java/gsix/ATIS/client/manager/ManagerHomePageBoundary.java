@@ -130,15 +130,4 @@ public class ManagerHomePageBoundary {
         }
     }
 
-
-    @FXML // This method is called by the FXMLLoader when initialization is complete
-    void initialize() {
-        assert RequestedTask != null : "fx:id=\"RequestedTask\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
-        assert approvedRequests != null : "fx:id=\"approvedRequests\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
-        assert btnViewMembers != null : "fx:id=\"btnViewReports\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
-        assert logOut != null : "fx:id=\"logOut\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
-        assert viewMsges != null : "fx:id=\"viewMsges\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
-
-    }
-
 }
