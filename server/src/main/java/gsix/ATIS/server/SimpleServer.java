@@ -261,29 +261,50 @@ public class SimpleServer extends AbstractServer {
         TypedQuery<T> query = session.createQuery(criteriaQuery);
         return query.getSingleResult();
     }
-    public static <T> T getUser(Class<T> object,String user_name, String password) {
 
+    public static <T> T getUser(Class<T> object, String user_name, String password) {
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
         Root<T> root = criteriaQuery.from(object);
+
         if (object.equals(User.class)) {
             Predicate condition1 = builder.equal(root.get("user_name"), user_name);
             Predicate condition2 = builder.equal(root.get("password"), password);
             Predicate finalCondition = builder.and(condition1, condition2);
             criteriaQuery.select(root).where(finalCondition);
         }
+
         TypedQuery<T> query = session.createQuery(criteriaQuery);
 
         try {
-            return query.getSingleResult();
+            T result = query.getSingleResult();
+            if (result instanceof User) {
+                User user = (User) result;
+                if (user.getLogged_in() == 1) { // User is already logged in
+                    Message message = new Message(2, "User already logged in");
+                    return (T) message;
+                } else { // User is not logged in, proceed with login
+                    // Set logged_in to 1 to indicate successful login
+                    user.setLogged_in(1);
+                    session.update(user);
+                    transaction.commit(); // Commit the update
+                    return (T) user;
+                }
+            }
         } catch (NoResultException e) {
             // User not found
-            String result = "Username or password is incorrect";
-            Message message = new Message(1,result);
-            return (T) message; // or throw a custom exception, or handle it according to your requirement
-            // casting to T cause the func must return , maybe needed to be checked
+            Message message = new Message(1, "Username or password is incorrect");
+            return (T) message;
         }
+
+        return null; // Fallback if needed
     }
+    public void logOut(User user){
+        user.setLogged_in(0);
+        session.update(user);
+        transaction.commit(); // Commit the update
+    }
+
 
     public static void updateTask(Task updatedTask) {
         session.update(updatedTask); // Update the task
@@ -561,25 +582,39 @@ public class SimpleServer extends AbstractServer {
                 client.sendToClient(message);
 
             }
+            else if (request.equals("log out")) {
+
+                User user = (User) message.getData();
+                System.out.println("logging out");
+                logOut(user);
+
+            }
             else if (request.equals("login request")) {
-                System.out.println("*********INSIDE LOGING REQUEST*********");
+                System.out.println("*********INSIDE LOGIN REQUEST*********");
                 User userData = (User) message.getData();
-                Object result = getUser(User.class,userData.getUser_name(),userData.getPassword());
-                if(result instanceof User){
+                Object result = getUser(User.class, userData.getUser_name(), userData.getPassword());
+
+                if (result instanceof User) {
                     message.setMessage("login request: Done");
                     User target = (User) result;
                     message.setData(target);
+                } else if (result instanceof Message) {
+                    Message resultMessage = (Message) result;
+                    if (resultMessage.getMessage().equals("User already logged in")) {
+                        message.setMessage("login request: User already logged in");
+                        message.setData(resultMessage);
+                    } else {
+                        message.setMessage("login request: Failed");
+                        String errMsg = "Username or password is incorrect";
+                        message.setData(errMsg);
+                    }
                 }
-                //User target = getUser(User.class,userData.getUser_name(),userData.getPassword());
-                else /*if(result instanceof Message)*/{
-                    message.setMessage("login request: Failed");
-                    Message errMsgg = (Message) result;
-                    //String errMsg = errMsgg.getMessage();
-                    String errMsg ="Username or password is incorrect";
-                    message.setData(errMsg);
-                }
+
                 client.sendToClient(message);
-            }else if (request.equals("open request")) {
+            }
+
+
+            else if (request.equals("open request")) {
 
                 Task newTask = (Task) message.getData();
                 System.out.println(newTask.toString());

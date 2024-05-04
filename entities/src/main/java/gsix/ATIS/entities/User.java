@@ -24,11 +24,21 @@ public class User implements Serializable {
     private int community_id;
     @OneToMany(mappedBy = "requester")
     private List<Task> tasks;
+    @Column(name= "logged_in")
+    private int logged_in;
+
+    public int getLogged_in() {
+        return logged_in;
+    }
+
+    public void setLogged_in(int logged_in) {
+        this.logged_in = logged_in;
+    }
 
     public User() {
     }
 
-    public User(String user_id, String user_type, String first_name, String last_name, String user_name, String password, int community_id) {
+    public User(String user_id, String user_type, String first_name, String last_name, String user_name, String password, int community_id,int logged_in) {
         this.user_id = user_id;
         this.user_type = user_type;
         this.first_name = first_name;
@@ -36,6 +46,7 @@ public class User implements Serializable {
         this.user_name = user_name;
         this.password = password;
         this.community_id = community_id;
+        this.logged_in=logged_in;
     }
 
     public User( String user_name, String password,String user_type) {
@@ -96,6 +107,7 @@ public class User implements Serializable {
     public void setCommunity(int community_id) {
         this.community_id = community_id;
     }
+
 
     @Override
     public String toString() {

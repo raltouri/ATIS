@@ -1,16 +1,20 @@
 package gsix.ATIS.client.user;
 
 
+import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ResourceBundle;
 
 
+import gsix.ATIS.client.SimpleClient;
 import gsix.ATIS.client.TaskViewController;
 
 import gsix.ATIS.client.common.GuiCommon;
 import gsix.ATIS.client.common.MessageEvent;
 import gsix.ATIS.client.login.LoginFrameBoundary;
+import gsix.ATIS.entities.Message;
 import gsix.ATIS.entities.Task;
 import gsix.ATIS.entities.User;
 import javafx.application.Platform;
@@ -125,9 +129,19 @@ public class UserHomePageBoundary {
     @FXML
     void LogOut(ActionEvent event) {
         stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+        //ask server to change logged_in in database back to 0 since he is logging out
+        Message message = new Message(1, LocalDateTime.now(), "log out",loggedInUser);
+        //System.out.println("task id="+taskId+"new status=");
+        try {
+            SimpleClient.getClient("",0).sendToServer(message);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         GuiCommon guiCommon = GuiCommon.getInstance();
         /*LoginFrameBoundary loginFrameBoundary = (LoginFrameBoundary)*/ guiCommon.displayNextScreen("LoginForm.fxml",
                 "Login Screen", stage, true);  // Example for opening new screen
+
 
     }
 
