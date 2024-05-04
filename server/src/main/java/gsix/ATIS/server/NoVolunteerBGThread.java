@@ -52,7 +52,7 @@ public class NoVolunteerBGThread implements Runnable{
                 System.out.println("Background thread is running...");
                 getAllSystemOverDuePendingTasks();
             }
-        }, 0, 10*1000); // Checks every 10 seconds
+        }, 0, 60*60*1000); // Checks every 60*60 seconds (1 Hour), put 10*1000 to check every 10 seconds
     }
 
     private void getAllSystemOverDuePendingTasks() {

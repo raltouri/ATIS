@@ -33,8 +33,8 @@ public class ManagerHomePageBoundary {
     private Button SoS_Btn;
     //  SOS
 
-    @FXML // fx:id="approvedRequests"
-    private Button approvedRequests; // Value injected by FXMLLoader
+    @FXML // fx:id="btnSOSReports"
+    private Button btnSOSReports; // Value injected by FXMLLoader
 
     @FXML // fx:id="msgToUser"
     private Button msgToUser; // Value injected by FXMLLoader
@@ -67,7 +67,7 @@ public class ManagerHomePageBoundary {
     }
     //  SOS
     @FXML
-    void ViewApprovedRequests(ActionEvent event) {
+    void ViewSOSReports(ActionEvent event) {
 
     }
 

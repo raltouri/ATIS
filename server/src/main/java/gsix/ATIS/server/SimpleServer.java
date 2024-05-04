@@ -906,14 +906,14 @@ public class SimpleServer extends AbstractServer {
 
 
     public void sendToAllClients(Message message) {
-        System.out.println("send to all clients before try**************************");
+        //System.out.println("send to all clients before try**************************");
         if(subscribersList == null){
             System.out.println("no clients online");
             return;
         }
         try {
             for (SubscribedClient SubscribedClient : subscribersList) {
-                System.out.println("send to all clients inside for loop **************************");
+                //System.out.println("send to all clients inside for loop **************************");
                 SubscribedClient.getClient().sendToClient(message);
             }
         } catch (IOException e1) {
@@ -956,7 +956,11 @@ public class SimpleServer extends AbstractServer {
                     .filter(task -> {
                         LocalDateTime taskTime = task.getTime();
                         long secondsDifference = Duration.between(taskTime, now).getSeconds();
-                        return secondsDifference > 10;
+                        /**
+                         * return secondsDifference % 2*60*60 == 0, to get overdue tasks once every 2 hours and so on...
+                         * return secondsDifference % 10 == 0, to get overdue tasks once every 10 seconds for test purposes.
+                         **/
+                        return secondsDifference % 24*60*60 == 0; // gets task if overdue once every 24 hours
                     })
                     .collect(Collectors.toList());
 

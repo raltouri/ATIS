@@ -65,7 +65,7 @@ public class LoginFrameBoundary implements Initializable{
     private TextField UsernameField;
 
     @FXML
-    private TextField PasswordField;
+	private PasswordField PasswordField;
     
     @FXML
     private Label msgArea;
