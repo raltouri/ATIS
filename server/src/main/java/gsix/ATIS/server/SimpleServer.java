@@ -79,6 +79,18 @@ public class SimpleServer extends AbstractServer {
         Task task = session.get(Task.class, taskId);
         return task != null;
     }
+    public static List<Task> getAllSystemPendingTasks() {
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Task> criteriaQuery = builder.createQuery(Task.class);
+        Root<Task> taskRoot = criteriaQuery.from(Task.class);
+
+        // Adding condition to the criteria query based on status
+        criteriaQuery.where(builder.equal(taskRoot.get("status"), "Pending"));
+
+        return session.createQuery(criteriaQuery).getResultList();
+    }
+
+
     public static List<Task> getAllRequestedTasksByCommunity(int communityID) {
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Task> criteriaQuery = builder.createQuery(Task.class);
@@ -92,14 +104,28 @@ public class SimpleServer extends AbstractServer {
                 builder.equal(userJoin.get("community_id"), communityID),
                 builder.equal(taskRoot.get("status"), "Request")
         );
-
-        /*List<Task> list =*/return session.createQuery(criteriaQuery).getResultList();
+        return session.createQuery(criteriaQuery).getResultList();
+        /*List<Task> list =*/
         //String sqlQuery = session.createQuery(criteriaQuery).unwrap(org.hibernate.query.Query.class).getQueryString();
         //System.out.println("Generated SQL Query: " + sqlQuery);
         //System.out.println("Result: " + list);
         //return list;
     }
 
+    public static List<User> getAllCommunityMembers(int communityID){
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<User> criteriaQuery = builder.createQuery(User.class);
+        Root<User> userRoot = criteriaQuery.from(User.class);
+
+        // Adding condition to the criteria query based on communityId
+        criteriaQuery.where(builder.equal(userRoot.get("community_id"), communityID));
+
+        /*List<User> list =*/ return session.createQuery(criteriaQuery).getResultList();
+        /*String sqlQuery = session.createQuery(criteriaQuery).unwrap(org.hibernate.query.Query.class).getQueryString();
+        System.out.println("Generated SQL Query: " + sqlQuery);
+        System.out.println("Result: " + list);
+        return list;*/
+    }
 
     public static <T> List<T> getAllByCommunity(Class<T> object, String userId) {
 
@@ -383,6 +409,14 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("get requested tasks by community: Done");
                 client.sendToClient(message);
             }
+            else if(request.equals("get all system pending tasks")){
+                //System.out.println("inside SimpleServer get task for community");
+                //int communityID = (int) message.getData();
+                message.setData(getAllSystemPendingTasks());
+                //System.out.println(message.getData());
+                message.setMessage("get all system pending tasks: Done");
+                client.sendToClient(message);
+            }
             else if(request.equals("send message")){ //Added by Ayal
                 System.out.println("inside SimpleServer send message");
                 String messageString = (String) message.getData();
@@ -391,6 +425,15 @@ public class SimpleServer extends AbstractServer {
 
                 message.setMessage("send masage to manager: Done");
                 client.sendToClient(message);
+            }
+            else if(request.equals("notify no volunteer")){
+                //System.out.println("inside SimpleServer ");
+                String messageString = (String) message.getData();
+
+                insertMessageToDataTable(messageString);
+
+                //message.setMessage("send masage to manager: Done");
+                //client.sendToClient(message);
             }
             // added by waheeb modified by ayal
             else if(request.equals("delete requested task")){
@@ -459,8 +502,11 @@ public class SimpleServer extends AbstractServer {
 
             }
             else if (request.equals("get all community users")) {
-                String community_id = (String) message.getData();
-                message.setData(getAllByCommunity(User.class, community_id));
+                int community_id = (int) message.getData();
+                //System.out.println("*********************************8");
+                //System.out.println(getAllCommunityMembers(community_id));
+                //System.out.println("**********************************");
+                message.setData(getAllCommunityMembers(community_id));
                 message.setMessage("get all community users: Done");
                 client.sendToClient(message);
 
@@ -533,6 +579,7 @@ public class SimpleServer extends AbstractServer {
 
                 message.setData(user);
                 message.setMessage("get user by id: Done");
+                //System.out.println(user +" user got from server for volunteered window in members list");
                 client.sendToClient(message);
 
             }

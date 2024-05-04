@@ -63,10 +63,10 @@ public class ManagerHomePageBoundary {
     void ViewRequestedTasks(ActionEvent event) {
         stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
         GuiCommon guiCommon = GuiCommon.getInstance();
-        RequestedTasks pendingRequests1 = (RequestedTasks) guiCommon.displayNextScreen("RequestedTasks.fxml",
+        RequestedTasks requestedTasks = (RequestedTasks) guiCommon.displayNextScreen("RequestedTasks.fxml",
                 "Community's Requested Tasks Page", stage, true);  // Example for opening new screen
 
-        pendingRequests1.setLoggedInUser(loggedInUser);
+        requestedTasks.setLoggedInUser(loggedInUser);
 
     }
 
