@@ -78,7 +78,7 @@ public class LoginFrameBoundary implements Initializable{
 
 	@FXML
 	private ComboBox<String> roleComboBox;
-    ArrayList<String> userDetails = new ArrayList<String>();
+
 
     
     @FXML 
@@ -183,12 +183,23 @@ public class LoginFrameBoundary implements Initializable{
 
 
 
-	}
+		}
 		if (event.getMessage().getMessage().equals("login request: Failed")) {
 			String errMsg = (String) loginMessage.getData();
 			Platform.runLater(() -> {
 				msgArea.setText(errMsg);
 			});
+		}
+		if (event.getMessage().getMessage().equals("login request: User already logged in")){
+			//Show a pop up that tells user he is already logged in
+			Platform.runLater(() -> {
+				Alert alert = new Alert(Alert.AlertType.ERROR);
+				alert.setTitle("Log in Error");
+				alert.setHeaderText("Already Logged In");
+				alert.setContentText("You are already logged in, make sure to close prior windows to log in again");
+				alert.showAndWait();
+			});
+
 		}
 	}
     
