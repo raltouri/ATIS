@@ -56,13 +56,22 @@ public class SimpleClient extends AbstractClient {
 		}else if(message.getMessage().equals("open request: Done")){
 			MessageEvent messageEvent=new MessageEvent(message);
 			EventBus.getDefault().post(messageEvent);
-		}else if(message.getMessage().equals("get pending tasks: Done")){
+		}else if(message.getMessage().equals("get requested tasks by community: Done")){
 			MessageEvent messageEvent=new MessageEvent(message);
 			EventBus.getDefault().post(messageEvent);
 		}else if(message.getMessage().equals("get task for decline: Done")){
 			MessageEvent messageEvent=new MessageEvent(message);
 			EventBus.getDefault().post(messageEvent);
 		}else if(message.getMessage().equals("send decline message: Done")){
+			MessageEvent messageEvent=new MessageEvent(message);
+			EventBus.getDefault().post(messageEvent);
+		}else if(message.getMessage().equals("get all community users: Done")){
+			MessageEvent messageEvent=new MessageEvent(message);
+			EventBus.getDefault().post(messageEvent);
+		}else if(message.getMessage().equals("get user by id: Done")){
+			MessageEvent messageEvent=new MessageEvent(message);
+			EventBus.getDefault().post(messageEvent);
+		}else if(message.getMessage().equals("get all system pending tasks: Done")){
 			MessageEvent messageEvent=new MessageEvent(message);
 			EventBus.getDefault().post(messageEvent);
 		}else {
