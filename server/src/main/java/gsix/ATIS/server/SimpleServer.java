@@ -322,6 +322,22 @@ public class SimpleServer extends AbstractServer {
         System.out.println("Task deleted successfully.");
     }
 
+    public static void addSos(SosRequest newSos) {
+        try {
+            System.out.println("in server doing SOS  Save");
+            System.out.println(newSos.toString());
+            session.save(newSos); // Add the SosCall
+            System.out.println("in server done SOS  Save");
+            transaction.commit();
+        } catch (Exception e1) {
+            if (transaction != null && transaction.isActive()) {
+                System.out.println("I am about to roll back3");
+                transaction.rollback();
+            }
+            System.out.println(e1.getMessage());
+
+        }
+    }
 
     public static void printTasksTest(List<Task> lst){
         for (Task task:lst){
@@ -335,6 +351,7 @@ public class SimpleServer extends AbstractServer {
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(Community.class);
         configuration.addAnnotatedClass(CommunityMessage.class);
+        configuration.addAnnotatedClass(SosRequest.class);
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties())
@@ -582,6 +599,18 @@ public class SimpleServer extends AbstractServer {
                 client.sendToClient(message);
 
             }
+
+            else if (request.equals("open SoS request")) {
+
+                SosRequest sosRequest = (SosRequest) message.getData();
+                System.out.println("in server in SOS request command");
+                //Task taskToDelete = getEntityById(Task.class, taskID);
+                addSos(sosRequest);
+                //message.setData(taskID);
+                System.out.println("in server After SOS request save");
+                message.setMessage("open SoS request: Done");
+                client.sendToClient(message);
+
             else if (request.equals("log out")) {
 
                 User user = (User) message.getData();

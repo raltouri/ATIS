@@ -21,8 +21,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 
 
+import gsix.ATIS.client.common.DeviceIdentifier;
 import gsix.ATIS.client.common.GuiCommon;
 import gsix.ATIS.client.common.MessageEvent;
+import gsix.ATIS.client.common.SosBoundary;
 import gsix.ATIS.client.manager.ManagerHomePageBoundary;
 import gsix.ATIS.client.user.UserHomePageBoundary;
 import gsix.ATIS.entities.Message;
@@ -68,6 +70,9 @@ public class LoginFrameBoundary implements Initializable{
     @FXML
     private Label msgArea;
 
+	@FXML
+	private Button SoS_Btn;
+  
     @FXML
     private Button loginButton;
     private String username;
@@ -80,7 +85,19 @@ public class LoginFrameBoundary implements Initializable{
 	private ComboBox<String> roleComboBox;
 
 
-    
+	@FXML
+	void OpenSosCall(ActionEvent event) {
+		stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+		GuiCommon guiCommon = GuiCommon.getInstance();
+		SosBoundary sosBoundary = (SosBoundary) guiCommon.displayNextScreen("SosWindow.fxml",
+				"SoS Call", stage, false);  // Example for opening new screen
+		String macID = DeviceIdentifier.getMACAddress();
+		System.out.println("SOS Call button was clicked. Your device MAC Addess: "+macID);
+		User unKnown = new User(macID, "community user","MAC Addess", "MAC Addess"
+				, "MAC Addess", "MAC Addess", 0);
+		sosBoundary.setRequester(unKnown);
+	}
+
     @FXML 
 	public void Login( ActionEvent event) throws IOException {
 
@@ -119,6 +136,7 @@ public class LoginFrameBoundary implements Initializable{
 		Message loginMessage = event.getMessage();
 		if (event.getMessage().getMessage().equals("login request: Done")) {
 			User loggedInUser = (User) loginMessage.getData();
+
 			System.out.println("I am in handle tasks event before opening ANY PAGE WHATSOEVER");
 			System.out.println("Selected Role is : "+selectedRole);
 			//check if user is manager or normal user
@@ -148,6 +166,7 @@ public class LoginFrameBoundary implements Initializable{
 						stage.close();
 						EventBus.getDefault().unregister(this);
 					});
+
 				}
 
 			}
