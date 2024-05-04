@@ -141,6 +141,25 @@ public class UserHomePageBoundary {
                 //GuiCommon.popUp(dbUpdatedTask.toString() +"\n Task opened successfully, pending for Manager approve!");
             });
         }
+        /**
+         * in this event handler message we get an overdue task (no volunteer yet)
+         * where volunteer_id is the community_id the task belongs to
+         **/
+        if (event.getMessage().getMessage().equals("notify overdue task")) {
+            System.out.println("***** We should get no volunteer pop up *****************************************888");
+            Task overDueTask = (Task) event.getMessage().getData();
+            int overDueTask_communityID = Integer.parseInt(overDueTask.getVolunteer_id());
+            if (loggedInUser.getCommunityId() == overDueTask_communityID && loggedInUser.getUser_id().equals(overDueTask.getRequester_id())) {
+                Platform.runLater(() -> {
+                    GuiCommon.popUp("community members have been notified about your yet unassisted task "+ overDueTask.getTask_id());
+                });
+            }
+            if (loggedInUser.getCommunityId() == overDueTask_communityID && !loggedInUser.getUser_id().equals(overDueTask.getRequester_id())) {
+                Platform.runLater(() -> {
+                    GuiCommon.popUp("Task of ID=" + overDueTask.getTask_id()+" is still unassisted yet");
+                });
+            }
+        }
     }
 
     @FXML
