@@ -6,11 +6,13 @@ import gsix.ATIS.server.ocsf.ConnectionToClient;
 import gsix.ATIS.server.ocsf.SubscribedClient;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
@@ -22,7 +24,7 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
 public class SimpleServer extends AbstractServer {
-    private static ArrayList<SubscribedClient> SubscribersList = new ArrayList<>();
+    private static ArrayList<SubscribedClient> subscribersList = new ArrayList<>();
 
     private SessionFactory sessionFactory;
     private static Session session;
@@ -265,16 +267,23 @@ public class SimpleServer extends AbstractServer {
 
     public static <T> T getEntityById(Class<T> object, int Id) {
 
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
-        Root<T> root = criteriaQuery.from(object);
-        if (object.equals(Task.class)) {
-            criteriaQuery.select(root).where(builder.equal(root.get("task_id"), Id));
-        } else {
-            criteriaQuery.select(root).where(builder.equal(root.get("user_id"), Id));
+        if (session == null || !session.isOpen()) {
+            session = getSessionFactory().openSession();
         }
-        TypedQuery<T> query = session.createQuery(criteriaQuery);
-        return query.getSingleResult();
+        try {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
+            Root<T> root = criteriaQuery.from(object);
+            if (object.equals(Task.class)) {
+                criteriaQuery.select(root).where(builder.equal(root.get("task_id"), Id));
+            } else {
+                criteriaQuery.select(root).where(builder.equal(root.get("user_id"), Id));
+            }
+            TypedQuery<T> query = session.createQuery(criteriaQuery);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null; // Return null if no result found
+        }
     }
 
     public static <T> T getUser(Class<T> object, String user_name, String password) {
@@ -677,6 +686,8 @@ public class SimpleServer extends AbstractServer {
 
                 if (result instanceof User) {
                     message.setMessage("login request: Done");
+                    SubscribedClient connection = new SubscribedClient(client);
+                    subscribersList.add(connection);
                     User target = (User) result;
                     message.setData(target);
                 } else if (result instanceof Message) {
@@ -893,8 +904,14 @@ public class SimpleServer extends AbstractServer {
 
 
     public void sendToAllClients(Message message) {
+        System.out.println("send to all clients before try**************************");
+        if(subscribersList == null){
+            System.out.println("no clients online");
+            return;
+        }
         try {
-            for (SubscribedClient SubscribedClient : SubscribersList) {
+            for (SubscribedClient SubscribedClient : subscribersList) {
+                System.out.println("send to all clients inside for loop **************************");
                 SubscribedClient.getClient().sendToClient(message);
             }
         } catch (IOException e1) {
@@ -902,4 +919,54 @@ public class SimpleServer extends AbstractServer {
         }
     }
 
+    /**
+     * not checked function, all credits for GPT we hope it works!
+     ***/
+    public List<Task> getAllOverDuePendingTasks() {
+
+        try {
+            sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Task> criteriaQuery = builder.createQuery(Task.class);
+            Root<Task> rootEntry = criteriaQuery.from(Task.class);
+            criteriaQuery.select(rootEntry);
+
+            // Create predicate for status condition
+            Predicate statusPredicate = builder.equal(rootEntry.get("status"), "Pending");
+
+            // Create predicate for time condition (tasks created more than 10 seconds ago)
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime tenSecondsAgo = now.minusSeconds(10);
+            Predicate timePredicate = builder.lessThan(rootEntry.get("time"), tenSecondsAgo);
+
+            // Combine predicates with "and" to create the final condition
+            Predicate combinedPredicate = builder.and(statusPredicate, timePredicate);
+
+            criteriaQuery.where(combinedPredicate);
+
+            TypedQuery<Task> allQuery = session.createQuery(criteriaQuery);
+            List<Task> tasks = allQuery.getResultList();
+
+            // Filter tasks further to ensure they are exactly 10 seconds old
+            List<Task> overdueTasks = tasks.stream()
+                    .filter(task -> {
+                        LocalDateTime taskTime = task.getTime();
+                        long secondsDifference = Duration.between(taskTime, now).getSeconds();
+                        return secondsDifference > 10;
+                    })
+                    .collect(Collectors.toList());
+
+            System.out.println("Overdue tasks to check: " + overdueTasks);
+
+            return overdueTasks;
+        } catch (Exception e) {
+            //throw new RuntimeException(e);
+            System.out.println(e.getMessage());
+        } finally {
+            session.close();
+        }
+        return null;
+    }
 }
