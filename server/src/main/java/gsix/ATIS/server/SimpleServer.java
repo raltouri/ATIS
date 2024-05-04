@@ -306,7 +306,7 @@ public class SimpleServer extends AbstractServer {
                     return (T) user;
                 }
             }
-        } catch (NoResultException e) {
+        } catch (Exception e) {
             // User not found
             Message message = new Message(1, "Username or password is incorrect");
             return (T) message;
@@ -673,11 +673,13 @@ public class SimpleServer extends AbstractServer {
             else if (request.equals("login request")) {
                 System.out.println("*********INSIDE LOGIN REQUEST*********");
                 User userData = (User) message.getData();
+                System.out.println("Trying to log in to user: "+userData.toString());
                 Object result = getUser(User.class, userData.getUser_name(), userData.getPassword());
 
                 if (result instanceof User) {
                     message.setMessage("login request: Done");
                     User target = (User) result;
+                    System.out.println("Trying to log in to user: "+target.toString());
                     message.setData(target);
                 } else if (result instanceof Message) {
                     Message resultMessage = (Message) result;

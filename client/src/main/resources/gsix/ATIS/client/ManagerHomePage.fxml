@@ -4,6 +4,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 
+<?import javafx.scene.text.Font?>
 <AnchorPane prefHeight="384.0" prefWidth="599.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.manager.ManagerHomePageBoundary">
    <children>
       <Button fx:id="RequestedTask" layoutX="84.0" layoutY="69.0" mnemonicParsing="false" onAction="#ViewRequestedTasks" prefHeight="26.0" prefWidth="120.0" text="Requested Tasks" />
@@ -11,5 +12,9 @@
       <Button fx:id="viewMsges" layoutX="320.0" layoutY="69.0" mnemonicParsing="false" onAction="#ViewMessages" prefHeight="26.0" prefWidth="150.0" text="View Messages" />
       <Button fx:id="btnViewMembers" layoutX="319.0" layoutY="148.0" mnemonicParsing="false" onAction="#ViewCommunityMembers" text="View Community Members" />
       <Button fx:id="logOut" layoutX="85.0" layoutY="250.0" mnemonicParsing="false" onAction="#logOut" prefHeight="26.0" prefWidth="120.0" text="Log Out" />
+      <Button fx:id="SoS_Btn" layoutX="457.0" layoutY="224.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="135.0" prefWidth="137.0" text="SoS Call" textFill="RED">
+         <font>
+            <Font size="24.0" />
+         </font></Button>
    </children>
 </AnchorPane>

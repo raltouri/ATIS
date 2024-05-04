@@ -7,6 +7,7 @@ package gsix.ATIS.client.manager;
 import gsix.ATIS.client.SimpleClient;
 import gsix.ATIS.client.common.GuiCommon;
 import gsix.ATIS.client.common.MessageEvent;
+import gsix.ATIS.client.common.SosBoundary;
 import gsix.ATIS.client.login.LoginFrameBoundary;
 import gsix.ATIS.entities.Message;
 import gsix.ATIS.entities.Task;
@@ -26,6 +27,11 @@ import java.time.LocalDateTime;
 public class ManagerHomePageBoundary {
     private Stage stage;
     private User loggedInUser;
+
+    //  SOS
+    @FXML
+    private Button SoS_Btn;
+    //  SOS
 
     @FXML // fx:id="approvedRequests"
     private Button approvedRequests; // Value injected by FXMLLoader
@@ -50,6 +56,16 @@ public class ManagerHomePageBoundary {
     }
 
 
+    //  SOS
+    @FXML
+    void OpenSosCall(ActionEvent event) {
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+        GuiCommon guiCommon = GuiCommon.getInstance();
+        SosBoundary sosBoundary = (SosBoundary) guiCommon.displayNextScreen("SosWindow.fxml",
+                "SoS Call", stage, false);  // Example for opening new screen
+        sosBoundary.setRequester(loggedInUser);
+    }
+    //  SOS
     @FXML
     void ViewApprovedRequests(ActionEvent event) {
 
@@ -130,15 +146,5 @@ public class ManagerHomePageBoundary {
         }
     }
 
-
-    @FXML // This method is called by the FXMLLoader when initialization is complete
-    void initialize() {
-        assert RequestedTask != null : "fx:id=\"RequestedTask\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
-        assert approvedRequests != null : "fx:id=\"approvedRequests\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
-        assert btnViewMembers != null : "fx:id=\"btnViewReports\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
-        assert logOut != null : "fx:id=\"logOut\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
-        assert viewMsges != null : "fx:id=\"viewMsges\" was not injected: check your FXML file 'ManagerHomePage.fxml'.";
-
-    }
 
 }
