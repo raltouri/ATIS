@@ -21,8 +21,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 
 
+import gsix.ATIS.client.common.DeviceIdentifier;
 import gsix.ATIS.client.common.GuiCommon;
 import gsix.ATIS.client.common.MessageEvent;
+import gsix.ATIS.client.common.SosBoundary;
 import gsix.ATIS.client.manager.ManagerHomePageBoundary;
 import gsix.ATIS.client.user.UserHomePageBoundary;
 import gsix.ATIS.entities.Message;
@@ -68,6 +70,9 @@ public class LoginFrameBoundary implements Initializable{
     @FXML
     private Label msgArea;
 
+	@FXML
+	private Button SoS_Btn;
+  
     @FXML
     private Button loginButton;
     private String username;
@@ -78,13 +83,35 @@ public class LoginFrameBoundary implements Initializable{
 
 	@FXML
 	private ComboBox<String> roleComboBox;
-    ArrayList<String> userDetails = new ArrayList<String>();
-    
+
+
+	@FXML
+	void OpenSosCall(ActionEvent event) {
+		stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+		GuiCommon guiCommon = GuiCommon.getInstance();
+		SosBoundary sosBoundary = (SosBoundary) guiCommon.displayNextScreen("SosWindow.fxml",
+				"SoS Call", stage, false);  // Example for opening new screen
+		String macID = DeviceIdentifier.getMACAddress();
+		System.out.println("SOS Call button was clicked. Your device MAC Addess: "+macID);
+		User unKnown = new User(macID, "community user","MAC Addess", "MAC Addess"
+				, "MAC Addess", "MAC Addess", 0,0);
+		sosBoundary.setRequester(unKnown);
+	}
+
     @FXML 
 	public void Login( ActionEvent event) throws IOException {
 
 		stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+		// Set an event handler for the stage's close request
+		stage.setOnCloseRequest(e -> {
+			// Custom logic before the stage closes
+			System.out.println("Stage is closing. Unregistering from EventBus.");
 
+			// Unregister from EventBus to avoid memory leaks
+			if (EventBus.getDefault().isRegistered(this)) {
+				EventBus.getDefault().unregister(this);
+			}
+		});
 		username = UsernameField.getText();
     	password = PasswordField.getText();
     	if (username.trim().isEmpty()) {
@@ -109,7 +136,8 @@ public class LoginFrameBoundary implements Initializable{
 		Message loginMessage = event.getMessage();
 		if (event.getMessage().getMessage().equals("login request: Done")) {
 			User loggedInUser = (User) loginMessage.getData();
-			System.out.println("I am in handle tasks event before opening userHomepage");
+
+			System.out.println("I am in handle tasks event before opening ANY PAGE WHATSOEVER");
 			System.out.println("Selected Role is : "+selectedRole);
 			//check if user is manager or normal user
 			if(selectedRole.equals("Manager")){
@@ -130,11 +158,15 @@ public class LoginFrameBoundary implements Initializable{
 					//else it means manager is logging in as manager
 					Platform.runLater(() -> {
 						GuiCommon guiCommon = GuiCommon.getInstance();
+
 						System.out.println("Manager entering as Manager");
 						ManagerHomePageBoundary managerHomePageBoundary = (ManagerHomePageBoundary) guiCommon.
-								displayNextScreen("ManagerHomePage.fxml", "Manager Home Page", stage, true);
+								displayNextScreen("ManagerHomePage.fxml", "Manager Home Page", null, false);//reminder to return stage normal
 						managerHomePageBoundary.setLoggedInUser(loggedInUser);
+						stage.close();
+						EventBus.getDefault().unregister(this);
 					});
+
 				}
 
 			}
@@ -146,22 +178,23 @@ public class LoginFrameBoundary implements Initializable{
 					//GuiCommon.popUp(loggedInUser.toString());
 
 					GuiCommon guiCommon = GuiCommon.getInstance();
+
+					//user entering as a user
 					if (loggedInUser.getUser_type().equals("community user")) {
 						System.out.println("Community user entering");
 						UserHomePageBoundary userHomePageBoundary = (UserHomePageBoundary) guiCommon.displayNextScreen("UserHomePage.fxml",
-								"Community User Home Page", stage, true);  // Example for opening new screen
+								"Community User Home Page", null, false);  // Example for opening new screen
 						userHomePageBoundary.setLoggedInUser(loggedInUser);
-					} else if (loggedInUser.getUser_type().equals("manager") && selectedRole.equals("Manager")) {
-						System.out.println("Manager entering as Manager");
-						ManagerHomePageBoundary managerHomePageBoundary = (ManagerHomePageBoundary) guiCommon.
-								displayNextScreen("ManagerHomePage.fxml", "Manager Home Page", stage, true);
-						managerHomePageBoundary.setLoggedInUser(loggedInUser);
+						stage.close();
+						EventBus.getDefault().unregister(this);
 					}
 					else{
 						//this handles case where Manager is trying to enter as a user
 						UserHomePageBoundary userHomePageBoundary = (UserHomePageBoundary) guiCommon.displayNextScreen("UserHomePage.fxml",
-								"Community User Home Page", stage, true);  // Example for opening new screen
+								"Community User Home Page", null, false);  // Example for opening new screen
 						userHomePageBoundary.setLoggedInUser(loggedInUser);
+						stage.close();
+						EventBus.getDefault().unregister(this);
 					}
 
 				});
@@ -169,12 +202,23 @@ public class LoginFrameBoundary implements Initializable{
 
 
 
-	}
+		}
 		if (event.getMessage().getMessage().equals("login request: Failed")) {
 			String errMsg = (String) loginMessage.getData();
 			Platform.runLater(() -> {
 				msgArea.setText(errMsg);
 			});
+		}
+		if (event.getMessage().getMessage().equals("login request: User already logged in")){
+			//Show a pop up that tells user he is already logged in
+			Platform.runLater(() -> {
+				Alert alert = new Alert(Alert.AlertType.ERROR);
+				alert.setTitle("Log in Error");
+				alert.setHeaderText("Already Logged In");
+				alert.setContentText("You are already logged in, make sure to close prior windows to log in again");
+				alert.showAndWait();
+			});
+
 		}
 	}
     
@@ -190,19 +234,39 @@ public class LoginFrameBoundary implements Initializable{
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		ObservableList<String> roles = FXCollections.observableArrayList("User", "Manager");
+		roleComboBox.setItems(roles);
 
-
-		// Set default value and listen for changes
+		// Set default value
 		roleComboBox.setValue("User");
+
+		// Listener to update selectedRole when ComboBox value changes
 		roleComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-			selectedRole = newValue; // Update the selected role
+			selectedRole = newValue;
 			System.out.println("Selected role changed to: " + selectedRole);
 		});
+		selectedRole="User";
+
+		// Register with EventBus if not already registered
+		if (!EventBus.getDefault().isRegistered(this)) {
+			EventBus.getDefault().register(this);
+		}
 
 
 
-		EventBus.getDefault().register(this);
+//		// Set default value and listen for changes
+//		roleComboBox.setValue("User");
+//		roleComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+//			selectedRole = newValue; // Update the selected role
+//			System.out.println("Selected role changed to: " + selectedRole);
+//		});
+//		EventBus.getDefault().register(this);
 		
 	}
-    
+
+	public LoginFrameBoundary() {
+		selectedRole="User";
+
+	}
+
 }

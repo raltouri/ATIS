@@ -264,7 +264,7 @@ public class RequestedTasks {
             Platform.runLater(() -> {
                 GuiCommon guiCommon = GuiCommon.getInstance();
                 SendMessageToUser sendMessageToUser = (SendMessageToUser) guiCommon.displayNextScreen("SendMsgToUser.fxml",
-                        "Send Decline Message", stage, false);
+                        "Send Decline Message", null, false);//null was stage
                 sendMessageToUser.setRequesterID(requesterID);
                 sendMessageToUser.setLoggedInManager(loggedInManager);
                 sendMessageToUser.setTaskID(declinedTask.getTask_id());
@@ -275,20 +275,22 @@ public class RequestedTasks {
 
 
             //System.out.println("before calling delete task in handle");
-            System.out.println("before if statement, isDeclineMsgSent = "+isDeclineMsgSent);
-            //isDeclineMsgSent=true;
-            if(isDeclineMsgSent){ //call function to refresh list view and delete task from DB
-                // Assuming tasksList is the ObservableList backing the ListView
-                ObservableList<String> tasksList = requestedLV.getItems();
-                System.out.println("inside isDeclineMsgSent = True ");
-                // Remove the pending task from the data model
-                tasksList.remove(selectedTaskInfo);
-
-                // Refresh the ListView to reflect the changes
-                requestedLV.refresh();
-                deleteTask(declinedTask.getTask_id());
-
-            }
+            //System.out.println("before if statement, isDeclineMsgSent = "+isDeclineMsgSent);
+//            //isDeclineMsgSent=true;
+//            if(isDeclineMsgSent){ //call function to refresh list view and delete task from DB
+//                // Assuming tasksList is the ObservableList backing the ListView
+//                ObservableList<String> tasksList = requestedLV.getItems();
+//                System.out.println("inside isDeclineMsgSent = True ");
+//                // Remove the pending task from the data model
+//                tasksList.remove(selectedTaskInfo);
+//
+//                // Refresh the ListView to reflect the changes
+//                requestedLV.refresh();
+//                //Instead of deleting we are going to move it to a declined status
+//                //deleteTask(declinedTask.getTask_id());
+//                updateTaskStatus(declinedTask.getTask_id(),"Declined");
+//
+//            }
 
         }
 
