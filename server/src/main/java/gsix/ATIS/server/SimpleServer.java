@@ -276,29 +276,50 @@ public class SimpleServer extends AbstractServer {
         TypedQuery<T> query = session.createQuery(criteriaQuery);
         return query.getSingleResult();
     }
-    public static <T> T getUser(Class<T> object,String user_name, String password) {
 
+    public static <T> T getUser(Class<T> object, String user_name, String password) {
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
         Root<T> root = criteriaQuery.from(object);
+
         if (object.equals(User.class)) {
             Predicate condition1 = builder.equal(root.get("user_name"), user_name);
             Predicate condition2 = builder.equal(root.get("password"), password);
             Predicate finalCondition = builder.and(condition1, condition2);
             criteriaQuery.select(root).where(finalCondition);
         }
+
         TypedQuery<T> query = session.createQuery(criteriaQuery);
 
         try {
-            return query.getSingleResult();
+            T result = query.getSingleResult();
+            if (result instanceof User) {
+                User user = (User) result;
+                if (user.getLogged_in() == 1) { // User is already logged in
+                    Message message = new Message(2, "User already logged in");
+                    return (T) message;
+                } else { // User is not logged in, proceed with login
+                    // Set logged_in to 1 to indicate successful login
+                    user.setLogged_in(1);
+                    session.update(user);
+                    transaction.commit(); // Commit the update
+                    return (T) user;
+                }
+            }
         } catch (NoResultException e) {
             // User not found
-            String result = "Username or password is incorrect";
-            Message message = new Message(1,result);
-            return (T) message; // or throw a custom exception, or handle it according to your requirement
-            // casting to T cause the func must return , maybe needed to be checked
+            Message message = new Message(1, "Username or password is incorrect");
+            return (T) message;
         }
+
+        return null; // Fallback if needed
     }
+    public void logOut(User user){
+        user.setLogged_in(0);
+        session.update(user);
+        transaction.commit(); // Commit the update
+    }
+
 
     public static void updateTask(Task updatedTask) {
         session.update(updatedTask); // Update the task
@@ -316,6 +337,22 @@ public class SimpleServer extends AbstractServer {
         System.out.println("Task deleted successfully.");
     }
 
+    public static void addSos(SosRequest newSos) {
+        try {
+            System.out.println("in server doing SOS  Save");
+            System.out.println(newSos.toString());
+            session.save(newSos); // Add the SosCall
+            System.out.println("in server done SOS  Save");
+            transaction.commit();
+        } catch (Exception e1) {
+            if (transaction != null && transaction.isActive()) {
+                System.out.println("I am about to roll back3");
+                transaction.rollback();
+            }
+            System.out.println(e1.getMessage());
+
+        }
+    }
 
     public static void printTasksTest(List<Task> lst){
         for (Task task:lst){
@@ -329,6 +366,7 @@ public class SimpleServer extends AbstractServer {
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(Community.class);
         configuration.addAnnotatedClass(CommunityMessage.class);
+        configuration.addAnnotatedClass(SosRequest.class);
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties())
@@ -360,6 +398,26 @@ public class SimpleServer extends AbstractServer {
                 session.getSessionFactory().close();
             }
         }
+    }
+    public static <T> List<T> getUnfinishedTasks(Class<T> object, String userID) {
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
+        Root<T> rootEntry = criteriaQuery.from(object);
+        CriteriaQuery<T> allCriteriaQuery = criteriaQuery.select(rootEntry);
+
+        // Create predicates for the volunteer_id and status
+        Predicate volunteerPredicate = builder.equal(rootEntry.get("volunteer_id"), userID);
+        Predicate statusPredicate = builder.equal(rootEntry.get("status"), "in process");
+
+        // Combine predicates with "and" to create the final condition
+        Predicate combinedPredicate = builder.and(volunteerPredicate, statusPredicate);
+
+        allCriteriaQuery.where(combinedPredicate);
+
+        TypedQuery<T> allQuery = session.createQuery(allCriteriaQuery);
+        List<T> lst = allQuery.getResultList();
+        System.out.println("I am in getUnfinishedTasks" + lst);
+        return lst;
     }
 
     @Override
@@ -486,6 +544,16 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("get sent messages: Done");
                 client.sendToClient(message);
             }
+
+            else if(request.equals("get unfinished tasks")){ //Added by Ayal
+                System.out.println("inside SimpleServer get unfinished tasks");
+                String userId = (String) message.getData();
+                message.setData(getUnfinishedTasks((Task.class),userId));// Should change this back to getAllByCommunity , it works on getAll
+                System.out.println(message.getData());
+                message.setMessage("get unfinished tasks: Done");
+                client.sendToClient(message);
+            }
+
             else if(request.equals("get received messages")){ //Added by Ayal
                 System.out.println("inside SimpleServer get received messages ");
                 String userId = (String) message.getData();
@@ -583,25 +651,52 @@ public class SimpleServer extends AbstractServer {
                 client.sendToClient(message);
 
             }
+
+            else if (request.equals("open SoS request")) {
+
+                SosRequest sosRequest = (SosRequest) message.getData();
+                System.out.println("in server in SOS request command");
+                //Task taskToDelete = getEntityById(Task.class, taskID);
+                addSos(sosRequest);
+                //message.setData(taskID);
+                System.out.println("in server After SOS request save");
+                message.setMessage("open SoS request: Done");
+                client.sendToClient(message);
+            }
+
+            else if (request.equals("log out")) {
+
+                User user = (User) message.getData();
+                System.out.println("logging out");
+                logOut(user);
+
+            }
             else if (request.equals("login request")) {
-                System.out.println("*********INSIDE LOGING REQUEST*********");
+                System.out.println("*********INSIDE LOGIN REQUEST*********");
                 User userData = (User) message.getData();
-                Object result = getUser(User.class,userData.getUser_name(),userData.getPassword());
-                if(result instanceof User){
+                Object result = getUser(User.class, userData.getUser_name(), userData.getPassword());
+
+                if (result instanceof User) {
                     message.setMessage("login request: Done");
                     User target = (User) result;
                     message.setData(target);
+                } else if (result instanceof Message) {
+                    Message resultMessage = (Message) result;
+                    if (resultMessage.getMessage().equals("User already logged in")) {
+                        message.setMessage("login request: User already logged in");
+                        message.setData(resultMessage);
+                    } else {
+                        message.setMessage("login request: Failed");
+                        String errMsg = "Username or password is incorrect";
+                        message.setData(errMsg);
+                    }
                 }
-                //User target = getUser(User.class,userData.getUser_name(),userData.getPassword());
-                else /*if(result instanceof Message)*/{
-                    message.setMessage("login request: Failed");
-                    Message errMsgg = (Message) result;
-                    //String errMsg = errMsgg.getMessage();
-                    String errMsg ="Username or password is incorrect";
-                    message.setData(errMsg);
-                }
+
                 client.sendToClient(message);
-            }else if (request.equals("open request")) {
+            }
+
+
+            else if (request.equals("open request")) {
 
                 Task newTask = (Task) message.getData();
                 System.out.println(newTask.toString());
@@ -778,6 +873,11 @@ public class SimpleServer extends AbstractServer {
             }
             if(newStatus.equals("Pending")){
                 task.setStatus(TaskStatus.Pending);
+            }
+            if(newStatus.equals("in process")){
+                task.setStatus(TaskStatus.inProcess);
+            }if(newStatus.equals("Declined")){
+                task.setStatus(TaskStatus.Declined);
             }
 
             // Commit the transaction

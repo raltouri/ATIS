@@ -102,11 +102,12 @@ public class SendMessageToUser {
         }
         String managerID = loggedInManager.getUser_id();
         CommunityMessageController.send(managerID,requesterID,msg);
-        //need code to delete
+        //need code to change status to decline
 
 
-        //send task ID to server to delete it from server
-        Message message2 = new Message(1, LocalDateTime.now(), "delete requested task",taskID);
+        //send task ID to server to update status to declined
+        String message=taskID+","+"Declined";
+        Message message2 = new Message(1, LocalDateTime.now(), "update task status",message);
         System.out.println("Community Message Controller : sending the message");
         try {
             SimpleClient.getClient("",0).sendToServer(message2);
