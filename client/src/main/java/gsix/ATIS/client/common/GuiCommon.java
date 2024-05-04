@@ -31,8 +31,10 @@ public class GuiCommon {//singleton
 	 *                 returns The controller of screen
 	 */
 	public Object displayNextScreen(String fxmlName,String title,Stage stage, boolean hide) {
-		if(hide)
+		if(hide) {
 			stage.close();
+			stage=null;
+		}
 			//stage.hide(); //hiding primary window
 		System.out.println("Target window path:  "+fxmlName);
 

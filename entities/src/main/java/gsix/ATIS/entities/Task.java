@@ -47,6 +47,12 @@ public class Task implements Serializable {
         }else if(taskStatus == TaskStatus.Done){
             this.status = "Done";
         }
+        else if(taskStatus == TaskStatus.Declined){
+            this.status = "Declined";
+        }
+        else if(taskStatus == TaskStatus.inProcess){
+            this.status = "in process";
+        }
     }
 
     public Task(String requester_id, String volunteer_id, String requested_operation, LocalDateTime time, TaskStatus taskStatus) {
@@ -61,6 +67,11 @@ public class Task implements Serializable {
             this.status = "Pending";
         }else if(taskStatus == TaskStatus.Done){
             this.status = "Done";
+        }else if(taskStatus == TaskStatus.Declined){
+            this.status = "Declined";
+        }
+        else if(taskStatus == TaskStatus.inProcess){
+            this.status = "in process";
         }
     }
 
@@ -77,6 +88,12 @@ public class Task implements Serializable {
             this.status = "Pending";
         }else if(taskStatus == TaskStatus.Done){
             this.status = "Done";
+        }
+        else if(taskStatus == TaskStatus.Declined){
+            this.status = "Declined";
+        }
+        else if(taskStatus == TaskStatus.inProcess){
+            this.status = "in process";
         }
     }
 
@@ -138,6 +155,12 @@ public class Task implements Serializable {
             this.status = "Pending";
         }else if(taskStatus == TaskStatus.Done){
             this.status = "Done";
+        }
+        else if(taskStatus == TaskStatus.Declined){
+            this.status = "Declined";
+        }
+        else if(taskStatus == TaskStatus.inProcess){
+            this.status = "in process";
         }
     }
     @Override
