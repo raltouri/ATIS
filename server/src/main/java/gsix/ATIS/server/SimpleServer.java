@@ -610,7 +610,7 @@ public class SimpleServer extends AbstractServer {
                 System.out.println("in server After SOS request save");
                 message.setMessage("open SoS request: Done");
                 client.sendToClient(message);
-
+            }
             else if (request.equals("log out")) {
 
                 User user = (User) message.getData();
