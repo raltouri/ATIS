@@ -6,20 +6,34 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.user.MyTasksPage">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="602.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.user.MyTasksPage">
    <children>
-      <ListView fx:id="requested_LV" layoutX="67.0" layoutY="100.0" prefHeight="200.0" prefWidth="200.0" />
-      <ListView fx:id="Volunteered_LV" layoutX="306.0" layoutY="100.0" prefHeight="200.0" prefWidth="200.0" />
-      <Label layoutX="108.0" layoutY="66.0" prefHeight="17.0" prefWidth="101.0" text="   Requested Tasks" textAlignment="CENTER" />
-      <Label layoutX="348.0" layoutY="66.0" prefHeight="17.0" prefWidth="129.0" text="Volunteered Tasks" />
-      <Label layoutX="221.0" layoutY="30.0" prefHeight="36.0" prefWidth="138.0" text="My Tasks Page">
+      <ListView fx:id="requested_LV" layoutX="16.0" layoutY="100.0" prefHeight="200.0" prefWidth="282.0" />
+      <ListView fx:id="Volunteered_LV" layoutX="307.0" layoutY="100.0" prefHeight="200.0" prefWidth="282.0" />
+      <Label layoutX="63.0" layoutY="73.0" prefHeight="22.0" prefWidth="146.0" text="   Requested Tasks :" textAlignment="CENTER">
          <font>
-            <Font size="18.0" />
+            <Font name="System Bold" size="15.0" />
+         </font></Label>
+      <Label layoutX="375.0" layoutY="73.0" prefHeight="22.0" prefWidth="146.0" text="Volunteered Tasks :">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font></Label>
+      <Label layoutX="211.0" layoutY="22.0" prefHeight="36.0" prefWidth="179.0" text="My Tasks Page">
+         <font>
+            <Font name="System Bold" size="25.0" />
          </font>
       </Label>
-      <Button fx:id="back_Btn" layoutX="241.0" layoutY="318.0" mnemonicParsing="false" onAction="#goBack" prefHeight="49.0" prefWidth="83.0" text="Back" />
-      <Button fx:id="requested_Btn" layoutX="71.0" layoutY="317.0" mnemonicParsing="false" onAction="#showRequestedTasks" prefHeight="49.0" prefWidth="146.0" text="Show Requested Tasks" />
-      <Button fx:id="volunteered_Btn" layoutX="348.0" layoutY="317.0" mnemonicParsing="false" onAction="#ShowVolunteeredTasks" prefHeight="49.0" prefWidth="157.0" text="Show Volunteered Tasks" />
+      <Button fx:id="back_Btn" layoutX="258.0" layoutY="317.0" mnemonicParsing="false" onAction="#goBack" prefHeight="49.0" prefWidth="83.0" text="Back">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="requested_Btn" layoutX="71.0" layoutY="317.0" mnemonicParsing="false" onAction="#showRequestedTasks" prefHeight="49.0" prefWidth="146.0" text="Show Requested Tasks">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="volunteered_Btn" layoutX="369.0" layoutY="317.0" mnemonicParsing="false" onAction="#ShowVolunteeredTasks" prefHeight="49.0" prefWidth="157.0" text="Show Volunteered Tasks">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font></Button>
    </children>
 </AnchorPane>

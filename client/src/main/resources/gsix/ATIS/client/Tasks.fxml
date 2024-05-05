@@ -20,9 +20,9 @@
             <Font size="14.0" />
          </font>
       </Button>
-      <Label layoutX="170.0" layoutY="14.0" text="Tasks">
+      <Label layoutX="159.0" layoutY="14.0" prefHeight="30.0" prefWidth="65.0" text="Tasks:">
          <font>
-            <Font size="18.0" />
+            <Font name="System Bold" size="20.0" />
          </font>
       </Label>
    </children>
