@@ -20,7 +20,11 @@
       <Pane layoutX="52.0" layoutY="70.0" prefHeight="244.0" prefWidth="429.0">
          <children>
             <Button fx:id="RequestedTask" layoutX="14.0" layoutY="23.0" mnemonicParsing="false" onAction="#ViewRequestedTasks" prefHeight="34.0" prefWidth="160.0" text="Requested Tasks" />
-            <Button fx:id="btnSOSReports" layoutX="14.0" layoutY="88.0" mnemonicParsing="false" onAction="#ViewSOSReports" prefHeight="34.0" prefWidth="160.0" text="View SOS Reports" />
+            <Button fx:id="btnSOSReports" layoutX="14.0" layoutY="88.0" mnemonicParsing="false" onAction="#ViewSOSReports" prefHeight="34.0" prefWidth="160.0" text="View SOS Reports" textFill="#f2092c">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Button>
             <Button fx:id="viewMsges" layoutX="236.0" layoutY="23.0" mnemonicParsing="false" onAction="#ViewMessages" prefHeight="34.0" prefWidth="160.0" text="View Messages" />
             <Button fx:id="btnViewMembers" layoutX="236.0" layoutY="88.0" mnemonicParsing="false" onAction="#ViewCommunityMembers" prefHeight="34.0" prefWidth="160.0" text="View Community Members" />
             <Button fx:id="logOut" layoutX="14.0" layoutY="196.0" mnemonicParsing="false" onAction="#logOut" prefHeight="34.0" prefWidth="130.0" text="Log Out" />
