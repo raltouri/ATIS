@@ -40,19 +40,19 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <Button fx:id="save_Btn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#saveBtnClicked" prefHeight="35.0" prefWidth="100.0" text="Save" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
-                        <Button fx:id="back_Btn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#backBtnClicked" prefHeight="35.0" prefWidth="100.0" text="Back" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
+                        <Button fx:id="save_Btn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#saveBtnClicked" prefHeight="35.0" prefWidth="100.0" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
+                        <Button fx:id="back_Btn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#backBtnClicked" prefHeight="35.0" prefWidth="100.0" text="Back" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
                         <Label text="Task ID" visible="false" />
-                        <Label text="Requested Operation" GridPane.rowIndex="1" />
-                        <Label text="Status" GridPane.rowIndex="2" />
-                        <Label text="Requester ID" GridPane.rowIndex="3" />
-                        <Label text="Volunteer ID" GridPane.rowIndex="4" />
+                        <Label text="Requested Operation :" GridPane.rowIndex="1" />
+                        <Label text="Status :" GridPane.rowIndex="2" />
+                        <Label text="Requester ID :" GridPane.rowIndex="3" />
+                        <Label text="Volunteer ID :" GridPane.rowIndex="4" />
                         <Label text="Time" visible="false" GridPane.rowIndex="5" />
                         <Label fx:id="task_id_Lbl" text="Label" visible="false" GridPane.columnIndex="1" />
                         <Label fx:id="requster_id_Lbl" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <Label fx:id="volunteer_id_Lbl" text="No One Yet" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                         <Label fx:id="time_Lbl" text="Label" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                  <TextField fx:id="requested_op_TxtFld" promptText="Type here" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField fx:id="requested_op_TxtFld" prefHeight="26.0" prefWidth="20.0" promptText="Type here" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Label fx:id="status_Lbl" text="status" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                     </children>
                     <padding>

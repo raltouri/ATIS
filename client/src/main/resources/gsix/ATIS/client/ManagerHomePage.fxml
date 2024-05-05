@@ -8,7 +8,7 @@
 
 <AnchorPane prefHeight="384.0" prefWidth="599.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.manager.ManagerHomePageBoundary">
    <children>
-      <Button fx:id="SoS_Btn" layoutX="431.0" layoutY="232.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="118.0" prefWidth="130.0" text="SoS Call" textFill="RED">
+      <Button fx:id="SoS_Btn" layoutX="431.0" layoutY="232.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="118.0" prefWidth="130.0" text="SOS Call" textFill="RED">
          <font>
             <Font name="System Bold" size="24.0" />
          </font></Button>
