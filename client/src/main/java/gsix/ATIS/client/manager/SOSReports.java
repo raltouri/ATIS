@@ -1,11 +1,13 @@
 package gsix.ATIS.client.manager;
 
+import gsix.ATIS.entities.User;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.BarChart;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
 
 import java.net.URL;
@@ -28,6 +30,14 @@ public class SOSReports implements Initializable {
     private DatePicker startDate; // Value injected by FXMLLoader
 
     private final String[] pickCommunity = {"My Community", "All Communities"};
+
+    private Stage stage;
+
+    private User loggedInManager = null;
+
+    public void setLoggedInUser(User loggedInManager) {
+        this.loggedInManager = loggedInManager;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

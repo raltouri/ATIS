@@ -68,7 +68,12 @@ public class ManagerHomePageBoundary {
     //  SOS
     @FXML
     void ViewSOSReports(ActionEvent event) {
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+        GuiCommon guiCommon = GuiCommon.getInstance();
+        SOSReports sosReports = (SOSReports) guiCommon.displayNextScreen
+                ("SOSReports.fxml", "SOS Reports", stage, true);  // Example for opening new screen
 
+        sosReports.setLoggedInUser(loggedInUser);
     }
 
     @FXML
