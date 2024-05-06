@@ -1,7 +1,12 @@
 package gsix.ATIS.client.manager;
 
+import gsix.ATIS.client.TasksController;
 import gsix.ATIS.client.common.GuiCommon;
+import gsix.ATIS.client.common.MessageEvent;
+import gsix.ATIS.entities.Message;
+import gsix.ATIS.entities.Task;
 import gsix.ATIS.entities.User;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -13,13 +18,14 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class SOSReports implements Initializable {
+public class SOSReports /*implements Initializable*/ {
 
     @FXML // fx:id="btnBack"
     private Button btnBack; // Value injected by FXMLLoader
@@ -54,9 +60,29 @@ public class SOSReports implements Initializable {
         managerHomePageBoundary.setLoggedInUser(loggedInManager);
     }
 
-    @Override
+    /*@Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        comboBoxCommunity.getItems().addAll(pickCommunity);
+
+    }*/
+
+
+    @Subscribe
+    public void handleTasksEvent(MessageEvent event){
+        Message handledMessage=event.getMessage();
+        if(event.getMessage().getMessage().equals("get volunteered tasks: Done")){
+           /* List<Task> communityTasks=(List<Task>) event.getMessage().getData();
+            //System.out.println("I am handling the tasks for community being brought back from eventbus in Volunteer class");
+            List<String> tasks_info = TasksController.getTasksInfo(communityTasks);
+            //System.out.println(tasks_info);
+            // Update ListView with received tasks
+            Platform.runLater(() -> {
+                requestedLV.getItems().clear(); // Clear existing items
+                ObservableList<String> observableTasks = FXCollections.observableArrayList(tasks_info);
+                requestedLV.setItems(observableTasks); // Add received tasks
+            });*/
+
+        }
+
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -67,6 +93,7 @@ public class SOSReports implements Initializable {
         assert endDate != null : "fx:id=\"endDate\" was not injected: check your FXML file 'SOSReports.fxml'.";
         assert startDate != null : "fx:id=\"startDate\" was not injected: check your FXML file 'SOSReports.fxml'.";
 
+        comboBoxCommunity.getItems().addAll(pickCommunity);
 
         // Register with EventBus
         if (!EventBus.getDefault().isRegistered(this)) {
