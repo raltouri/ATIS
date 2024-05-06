@@ -54,17 +54,14 @@ public class MemberVolunteeredTasks {
     public void setCommunityMember(User communityMember) {
         this.communityMember = communityMember;
         getVolunteeredTasks(communityMember.getUser_id());
-        if(volunteeredLV.getItems().isEmpty()){
-            showNoTasksToViewAlert();
-        }
     }
 
     private void showNoTasksToViewAlert() {
         // Handle the case when no task is selected
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Select a task");
+        alert.setTitle("No Available Tasks");
         alert.setHeaderText(null);
-        alert.setContentText("You need to select a task");
+        alert.setContentText("There Are No Tasks To View");
 
         // Show the alert dialog
         alert.showAndWait();
@@ -104,11 +101,15 @@ public class MemberVolunteeredTasks {
                 ObservableList<String> observableTasks = FXCollections.observableArrayList(tasks_info);
                 requestedLV.setItems(observableTasks); // Add received tasks
             });*/
-            Platform.runLater(() -> {
-                memberVolunteeredTasksArrayList = (ArrayList<Task>) event.getMessage().getData();
-                memberVolunteeredTasksInfoString = (ArrayList<String>) TasksController.getTasksInfo(memberVolunteeredTasksArrayList);
-                volunteeredLV.getItems().addAll(memberVolunteeredTasksInfoString);
-            });
+            memberVolunteeredTasksArrayList = (ArrayList<Task>) event.getMessage().getData();
+            if(!memberVolunteeredTasksArrayList.isEmpty()){
+                Platform.runLater(() -> {
+                    memberVolunteeredTasksInfoString = (ArrayList<String>) TasksController.getTasksInfo(memberVolunteeredTasksArrayList);
+                    volunteeredLV.getItems().addAll(memberVolunteeredTasksInfoString);
+                });
+            }else{
+                Platform.runLater(this::showNoTasksToViewAlert);
+            }
 
         }
 

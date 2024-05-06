@@ -18,7 +18,7 @@
             <Font name="System Bold" size="30.0" />
          </font>
       </Label>
-      <Button fx:id="SoS_Btn" layoutX="441.0" layoutY="237.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="135.0" prefWidth="137.0" text="SoS Call" textFill="RED">
+      <Button fx:id="SoS_Btn" layoutX="441.0" layoutY="237.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="135.0" prefWidth="137.0" text="SOS Call" textFill="RED">
          <font>
             <Font name="System Bold" size="22.0" />
          </font></Button>
