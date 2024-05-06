@@ -52,17 +52,14 @@ public class MemberOpenedTasks {
     public void setCommunityMember(User communityMember) {
         this.communityMember = communityMember;
         getRequestedTasks(communityMember.getUser_id());
-        if(openedLV.getItems().isEmpty()){
-            showNoTasksToViewAlert();
-        }
     }
 
     private void showNoTasksToViewAlert() {
         // Handle the case when no task is selected
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Select a task");
+        alert.setTitle("No Available Tasks");
         alert.setHeaderText(null);
-        alert.setContentText("You need to select a task");
+        alert.setContentText("There Are No Tasks To View");
 
         // Show the alert dialog
         alert.showAndWait();
@@ -115,11 +112,15 @@ public class MemberOpenedTasks {
                 //System.out.println(declinedTask.getTask_id());
 
             });*/
-            Platform.runLater(() -> {
-                memberOpenedTasksArrayList = (ArrayList<Task>) event.getMessage().getData();
-                memberOpenedTasksInfoString = (ArrayList<String>) getOpenedTasksInfo(memberOpenedTasksArrayList);
-                openedLV.getItems().addAll(memberOpenedTasksInfoString);
-            });
+            memberOpenedTasksArrayList = (ArrayList<Task>) event.getMessage().getData();
+            if(!memberOpenedTasksArrayList.isEmpty()){
+                Platform.runLater(() -> {
+                    memberOpenedTasksInfoString = (ArrayList<String>) getOpenedTasksInfo(memberOpenedTasksArrayList);
+                    openedLV.getItems().addAll(memberOpenedTasksInfoString);
+                });
+            }else{
+                Platform.runLater(this::showNoTasksToViewAlert);
+            }
 
         }
     }
