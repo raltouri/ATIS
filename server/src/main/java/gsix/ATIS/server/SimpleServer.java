@@ -7,11 +7,10 @@ import gsix.ATIS.server.ocsf.SubscribedClient;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.util.*;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.persistence.TypedQuery;
@@ -81,6 +80,48 @@ public class SimpleServer extends AbstractServer {
         Task task = session.get(Task.class, taskId);
         return task != null;
     }
+
+    // Fetch SOS requests between start and end date
+    public static List<SosRequest> getSosRequestsBetween(LocalDate startDate, LocalDate endDate) {
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<SosRequest> criteriaQuery = builder.createQuery(SosRequest.class);
+        Root<SosRequest> sosRoot = criteriaQuery.from(SosRequest.class);
+        System.out.println("INSIDE getSosRequests database code");
+        LocalDateTime startDateTime = startDate.atStartOfDay(); // Get the start of the day
+        LocalDateTime endDateTime = endDate.plusDays(1).atStartOfDay().minusSeconds(1); // Get the end of the day
+
+        Predicate betweenPredicate = builder.between(
+                sosRoot.get("time"),
+                startDateTime,
+                endDateTime
+        );
+
+        criteriaQuery.where(betweenPredicate);
+        return session.createQuery(criteriaQuery).getResultList();
+    }
+    public List<SosRequest> getSosRequestsForCommunityBetween(int communityId, LocalDate startDate, LocalDate endDate) {
+        List<SosRequest> allSosRequests = getSosRequestsBetween(startDate, endDate);
+        List<User> allUsers = getAll(User.class);
+
+        // Create a map to easily get the community ID for each requester
+        Map<String, Integer> requesterToCommunity = allUsers.stream()
+                .collect(Collectors.toMap(User::getUser_id, User::getCommunityId));
+
+        // Filter the SOS requests to get only those for the specified community
+        List<SosRequest> filteredSosRequests = allSosRequests.stream()
+                .filter(sosRequest -> {
+                    Integer community = requesterToCommunity.get(sosRequest.getRequester_id());
+                    return community != null && community == communityId;
+                })
+                .collect(Collectors.toList());
+        System.out.println("Community id is: "+communityId);
+        System.out.println(filteredSosRequests);
+        //it returns the filtered Requests
+        return filteredSosRequests;
+    }
+
+
+
     public static List<Task> getAllSystemPendingTasks() {
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Task> criteriaQuery = builder.createQuery(Task.class);
@@ -460,6 +501,33 @@ public class SimpleServer extends AbstractServer {
                 //sendToAllClients(message);
 
             }
+            else if (message.getMessage().equals("get sos requests for all communities between dates")) {
+                LocalDate[] dates = (LocalDate[]) message.getData(); // Extract the date array
+                LocalDate start = dates[0];
+                LocalDate end = dates[1];
+
+                List<SosRequest> sosRequests = getSosRequestsBetween(start, end);
+                System.out.println(sosRequests);
+
+                // Send the retrieved SOS data back to the client
+                message.setData(sosRequests);
+                message.setMessage("SOS data retrieval for all communities: Done");
+                client.sendToClient(message);
+            }
+            else if (message.getMessage().equals("get sos requests for community between dates")) {
+                // Extract data from the message
+                Object[] data = (Object[]) message.getData();
+                int communityId = (int) data[0];
+                LocalDate start = (LocalDate) data[1];
+                LocalDate end = (LocalDate) data[2];
+// Get SOS requests for the specified community and date range
+                List<SosRequest> sosRequests = getSosRequestsForCommunityBetween(communityId, start, end);
+
+                // Set the data and send it back to the client
+                message.setData(sosRequests);
+                message.setMessage("SOS data retrieval for community: Done");
+                client.sendToClient(message);
+            }
             else if(request.equals("get tasks for community")){ //Added by Ayal
                 System.out.println("inside SimpleServer get task for community");
                 String userId = (String) message.getData();
@@ -740,6 +808,8 @@ public class SimpleServer extends AbstractServer {
         }
     }
 
+
+
     private void saveMessage(String senderID,String receiverID, String messageContent) {
 
         // Check if the session is available and open
@@ -906,14 +976,14 @@ public class SimpleServer extends AbstractServer {
 
 
     public void sendToAllClients(Message message) {
-        System.out.println("send to all clients before try**************************");
+        //System.out.println("send to all clients before try**************************");
         if(subscribersList == null){
             System.out.println("no clients online");
             return;
         }
         try {
             for (SubscribedClient SubscribedClient : subscribersList) {
-                System.out.println("send to all clients inside for loop **************************");
+                //System.out.println("send to all clients inside for loop **************************");
                 SubscribedClient.getClient().sendToClient(message);
             }
         } catch (IOException e1) {
@@ -956,7 +1026,11 @@ public class SimpleServer extends AbstractServer {
                     .filter(task -> {
                         LocalDateTime taskTime = task.getTime();
                         long secondsDifference = Duration.between(taskTime, now).getSeconds();
-                        return secondsDifference > 10;
+                        /**
+                         * return secondsDifference % 2*60*60 == 0, to get overdue tasks once every 2 hours and so on...
+                         * return secondsDifference % 10 == 0, to get overdue tasks once every 10 seconds for test purposes.
+                         **/
+                        return secondsDifference % 24*60*60 == 0; // gets task if overdue once every 24 hours
                     })
                     .collect(Collectors.toList());
 

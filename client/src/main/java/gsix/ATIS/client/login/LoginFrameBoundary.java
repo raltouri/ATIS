@@ -2,12 +2,14 @@ package gsix.ATIS.client.login;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 /*import client.CEMSClient;
 import client.ClientUI;
 import control_common.LoginController;*/
+import gsix.ATIS.client.SimpleClient;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 
@@ -65,7 +67,7 @@ public class LoginFrameBoundary implements Initializable{
     private TextField UsernameField;
 
     @FXML
-    private TextField PasswordField;
+	private PasswordField PasswordField;
     
     @FXML
     private Label msgArea;
@@ -153,6 +155,14 @@ public class LoginFrameBoundary implements Initializable{
 						alert.setContentText("You do not have the correct permissions to access the manager's area.");
 						alert.showAndWait();
 					});
+					//ask server to change logged_in in database back to 0 since he is logging out
+					Message message = new Message(1, LocalDateTime.now(), "log out",loggedInUser);
+					//System.out.println("task id="+taskId+"new status=");
+					try {
+						SimpleClient.getClient("",0).sendToServer(message);
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
 				}
 				else {
 					//else it means manager is logging in as manager

@@ -33,8 +33,8 @@ public class ManagerHomePageBoundary {
     private Button SoS_Btn;
     //  SOS
 
-    @FXML // fx:id="approvedRequests"
-    private Button approvedRequests; // Value injected by FXMLLoader
+    @FXML // fx:id="btnSOSReports"
+    private Button btnSOSReports; // Value injected by FXMLLoader
 
     @FXML // fx:id="msgToUser"
     private Button msgToUser; // Value injected by FXMLLoader
@@ -67,8 +67,13 @@ public class ManagerHomePageBoundary {
     }
     //  SOS
     @FXML
-    void ViewApprovedRequests(ActionEvent event) {
+    void ViewSOSReports(ActionEvent event) {
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+        GuiCommon guiCommon = GuiCommon.getInstance();
+        SOSReports sosReports = (SOSReports) guiCommon.displayNextScreen
+                ("SOSReports.fxml", "SOS Reports", stage, true);  // Example for opening new screen
 
+        sosReports.setLoggedInUser(loggedInUser);
     }
 
     @FXML

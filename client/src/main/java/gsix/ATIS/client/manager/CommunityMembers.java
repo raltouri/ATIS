@@ -74,13 +74,15 @@ public class CommunityMembers {
 
         //get selected line and get the user from it then pass it over
         String selectedItem = membersLV.getSelectionModel().getSelectedItem();
-        if(selectedItem == null){
-            showNoSelectedItemMessage();
-            return;
+        if(selectedItem != null){
+            String memberID = extractUserId(selectedItem);
+            flag = "opened";
+            getUserByID(memberID);
+            //return;
         }
-        String memberID = extractUserId(selectedItem);
-        flag = "opened";
-        getUserByID(memberID);
+        else{
+            showNoSelectedItemMessage();
+        }
     }
 
     private void getUserByID(String memberID) {
@@ -103,17 +105,17 @@ public class CommunityMembers {
 
         //get selected line and get the user from it then pass it over
         String selectedItem = membersLV.getSelectionModel().getSelectedItem();
-        if(selectedItem == null){
+        if(selectedItem != null){
+            String memberID = extractUserId(selectedItem);
+            flag = "volunteered";
+            getUserByID(memberID);
+            //return;
+        }
+        else{
             showNoSelectedItemMessage();
-            return;
         }
-        String memberID = extractUserId(selectedItem);
-        flag = "volunteered";
-        getUserByID(memberID);
-    /*    if(selectedMember == null){
-            System.out.println("user of "+memberID+" is null");
-            return;
-        }
+    /*
+        System.out.println("user of "+memberID+" is null")
         System.out.println("after ExtractUserID Id = "+memberID);
         System.out.println(selectedMember);*/
     }
@@ -143,10 +145,15 @@ public class CommunityMembers {
     @Subscribe
     public void handleTasksEvent(MessageEvent event){
         Message handledMessage=event.getMessage();
-        if(event.getMessage().getMessage().equals("get all community users: Done")){
+        if(event.getMessage().getMessage().equals("get all community users: Done")) {
             membersArrayList = (ArrayList<User>) event.getMessage().getData();
-            membersInfoString = getUsersInfoString(membersArrayList);
-            membersLV.getItems().addAll(membersInfoString);
+            if (!membersArrayList.isEmpty()){
+                Platform.runLater(() -> {
+                    membersInfoString = getUsersInfoString(membersArrayList);
+                    membersLV.getItems().addAll(membersInfoString);
+                });
+            }
+
             //System.out.println("I am handling the tasks for community being brought back from eventbus in Volunteer class");
             //List<String> tasks_info = TasksController.getTasksInfo(communityTasks);
             //System.out.println(tasks_info);
