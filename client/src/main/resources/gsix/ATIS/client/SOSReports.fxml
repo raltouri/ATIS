@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.manager.SOSReports">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="632.0" prefWidth="651.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.manager.SOSReports">
    <children>
       <Label layoutX="223.0" layoutY="14.0" text="SOS Reports">
          <font>
@@ -35,7 +35,7 @@
          </font>
       </Text>
       <DatePicker fx:id="endDate" editable="false" layoutX="422.0" layoutY="119.0" promptText="End Date" />
-      <BarChart fx:id="barChart" layoutX="28.0" layoutY="161.0" prefHeight="391.0" prefWidth="565.0">
+      <BarChart fx:id="barChart" layoutX="24.0" layoutY="161.0" prefHeight="398.0" prefWidth="582.0">
         <xAxis>
           <CategoryAxis side="BOTTOM" />
         </xAxis>
@@ -44,7 +44,7 @@
         </yAxis>
       </BarChart>
       <ComboBox fx:id="comboBoxCommunity" layoutX="356.0" layoutY="74.0" prefHeight="26.0" prefWidth="139.0" promptText="Pick Community" />
-      <Button fx:id="btnBack" layoutX="270.0" layoutY="548.0" mnemonicParsing="false" onAction="#backToManagerHomePage" prefHeight="38.0" prefWidth="86.0" text="Back">
+      <Button fx:id="btnBack" layoutX="282.0" layoutY="559.0" mnemonicParsing="false" onAction="#backToManagerHomePage" prefHeight="38.0" prefWidth="86.0" text="Back">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
