@@ -11,8 +11,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane prefHeight="609.0" prefWidth="635.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.manager.SOSReports">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.manager.SOSReports">
    <children>
       <Label layoutX="223.0" layoutY="14.0" text="SOS Reports">
          <font>
@@ -50,5 +49,6 @@
             <Font name="System Bold" size="12.0" />
          </font>
       </Button>
+      <Button fx:id="show_Btn" layoutX="500.0" layoutY="75.0" mnemonicParsing="false" onAction="#onGenerateReport" text="Show  Reports" />
    </children>
 </AnchorPane>

@@ -1,23 +1,29 @@
 package gsix.ATIS.client.manager;
 
+import gsix.ATIS.client.SimpleClient;
 import gsix.ATIS.client.common.GuiCommon;
+import gsix.ATIS.client.common.MessageEvent;
+import gsix.ATIS.entities.CommunityMessage;
+import gsix.ATIS.entities.Message;
+import gsix.ATIS.entities.SosRequest;
 import gsix.ATIS.entities.User;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
+import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class SOSReports implements Initializable {
 
@@ -25,7 +31,7 @@ public class SOSReports implements Initializable {
     private Button btnBack; // Value injected by FXMLLoader
 
     @FXML // fx:id="barChart"
-    private BarChart<?, ?> barChart; // Value injected by FXMLLoader
+    private BarChart<String, Number> barChart; // Value injected by FXMLLoader
 
     @FXML // fx:id="checkBoxCommunity"
     private ComboBox<String> comboBoxCommunity; // Value injected by FXMLLoader
@@ -41,6 +47,73 @@ public class SOSReports implements Initializable {
     private Stage stage;
 
     private User loggedInManager = null;
+    @FXML
+    private Button show_Btn;
+
+    @FXML
+    private void onGenerateReport() {
+        LocalDate start = startDate.getValue();
+        LocalDate end = endDate.getValue();
+        LocalDate today = LocalDate.now(); // Get today's date
+
+        // Validate dates
+        if (start == null || end == null) {
+            showInvalidDateAlert("Please select both start and end dates.");
+            return;
+        }
+
+        if (start.isAfter(end)) {
+            showInvalidDateAlert("Start date cannot be after end date.");
+            return;
+        }
+        // Check if start date is in the future
+        if (start.isAfter(today)) {
+            showInvalidDateAlert("Start date cannot be in the future.");
+            return;
+        }
+
+        // Check if end date is in the future
+        if (end.isAfter(today)) {
+            showInvalidDateAlert("End date cannot be in the future.");
+            return;
+        }
+        String selectedCommunity = comboBoxCommunity.getValue();
+
+        Message message;
+
+        if ("My Community".equals(selectedCommunity)) {
+            // Fetch reports only for the manager's community
+            message = new Message(
+                    1,
+                    LocalDateTime.now(),
+                    "get sos requests for community between dates",
+                    new Object[]{loggedInManager.getCommunityId(), start, end}
+            );
+        } else {
+            // Fetch reports for all communities
+            message = new Message(
+                    1,
+                    LocalDateTime.now(),
+                    "get sos requests for all communities between dates",
+                    new LocalDate[]{start, end}
+            );
+        }
+
+        try {
+            SimpleClient.getClient("", 0).sendToServer(message);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    // Function to show an alert for invalid date selections
+    private void showInvalidDateAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Invalid Date Selection");
+        alert.setHeaderText("Incorrect Dates");
+        alert.setContentText(message);
+
+        alert.showAndWait(); // Displays the alert and waits for user acknowledgment
+    }
 
     public void setLoggedInUser(User loggedInManager) {
         this.loggedInManager = loggedInManager;
@@ -57,10 +130,6 @@ public class SOSReports implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         comboBoxCommunity.getItems().addAll(pickCommunity);
-    }
-
-    @FXML // This method is called by the FXMLLoader when initialization is complete
-    void initialize() {
         assert barChart != null : "fx:id=\"barChart\" was not injected: check your FXML file 'SOSReports.fxml'.";
         assert btnBack != null : "fx:id=\"btnBack\" was not injected: check your FXML file 'SOSReports.fxml'.";
         assert comboBoxCommunity != null : "fx:id=\"checkBoxCommunity\" was not injected: check your FXML file 'SOSReports.fxml'.";
@@ -72,6 +141,60 @@ public class SOSReports implements Initializable {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
+    }
+
+    @FXML // This method is called by the FXMLLoader when initialization is complete
+    void initialize() {
+//        assert barChart != null : "fx:id=\"barChart\" was not injected: check your FXML file 'SOSReports.fxml'.";
+//        assert btnBack != null : "fx:id=\"btnBack\" was not injected: check your FXML file 'SOSReports.fxml'.";
+//        assert comboBoxCommunity != null : "fx:id=\"checkBoxCommunity\" was not injected: check your FXML file 'SOSReports.fxml'.";
+//        assert endDate != null : "fx:id=\"endDate\" was not injected: check your FXML file 'SOSReports.fxml'.";
+//        assert startDate != null : "fx:id=\"startDate\" was not injected: check your FXML file 'SOSReports.fxml'.";
+//
+//
+//        // Register with EventBus
+//        if (!EventBus.getDefault().isRegistered(this)) {
+//            EventBus.getDefault().register(this);
+//        }
 
     }
+    public void onSOSDataReceived(List<SosRequest> sosRequests) {
+        // Wrap the update in Platform.runLater() to ensure it runs on the FX application thread
+        Platform.runLater(() -> {
+            // Process the received SOS requests
+            Map<LocalDate, Integer> dailySOSCount = new HashMap<>();
+
+            for (SosRequest sos : sosRequests) {
+                LocalDate date = sos.getTime().toLocalDate(); // Convert to LocalDate
+                dailySOSCount.put(date, dailySOSCount.getOrDefault(date, 0) + 1);
+            }
+
+            // Update the BarChart
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            series.setName("SOS Requests");
+
+            for (Map.Entry<LocalDate, Integer> entry : dailySOSCount.entrySet()) {
+                series.getData().add(new XYChart.Data<>(entry.getKey().toString(), entry.getValue()));
+            }
+
+            // Clear existing data and add the new series
+            barChart.getData().clear();
+            barChart.getData().add(series);
+        });
+    }
+    @Subscribe
+    public void handleTasksEvent(MessageEvent event) {
+        Message handledMessage = event.getMessage();
+
+        if(handledMessage.getMessage().equals("SOS data retrieval for all communities: Done")){
+            System.out.println("SOS DATA is here");
+            List<SosRequest> sosRequests=(List<SosRequest>)handledMessage.getData();
+            onSOSDataReceived(sosRequests);
+        }
+        if(handledMessage.getMessage().equals("SOS data retrieval for community: Done")){
+            List<SosRequest> sosRequests=(List<SosRequest>)handledMessage.getData();
+            onSOSDataReceived(sosRequests);
+        }
+    }
+
 }
