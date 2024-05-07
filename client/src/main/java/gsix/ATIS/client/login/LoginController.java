@@ -29,6 +29,7 @@ public class LoginController {
 	
 	public static String loginUser(User userDetails) throws IOException {
 		User user = userDetails;
+		System.out.println("hey from LoginController");
 		Message message = new Message(1, LocalDateTime.now(), "login request", user);
 		try {
 			SimpleClient.getClient("", 0).sendToServer(message);

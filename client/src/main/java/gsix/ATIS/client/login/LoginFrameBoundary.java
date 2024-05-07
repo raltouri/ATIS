@@ -127,7 +127,7 @@ public class LoginFrameBoundary implements Initializable{
 
 		User userDetails = new User(username,password, selectedRole);
 		LoginController.loginUser(userDetails);
-		System.out.println("Hey");
+		System.out.println("Hey from LoginFrameBoundary");
 
 
 		

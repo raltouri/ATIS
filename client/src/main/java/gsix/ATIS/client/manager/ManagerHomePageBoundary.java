@@ -6,6 +6,7 @@ package gsix.ATIS.client.manager;
 
 import gsix.ATIS.client.SimpleClient;
 import gsix.ATIS.client.common.GuiCommon;
+import gsix.ATIS.client.user.ShowMessageBoxController;
 import gsix.ATIS.client.common.MessageEvent;
 import gsix.ATIS.client.common.SosBoundary;
 import gsix.ATIS.client.login.LoginFrameBoundary;
@@ -89,6 +90,24 @@ public class ManagerHomePageBoundary {
     @FXML
     void ViewMessages(ActionEvent event) {
 
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+        GuiCommon guiCommon = GuiCommon.getInstance();
+
+        ///1. "the name of java file that has the go back etc"
+        /// ShowMessagesViewer
+        ///2. "1 adding page"
+        /// ShowMessagesViewerPage
+        ///3. "the fxml file (not 1 nor 2)"
+        /// MessagesViewerPage
+
+        ShowMessagesViewer ShowMessagesViewerPage =
+                (ShowMessagesViewer) guiCommon.displayNextScreen
+                        ("MessagesViewerPage.fxml",
+                "Manager Messages Viewer Page",
+                                stage, true);
+        // Example for opening new screen
+
+        ShowMessagesViewerPage.setLoggedInUser(loggedInUser);
     }
 
     @FXML
