@@ -14,6 +14,7 @@ import gsix.ATIS.client.SimpleClient;
 import gsix.ATIS.client.TasksController;
 import gsix.ATIS.client.common.GuiCommon;
 import gsix.ATIS.client.common.MessageEvent;
+import gsix.ATIS.client.common.SosBoundary;
 import gsix.ATIS.entities.Message;
 import gsix.ATIS.entities.Task;
 import gsix.ATIS.entities.User;
@@ -53,6 +54,22 @@ public class MyTasksPage {
     @FXML // fx:id="requested_LV"
     private ListView<String> requested_LV; // Value injected by FXMLLoader
 
+    //  SOS
+    @FXML
+    private Button SoS_Btn;
+    //  SOS
+
+
+    //  SOS
+    @FXML
+    void OpenSosCall(ActionEvent event) {
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+        GuiCommon guiCommon = GuiCommon.getInstance();
+        SosBoundary sosBoundary = (SosBoundary) guiCommon.displayNextScreen("SosWindow.fxml",
+                "SoS Call", stage, false);  // Example for opening new screen
+        sosBoundary.setRequester(loggedInUser);
+    }
+    //  SOS
     @FXML
     void goBack(ActionEvent event) {
         // Implement logic to navigate back to the user's home page

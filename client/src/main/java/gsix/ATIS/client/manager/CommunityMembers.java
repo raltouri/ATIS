@@ -15,6 +15,7 @@ import gsix.ATIS.client.SimpleClient;
 import gsix.ATIS.client.TasksController;
 import gsix.ATIS.client.common.GuiCommon;
 import gsix.ATIS.client.common.MessageEvent;
+import gsix.ATIS.client.common.SosBoundary;
 import gsix.ATIS.entities.Message;
 import gsix.ATIS.entities.Task;
 import gsix.ATIS.entities.User;
@@ -52,11 +53,28 @@ public class CommunityMembers {
     @FXML // fx:id="membersLV"
     private ListView<String> membersLV; // Value injected by FXMLLoader
 
+    //  SOS
+    @FXML
+    private Button SoS_Btn;
+    //  SOS
+
     private Stage stage;
     private User loggedInManager = null;
     private User selectedMember = null;
     ArrayList<User> membersArrayList; // from DB
     ArrayList<String> membersInfoString; // for listView
+
+    //  SOS
+    @FXML
+    void OpenSosCall(ActionEvent event) {
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+        GuiCommon guiCommon = GuiCommon.getInstance();
+        SosBoundary sosBoundary = (SosBoundary) guiCommon.displayNextScreen("SosWindow.fxml",
+                "SoS Call", stage, false);  // Example for opening new screen
+        sosBoundary.setRequester(loggedInManager);
+    }
+    //  SOS
+
 
     @FXML
     void BackToManagerHome(ActionEvent event) {
@@ -235,6 +253,7 @@ public class CommunityMembers {
         this.loggedInManager = loggedInUser;
         getCommunityMembers(loggedInUser.getCommunityId());
     }
+
 
  /*   @FXML
     @Override

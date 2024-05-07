@@ -174,6 +174,7 @@ public class SOSReports implements Initializable {
             series.setName("SOS Requests");
 
             for (Map.Entry<LocalDate, Integer> entry : dailySOSCount.entrySet()) {
+                System.out.println("Date: "+ entry.getKey().toString() + ". Sos Calls: "+entry.getValue() );
                 series.getData().add(new XYChart.Data<>(entry.getKey().toString(), entry.getValue()));
             }
 

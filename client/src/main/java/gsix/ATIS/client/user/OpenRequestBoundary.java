@@ -11,10 +11,12 @@ import java.util.ResourceBundle;
 
 import gsix.ATIS.client.SimpleClient;
 import gsix.ATIS.client.common.GuiCommon;
+import gsix.ATIS.client.common.SosBoundary;
 import gsix.ATIS.entities.Message;
 import gsix.ATIS.entities.Task;
 import gsix.ATIS.entities.TaskStatus;
 import gsix.ATIS.entities.User;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -57,6 +59,22 @@ public class OpenRequestBoundary {
 
     @FXML // fx:id="volunteer_id_Lbl"
     private Label volunteer_id_Lbl; // Value injected by FXMLLoader
+
+    //  SOS
+    @FXML
+    private Button SoS_Btn;
+    //  SOS
+
+    //  SOS
+    @FXML
+    void OpenSosCall(ActionEvent event) {
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+        GuiCommon guiCommon = GuiCommon.getInstance();
+        SosBoundary sosBoundary = (SosBoundary) guiCommon.displayNextScreen("SosWindow.fxml",
+                "SoS Call", stage, false);  // Example for opening new screen
+        sosBoundary.setRequester(requester);
+    }
+    //  SOS
 
     @FXML
     void backBtnClicked(MouseEvent event) {
