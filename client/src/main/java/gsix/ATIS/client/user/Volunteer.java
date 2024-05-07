@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import gsix.ATIS.client.common.GuiCommon;
+import gsix.ATIS.client.common.SosBoundary;
 import javafx.event.ActionEvent;
 
 import gsix.ATIS.client.SimpleClient;
@@ -54,7 +55,20 @@ public class Volunteer {
     private Button choose_Btn; // Value injected by FXMLLoader*/
     @FXML
     private Button pickTask_Btn;
-
+    //  SOS
+    @FXML
+    private Button SoS_Btn;
+    //  SOS
+    //  SOS
+    @FXML
+    void OpenSosCall(ActionEvent event) {
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+        GuiCommon guiCommon = GuiCommon.getInstance();
+        SosBoundary sosBoundary = (SosBoundary) guiCommon.displayNextScreen("SosWindow.fxml",
+                "SoS Call", stage, false);  // Example for opening new screen
+        sosBoundary.setRequester(loggedInUser);
+    }
+    //  SOS
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {

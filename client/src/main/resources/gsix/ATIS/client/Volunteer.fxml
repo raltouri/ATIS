@@ -22,5 +22,9 @@
             <Font name="System Bold" size="25.0" />
          </font>
       </Label>
+      <Button fx:id="SoS_Btn" layoutX="26.0" layoutY="11.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="59.0" prefWidth="104.0" text="SOS Call" textFill="RED">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font></Button>
    </children>
 </AnchorPane>
