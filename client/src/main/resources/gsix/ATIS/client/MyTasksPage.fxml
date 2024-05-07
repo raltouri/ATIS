@@ -35,5 +35,9 @@
          <font>
             <Font name="System Bold" size="12.0" />
          </font></Button>
+      <Button fx:id="SoS_Btn" layoutX="487.0" layoutY="15.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="86.0" prefWidth="101.0" text="SOS Call" textFill="RED">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font></Button>
    </children>
 </AnchorPane>

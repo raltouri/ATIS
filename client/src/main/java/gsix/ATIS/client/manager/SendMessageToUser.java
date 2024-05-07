@@ -12,6 +12,7 @@ import gsix.ATIS.client.SimpleClient;
 import gsix.ATIS.client.TasksController;
 import gsix.ATIS.client.common.GuiCommon;
 import gsix.ATIS.client.common.MessageEvent;
+import gsix.ATIS.client.common.SosBoundary;
 import gsix.ATIS.entities.Message;
 import gsix.ATIS.entities.Task;
 import gsix.ATIS.entities.User;
@@ -48,6 +49,11 @@ public class SendMessageToUser {
     @FXML // fx:id="taskIdTV"
     private Text taskIdTV; // Value injected by FXMLLoader
 
+    //  SOS
+    @FXML
+    private Button SoS_Btn;
+    //  SOS
+
     private Stage stage;
     private User loggedInManager;
     private String requesterID;
@@ -56,6 +62,17 @@ public class SendMessageToUser {
         this.requestedTasks = requestedTasks;
     }
 
+
+    //  SOS
+    @FXML
+    void OpenSosCall(ActionEvent event) {
+        stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
+        GuiCommon guiCommon = GuiCommon.getInstance();
+        SosBoundary sosBoundary = (SosBoundary) guiCommon.displayNextScreen("SosWindow.fxml",
+                "SoS Call", stage, false);  // Example for opening new screen
+        sosBoundary.setRequester(loggedInManager);
+    }
+    //  SOS
 
     private int taskID;
     public void setTaskID(int taskID) {
@@ -94,7 +111,7 @@ public class SendMessageToUser {
         alert.showAndWait();
     }
     @FXML
-    void SendMsgToUser(ActionEvent event) {
+    void SendDeclineMsgToUser(ActionEvent event) {
         stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
         String msg = messageTB.getText();
         if(msg.isEmpty()){

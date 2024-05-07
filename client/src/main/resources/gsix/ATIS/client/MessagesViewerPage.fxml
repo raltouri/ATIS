@@ -6,7 +6,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.manager.ShowMessagesViewer">
    <children>
       <ListView fx:id="Msent_LV" layoutX="77.0" layoutY="110.0" prefHeight="200.0" prefWidth="200.0" />
@@ -21,5 +20,9 @@
       <Button fx:id="Mback_Btn" layoutX="251.0" layoutY="327.0" mnemonicParsing="false" onAction="#MgoBack" prefHeight="49.0" prefWidth="83.0" text="Back" />
       <Button fx:id="Msent_Btn" layoutX="81.0" layoutY="327.0" mnemonicParsing="false" onAction="#MshowSentMessages" prefHeight="49.0" prefWidth="146.0" text="Show Sent Messages" />
       <Button fx:id="Mreceived_Btn" layoutX="358.0" layoutY="327.0" mnemonicParsing="false" onAction="#MShowReceivedMessages" prefHeight="49.0" prefWidth="157.0" text="Show Received Messages" />
+      <Button fx:id="SoS_Btn" layoutX="487.0" layoutY="15.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="86.0" prefWidth="101.0" text="SOS Call" textFill="RED">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font></Button>
    </children>
 </AnchorPane>

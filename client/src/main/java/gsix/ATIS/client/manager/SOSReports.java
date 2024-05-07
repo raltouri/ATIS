@@ -177,7 +177,9 @@ public class SOSReports implements Initializable {
 
             List<String> categories = new ArrayList<>(); // Collect all dates as strings
             for (Map.Entry<LocalDate, Integer> entry : dailySOSCount.entrySet()) {
+
                 System.out.println("Date is : "+entry.getKey().toString()+" Values is: "+entry.getValue());
+
                 series.getData().add(new XYChart.Data<>(entry.getKey().toString(), entry.getValue()));
                 categories.add(entry.getKey().toString());
             }
