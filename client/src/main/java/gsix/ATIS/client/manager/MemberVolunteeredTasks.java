@@ -43,7 +43,7 @@ public class MemberVolunteeredTasks {
 
     private Stage stage;
     private User loggedInManager = null;
-    private User communityMember = null;
+    private String communityMemberID = null;
     ArrayList<Task> memberVolunteeredTasksArrayList; // from DB
     ArrayList<String> memberVolunteeredTasksInfoString; // for listView
 
@@ -51,9 +51,9 @@ public class MemberVolunteeredTasks {
         this.loggedInManager = loggedInManager;
     }
 
-    public void setCommunityMember(User communityMember) {
-        this.communityMember = communityMember;
-        getVolunteeredTasks(communityMember.getUser_id());
+    public void setCommunityMember(String communityMemberID) {
+        this.communityMemberID = communityMemberID;
+        getVolunteeredTasks(communityMemberID);
     }
 
     private void showNoTasksToViewAlert() {

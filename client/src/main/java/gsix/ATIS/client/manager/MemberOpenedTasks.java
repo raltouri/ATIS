@@ -42,16 +42,16 @@ public class MemberOpenedTasks {
 
     private Stage stage;
     private User loggedInManager = null;
-    private User communityMember = null;
+    private String communityMemberID = null;
     ArrayList<Task> memberOpenedTasksArrayList; // from DB
     ArrayList<String> memberOpenedTasksInfoString; // for listView
 
     public void setLoggedInUser(User loggedInManager) {
         this.loggedInManager = loggedInManager;
     }
-    public void setCommunityMember(User communityMember) {
-        this.communityMember = communityMember;
-        getRequestedTasks(communityMember.getUser_id());
+    public void setCommunityMember(String communityMemberID) {
+        this.communityMemberID = communityMemberID;
+        getRequestedTasks(communityMemberID);
     }
 
     private void showNoTasksToViewAlert() {
