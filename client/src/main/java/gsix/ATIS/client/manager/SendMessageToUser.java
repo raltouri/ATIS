@@ -76,10 +76,11 @@ public class SendMessageToUser {
     @FXML
     void Close(ActionEvent event) {
         stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
-        GuiCommon guiCommon = GuiCommon.getInstance();
+        /*GuiCommon guiCommon = GuiCommon.getInstance();
         RequestedTasks requestedTasks = (RequestedTasks) guiCommon.displayNextScreen("RequestedTasks.fxml",
                 "Manager Home Page", stage, true);  // Example for opening new screen
-        requestedTasks.setLoggedInUser(loggedInManager);
+        requestedTasks.setLoggedInUser(loggedInManager);*/
+        stage.close();
     }
 
     private void showEmptyMessageBoxAlert() {
@@ -115,7 +116,7 @@ public class SendMessageToUser {
             throw new RuntimeException(e);
         }
 
-        stage.close();
+        //stage.close();
     }
     @Subscribe
     public void handleTasksEvent(MessageEvent event){
@@ -128,10 +129,11 @@ public class SendMessageToUser {
             Platform.runLater(() -> {
 
                 showDeclineMessageSentAlert();
-                GuiCommon guiCommon = GuiCommon.getInstance();
+                /*GuiCommon guiCommon = GuiCommon.getInstance();
                 RequestedTasks requestedTasks = (RequestedTasks) guiCommon.displayNextScreen("RequestedTasks.fxml",
                         "Manager Home Page", stage, true);  // Example for opening new screen
-                requestedTasks.setLoggedInUser(loggedInManager);
+                requestedTasks.setLoggedInUser(loggedInManager);*/
+                stage.close();
             });
 
 
