@@ -8,11 +8,13 @@ import gsix.ATIS.entities.Message;
 import gsix.ATIS.entities.SosRequest;
 import gsix.ATIS.entities.User;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -173,11 +175,23 @@ public class SOSReports implements Initializable {
             XYChart.Series<String, Number> series = new XYChart.Series<>();
             series.setName("SOS Requests");
 
+            List<String> categories = new ArrayList<>(); // Collect all dates as strings
             for (Map.Entry<LocalDate, Integer> entry : dailySOSCount.entrySet()) {
-                System.out.println("Date: "+ entry.getKey().toString() + ". Sos Calls: "+entry.getValue() );
-                series.getData().add(new XYChart.Data<>(entry.getKey().toString(), entry.getValue()));
-            }
 
+                System.out.println("Date is : "+entry.getKey().toString()+" Values is: "+entry.getValue());
+
+                series.getData().add(new XYChart.Data<>(entry.getKey().toString(), entry.getValue()));
+                categories.add(entry.getKey().toString());
+            }
+            barChart.setPrefWidth(800);
+            barChart.setPrefHeight(350);
+            CategoryAxis xAxis = (CategoryAxis) barChart.getXAxis();
+
+
+            xAxis.setTickLength(1); // Ensure there's a tick for every category (date)
+            //Force showing the labels
+            xAxis.setAutoRanging(false);
+            xAxis.setCategories(FXCollections.observableArrayList(categories)); // Set the X-axis categories explicitly
             // Clear existing data and add the new series
             barChart.getData().clear();
             barChart.getData().add(series);
