@@ -6,11 +6,12 @@ import gsix.ATIS.server.ocsf.ConnectionToClient;
 import gsix.ATIS.server.ocsf.SubscribedClient;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.util.*;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
@@ -22,7 +23,7 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
 public class SimpleServer extends AbstractServer {
-    private static ArrayList<SubscribedClient> SubscribersList = new ArrayList<>();
+    private static ArrayList<SubscribedClient> subscribersList = new ArrayList<>();
 
     private SessionFactory sessionFactory;
     private static Session session;
@@ -80,37 +81,94 @@ public class SimpleServer extends AbstractServer {
         return task != null;
     }
 
-    public static <T> List<T> getAllRequestedTasksByCommunity(Class<T> object, int communityID) {
-
+    // Fetch SOS requests between start and end date
+    public static List<SosRequest> getSosRequestsBetween(LocalDate startDate, LocalDate endDate) {
         CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
+        CriteriaQuery<SosRequest> criteriaQuery = builder.createQuery(SosRequest.class);
+        Root<SosRequest> sosRoot = criteriaQuery.from(SosRequest.class);
+        System.out.println("INSIDE getSosRequests database code");
+        LocalDateTime startDateTime = startDate.atStartOfDay(); // Get the start of the day
+        LocalDateTime endDateTime = endDate.plusDays(1).atStartOfDay().minusSeconds(1); // Get the end of the day
+
+        Predicate betweenPredicate = builder.between(
+                sosRoot.get("time"),
+                startDateTime,
+                endDateTime
+        );
+
+        criteriaQuery.where(betweenPredicate);
+        return session.createQuery(criteriaQuery).getResultList();
+    }
+    public List<SosRequest> getSosRequestsForCommunityBetween(int communityId, LocalDate startDate, LocalDate endDate) {
+        List<SosRequest> allSosRequests = getSosRequestsBetween(startDate, endDate);
+        List<User> allUsers = getAll(User.class);
+
+        // Create a map to easily get the community ID for each requester
+        Map<String, Integer> requesterToCommunity = allUsers.stream()
+                .collect(Collectors.toMap(User::getUser_id, User::getCommunityId));
+
+        // Filter the SOS requests to get only those for the specified community
+        List<SosRequest> filteredSosRequests = allSosRequests.stream()
+                .filter(sosRequest -> {
+                    Integer community = requesterToCommunity.get(sosRequest.getRequester_id());
+                    return community != null && community == communityId;
+                })
+                .collect(Collectors.toList());
+        System.out.println("Community id is: "+communityId);
+        System.out.println(filteredSosRequests);
+        //it returns the filtered Requests
+        return filteredSosRequests;
+    }
+
+
+
+    public static List<Task> getAllSystemPendingTasks() {
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Task> criteriaQuery = builder.createQuery(Task.class);
+        Root<Task> taskRoot = criteriaQuery.from(Task.class);
+
+        // Adding condition to the criteria query based on status
+        criteriaQuery.where(builder.equal(taskRoot.get("status"), "Pending"));
+
+        return session.createQuery(criteriaQuery).getResultList();
+    }
+
+
+    public static List<Task> getAllRequestedTasksByCommunity(int communityID) {
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Task> criteriaQuery = builder.createQuery(Task.class);
         Root<Task> taskRoot = criteriaQuery.from(Task.class);
 
         // Joining Task with User entity using the requester_id attribute
-        Join<Task, User> userJoin = taskRoot.join("requester"); // Assuming "requester" is the attribute in Task entity referring to User entity
+        Join<Task, User> userJoin = taskRoot.join("requester");
 
-        // Fetching the User entity based on userId
-        CriteriaQuery<User> userQuery = builder.createQuery(User.class);
-        /*Root<User> userRoot = userQuery.from(User.class);
-        userQuery.select(userRoot).where(builder.equal(userRoot.get("user_id"), userId)); // Assuming the primary key in User entity is "userId"
-        User user = session.createQuery(userQuery).getSingleResult();
-
-        // Accessing communityId from the fetched User entity
-        int communityId = user.getCommunityId();*/
-
-        // Adding condition to the criteria query based on communityId
+        // Adding condition to the criteria query based on communityId and status
         criteriaQuery.where(
                 builder.equal(userJoin.get("community_id"), communityID),
                 builder.equal(taskRoot.get("status"), "Request")
         );
-
-        List<T> list = session.createQuery(criteriaQuery).getResultList();
-        String sqlQuery = session.createQuery(criteriaQuery).unwrap(org.hibernate.query.Query.class).getQueryString();
-        System.out.println("Generated SQL Query: " + sqlQuery);
-        System.out.println("Result: " + list);
-        return list;
+        return session.createQuery(criteriaQuery).getResultList();
+        /*List<Task> list =*/
+        //String sqlQuery = session.createQuery(criteriaQuery).unwrap(org.hibernate.query.Query.class).getQueryString();
+        //System.out.println("Generated SQL Query: " + sqlQuery);
+        //System.out.println("Result: " + list);
+        //return list;
     }
 
+    public static List<User> getAllCommunityMembers(int communityID){
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<User> criteriaQuery = builder.createQuery(User.class);
+        Root<User> userRoot = criteriaQuery.from(User.class);
+
+        // Adding condition to the criteria query based on communityId
+        criteriaQuery.where(builder.equal(userRoot.get("community_id"), communityID));
+
+        /*List<User> list =*/ return session.createQuery(criteriaQuery).getResultList();
+        /*String sqlQuery = session.createQuery(criteriaQuery).unwrap(org.hibernate.query.Query.class).getQueryString();
+        System.out.println("Generated SQL Query: " + sqlQuery);
+        System.out.println("Result: " + list);
+        return list;*/
+    }
 
     public static <T> List<T> getAllByCommunity(Class<T> object, String userId) {
 
@@ -250,40 +308,68 @@ public class SimpleServer extends AbstractServer {
 
     public static <T> T getEntityById(Class<T> object, int Id) {
 
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
-        Root<T> root = criteriaQuery.from(object);
-        if (object.equals(Task.class)) {
-            criteriaQuery.select(root).where(builder.equal(root.get("task_id"), Id));
-        } else {
-            criteriaQuery.select(root).where(builder.equal(root.get("user_id"), Id));
+        if (session == null || !session.isOpen()) {
+            session = getSessionFactory().openSession();
         }
-        TypedQuery<T> query = session.createQuery(criteriaQuery);
-        return query.getSingleResult();
+        try {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
+            Root<T> root = criteriaQuery.from(object);
+            if (object.equals(Task.class)) {
+                criteriaQuery.select(root).where(builder.equal(root.get("task_id"), Id));
+            } else {
+                criteriaQuery.select(root).where(builder.equal(root.get("user_id"), Id));
+            }
+            TypedQuery<T> query = session.createQuery(criteriaQuery);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null; // Return null if no result found
+        }
     }
-    public static <T> T getUser(Class<T> object,String user_name, String password) {
 
+    public static <T> T getUser(Class<T> object, String user_name, String password) {
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
         Root<T> root = criteriaQuery.from(object);
+
         if (object.equals(User.class)) {
             Predicate condition1 = builder.equal(root.get("user_name"), user_name);
             Predicate condition2 = builder.equal(root.get("password"), password);
             Predicate finalCondition = builder.and(condition1, condition2);
             criteriaQuery.select(root).where(finalCondition);
         }
+
         TypedQuery<T> query = session.createQuery(criteriaQuery);
 
         try {
-            return query.getSingleResult();
-        } catch (NoResultException e) {
+            T result = query.getSingleResult();
+            if (result instanceof User) {
+                User user = (User) result;
+                if (user.getLogged_in() == 1) { // User is already logged in
+                    Message message = new Message(2, "User already logged in");
+                    return (T) message;
+                } else { // User is not logged in, proceed with login
+                    // Set logged_in to 1 to indicate successful login
+                    user.setLogged_in(1);
+                    session.update(user);
+                    transaction.commit(); // Commit the update
+                    return (T) user;
+                }
+            }
+        } catch (Exception e) {
             // User not found
-            String result = "Username or password is incorrect";
-            Message message = new Message(1,result);
-            return (T) message; // or throw a custom exception, or handle it according to your requirement
-            // casting to T cause the func must return , maybe needed to be checked
+            Message message = new Message(1, "Username or password is incorrect");
+            return (T) message;
         }
+
+        return null; // Fallback if needed
     }
+    public void logOut(User user){
+        user.setLogged_in(0);
+        session.update(user);
+        transaction.commit(); // Commit the update
+    }
+
 
     public static void updateTask(Task updatedTask) {
         session.update(updatedTask); // Update the task
@@ -301,6 +387,22 @@ public class SimpleServer extends AbstractServer {
         System.out.println("Task deleted successfully.");
     }
 
+    public static void addSos(SosRequest newSos) {
+        try {
+            System.out.println("in server doing SOS  Save");
+            System.out.println(newSos.toString());
+            session.save(newSos); // Add the SosCall
+            System.out.println("in server done SOS  Save");
+            transaction.commit();
+        } catch (Exception e1) {
+            if (transaction != null && transaction.isActive()) {
+                System.out.println("I am about to roll back3");
+                transaction.rollback();
+            }
+            System.out.println(e1.getMessage());
+
+        }
+    }
 
     public static void printTasksTest(List<Task> lst){
         for (Task task:lst){
@@ -314,6 +416,7 @@ public class SimpleServer extends AbstractServer {
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(Community.class);
         configuration.addAnnotatedClass(CommunityMessage.class);
+        configuration.addAnnotatedClass(SosRequest.class);
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties())
@@ -345,6 +448,26 @@ public class SimpleServer extends AbstractServer {
                 session.getSessionFactory().close();
             }
         }
+    }
+    public static <T> List<T> getUnfinishedTasks(Class<T> object, String userID) {
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
+        Root<T> rootEntry = criteriaQuery.from(object);
+        CriteriaQuery<T> allCriteriaQuery = criteriaQuery.select(rootEntry);
+
+        // Create predicates for the volunteer_id and status
+        Predicate volunteerPredicate = builder.equal(rootEntry.get("volunteer_id"), userID);
+        Predicate statusPredicate = builder.equal(rootEntry.get("status"), "in process");
+
+        // Combine predicates with "and" to create the final condition
+        Predicate combinedPredicate = builder.and(volunteerPredicate, statusPredicate);
+
+        allCriteriaQuery.where(combinedPredicate);
+
+        TypedQuery<T> allQuery = session.createQuery(allCriteriaQuery);
+        List<T> lst = allQuery.getResultList();
+        System.out.println("I am in getUnfinishedTasks" + lst);
+        return lst;
     }
 
     @Override
@@ -378,6 +501,33 @@ public class SimpleServer extends AbstractServer {
                 //sendToAllClients(message);
 
             }
+            else if (message.getMessage().equals("get sos requests for all communities between dates")) {
+                LocalDate[] dates = (LocalDate[]) message.getData(); // Extract the date array
+                LocalDate start = dates[0];
+                LocalDate end = dates[1];
+
+                List<SosRequest> sosRequests = getSosRequestsBetween(start, end);
+                System.out.println(sosRequests);
+
+                // Send the retrieved SOS data back to the client
+                message.setData(sosRequests);
+                message.setMessage("SOS data retrieval for all communities: Done");
+                client.sendToClient(message);
+            }
+            else if (message.getMessage().equals("get sos requests for community between dates")) {
+                // Extract data from the message
+                Object[] data = (Object[]) message.getData();
+                int communityId = (int) data[0];
+                LocalDate start = (LocalDate) data[1];
+                LocalDate end = (LocalDate) data[2];
+// Get SOS requests for the specified community and date range
+                List<SosRequest> sosRequests = getSosRequestsForCommunityBetween(communityId, start, end);
+
+                // Set the data and send it back to the client
+                message.setData(sosRequests);
+                message.setMessage("SOS data retrieval for community: Done");
+                client.sendToClient(message);
+            }
             else if(request.equals("get tasks for community")){ //Added by Ayal
                 System.out.println("inside SimpleServer get task for community");
                 String userId = (String) message.getData();
@@ -386,12 +536,20 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("get tasks for community: Done");
                 client.sendToClient(message);
             }
-            else if(request.equals("get pending tasks")){
+            else if(request.equals("get requested tasks by community")){
                 System.out.println("inside SimpleServer get task for community");
                 int communityID = (int) message.getData();
-                message.setData(getAllRequestedTasksByCommunity((Task.class),communityID));
+                message.setData(getAllRequestedTasksByCommunity(communityID));
                 System.out.println(message.getData());
-                message.setMessage("get pending tasks: Done");
+                message.setMessage("get requested tasks by community: Done");
+                client.sendToClient(message);
+            }
+            else if(request.equals("get all system pending tasks")){
+                //System.out.println("inside SimpleServer get task for community");
+                //int communityID = (int) message.getData();
+                message.setData(getAllSystemPendingTasks());
+                //System.out.println(message.getData());
+                message.setMessage("get all system pending tasks: Done");
                 client.sendToClient(message);
             }
             else if(request.equals("send message")){ //Added by Ayal
@@ -402,6 +560,15 @@ public class SimpleServer extends AbstractServer {
 
                 message.setMessage("send masage to manager: Done");
                 client.sendToClient(message);
+            }
+            else if(request.equals("notify no volunteer")){
+                //System.out.println("inside SimpleServer ");
+                String messageString = (String) message.getData();
+
+                insertMessageToDataTable(messageString);
+
+                //message.setMessage("send masage to manager: Done");
+                //client.sendToClient(message);
             }
             // added by waheeb modified by ayal
             else if(request.equals("delete requested task")){
@@ -454,6 +621,16 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("get sent messages: Done");
                 client.sendToClient(message);
             }
+
+            else if(request.equals("get unfinished tasks")){ //Added by Ayal
+                System.out.println("inside SimpleServer get unfinished tasks");
+                String userId = (String) message.getData();
+                message.setData(getUnfinishedTasks((Task.class),userId));// Should change this back to getAllByCommunity , it works on getAll
+                System.out.println(message.getData());
+                message.setMessage("get unfinished tasks: Done");
+                client.sendToClient(message);
+            }
+
             else if(request.equals("get received messages")){ //Added by Ayal
                 System.out.println("inside SimpleServer get received messages ");
                 String userId = (String) message.getData();
@@ -468,7 +645,17 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("get all users: Done");
                 client.sendToClient(message);
 
-            } else if (request.equals("view task info")) {
+            }
+            else if (request.equals("get all community users")) {
+                int community_id = (int) message.getData();
+                //System.out.println("*********************************8");
+                //System.out.println(getAllCommunityMembers(community_id));
+                //System.out.println("**********************************");
+                message.setData(getAllCommunityMembers(community_id));
+                message.setMessage("get all community users: Done");
+                client.sendToClient(message);
+
+            }else if (request.equals("view task info")) {
 
                 int taskId = (Integer) message.getData();
                 Task task = getEntityById(Task.class, taskId);
@@ -530,26 +717,66 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("delete task: Done");
                 client.sendToClient(message);
 
+            }else if (request.equals("get user by id")) {
+
+                int userID = (Integer) message.getData();
+                User user = getEntityById(User.class, userID);
+
+                message.setData(user);
+                message.setMessage("get user by id: Done");
+                //System.out.println(user +" user got from server for volunteered window in members list");
+                client.sendToClient(message);
+
+            }
+
+            else if (request.equals("open SoS request")) {
+
+                SosRequest sosRequest = (SosRequest) message.getData();
+                System.out.println("in server in SOS request command");
+                //Task taskToDelete = getEntityById(Task.class, taskID);
+                addSos(sosRequest);
+                //message.setData(taskID);
+                System.out.println("in server After SOS request save");
+                message.setMessage("open SoS request: Done");
+                client.sendToClient(message);
+            }
+            else if (request.equals("log out")) {
+
+                User user = (User) message.getData();
+                System.out.println("logging out");
+                logOut(user);
+
             }
             else if (request.equals("login request")) {
-                System.out.println("*********INSIDE LOGING REQUEST*********");
+                System.out.println("*********INSIDE LOGIN REQUEST*********");
                 User userData = (User) message.getData();
-                Object result = getUser(User.class,userData.getUser_name(),userData.getPassword());
-                if(result instanceof User){
+                System.out.println("Trying to log in to user: "+userData.toString());
+                Object result = getUser(User.class, userData.getUser_name(), userData.getPassword());
+
+                if (result instanceof User) {
                     message.setMessage("login request: Done");
+                    SubscribedClient connection = new SubscribedClient(client);
+                    subscribersList.add(connection);
                     User target = (User) result;
+                    System.out.println("Trying to log in to user: "+target.toString());
                     message.setData(target);
+                } else if (result instanceof Message) {
+                    Message resultMessage = (Message) result;
+                    if (resultMessage.getMessage().equals("User already logged in")) {
+                        message.setMessage("login request: User already logged in");
+                        message.setData(resultMessage);
+                    } else {
+                        message.setMessage("login request: Failed");
+                        String errMsg = "Username or password is incorrect";
+                        message.setData(errMsg);
+                    }
                 }
-                //User target = getUser(User.class,userData.getUser_name(),userData.getPassword());
-                else /*if(result instanceof Message)*/{
-                    message.setMessage("login request: Failed");
-                    Message errMsgg = (Message) result;
-                    //String errMsg = errMsgg.getMessage();
-                    String errMsg ="Username or password is incorrect";
-                    message.setData(errMsg);
-                }
+
                 client.sendToClient(message);
-            }else if (request.equals("open request")) {
+            }
+
+
+            else if (request.equals("open request")) {
 
                 Task newTask = (Task) message.getData();
                 System.out.println(newTask.toString());
@@ -580,6 +807,8 @@ public class SimpleServer extends AbstractServer {
             }
         }
     }
+
+
 
     private void saveMessage(String senderID,String receiverID, String messageContent) {
 
@@ -727,6 +956,11 @@ public class SimpleServer extends AbstractServer {
             if(newStatus.equals("Pending")){
                 task.setStatus(TaskStatus.Pending);
             }
+            if(newStatus.equals("in process")){
+                task.setStatus(TaskStatus.inProcess);
+            }if(newStatus.equals("Declined")){
+                task.setStatus(TaskStatus.Declined);
+            }
 
             // Commit the transaction
             session.update(task);
@@ -742,8 +976,14 @@ public class SimpleServer extends AbstractServer {
 
 
     public void sendToAllClients(Message message) {
+        //System.out.println("send to all clients before try**************************");
+        if(subscribersList == null){
+            System.out.println("no clients online");
+            return;
+        }
         try {
-            for (SubscribedClient SubscribedClient : SubscribersList) {
+            for (SubscribedClient SubscribedClient : subscribersList) {
+                //System.out.println("send to all clients inside for loop **************************");
                 SubscribedClient.getClient().sendToClient(message);
             }
         } catch (IOException e1) {
@@ -751,4 +991,58 @@ public class SimpleServer extends AbstractServer {
         }
     }
 
+    /**
+     * not checked function, all credits for GPT we hope it works!
+     ***/
+    public List<Task> getAllOverDuePendingTasks() {
+
+        try {
+            sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Task> criteriaQuery = builder.createQuery(Task.class);
+            Root<Task> rootEntry = criteriaQuery.from(Task.class);
+            criteriaQuery.select(rootEntry);
+
+            // Create predicate for status condition
+            Predicate statusPredicate = builder.equal(rootEntry.get("status"), "Pending");
+
+            // Create predicate for time condition (tasks created more than 10 seconds ago)
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime tenSecondsAgo = now.minusSeconds(10);
+            Predicate timePredicate = builder.lessThan(rootEntry.get("time"), tenSecondsAgo);
+
+            // Combine predicates with "and" to create the final condition
+            Predicate combinedPredicate = builder.and(statusPredicate, timePredicate);
+
+            criteriaQuery.where(combinedPredicate);
+
+            TypedQuery<Task> allQuery = session.createQuery(criteriaQuery);
+            List<Task> tasks = allQuery.getResultList();
+
+            // Filter tasks further to ensure they are exactly 10 seconds old
+            List<Task> overdueTasks = tasks.stream()
+                    .filter(task -> {
+                        LocalDateTime taskTime = task.getTime();
+                        long secondsDifference = Duration.between(taskTime, now).getSeconds();
+                        /**
+                         * return secondsDifference % 2*60*60 == 0, to get overdue tasks once every 2 hours and so on...
+                         * return secondsDifference % 10 == 0, to get overdue tasks once every 10 seconds for test purposes.
+                         **/
+                        return secondsDifference % 24*60*60 == 0; // gets task if overdue once every 24 hours
+                    })
+                    .collect(Collectors.toList());
+
+            System.out.println("Overdue tasks to check: " + overdueTasks);
+
+            return overdueTasks;
+        } catch (Exception e) {
+            //throw new RuntimeException(e);
+            System.out.println(e.getMessage());
+        } finally {
+            session.close();
+        }
+        return null;
+    }
 }

@@ -50,8 +50,8 @@ public class Volunteer {
     @FXML // fx:id="back_Btn"
     private Button back_Btn; // Value injected by FXMLLoader
 
-    @FXML // fx:id="choose_Btn"
-    private Button choose_Btn; // Value injected by FXMLLoader
+    /*@FXML // fx:id="choose_Btn"
+    private Button choose_Btn; // Value injected by FXMLLoader*/
     @FXML
     private Button pickTask_Btn;
 
@@ -60,7 +60,7 @@ public class Volunteer {
     void initialize() {
         assert availableTaskListView != null : "fx:id=\"availableTaskListView\" was not injected: check your FXML file 'Untitled'.";
         assert back_Btn != null : "fx:id=\"back_Btn\" was not injected: check your FXML file 'Untitled'.";
-        assert choose_Btn != null : "fx:id=\"choose_Btn\" was not injected: check your FXML file 'Untitled'.";
+        //assert choose_Btn != null : "fx:id=\"choose_Btn\" was not injected: check your FXML file 'Untitled'.";
         assert pickTask_Btn != null : "fx:id=\"pickTask_Btn\" was not injected: check your FXML file 'Volunteer.fxml'.";
 
         EventBus.getDefault().register(this);
@@ -106,7 +106,7 @@ public class Volunteer {
             int taskId = extractTaskId(selectedTaskInfo);
             System.out.println("task id is : "+taskId);
             // Update the task status in the database
-            updateTaskStatus(taskId, "done");
+            updateTaskStatus(taskId, "in process");
             updateTaskVolunteer(taskId,loggedInUser.getUser_id());
 
             // Show a pop-up message to indicate success
@@ -177,7 +177,7 @@ public class Volunteer {
     }
 
 
-    @FXML
+/*    @FXML
     private void showTasks() {
         if(loggedInUser!=null) {
             String userId = this.loggedInUser.getUser_id();
@@ -188,7 +188,7 @@ public class Volunteer {
         else{
             System.out.println("LoggedInUser is null in Volunteer Do task line 81");
         }
-    }
+    }*/
     public void getTasksForCommunity(String userId) {
 
         Message message = new Message(1, LocalDateTime.now(), "get tasks for community", userId);
@@ -203,6 +203,8 @@ public class Volunteer {
     }
 
     public void setLoggedInUser(User loggedInUser) {
+
         this.loggedInUser=loggedInUser;
+        getTasksForCommunity(loggedInUser.getUser_id());
     }
 }

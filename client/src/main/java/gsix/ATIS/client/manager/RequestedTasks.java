@@ -23,6 +23,7 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RequestedTasks {
@@ -46,6 +47,9 @@ public class RequestedTasks {
     private Button showRequested; // Value injected by FXMLLoader
     private boolean isDeclineMsgSent = false;
 
+    ArrayList<Task> requestedTasksArrayList; // from DB
+    ArrayList<String> requestedTasksInfoStrings; // for list view
+
     public void setDeclineMsgSent(boolean declineMsgSent) {
         isDeclineMsgSent = declineMsgSent;
     }
@@ -54,10 +58,11 @@ public class RequestedTasks {
 
     public void setLoggedInUser(User loggedInUser) {
         this.loggedInManager=loggedInUser;
+        getRequestedTasksForCommunity(loggedInManager.getCommunityId());
     }
 
 
-    @FXML
+/*    @FXML
     void ShowRequestedTasks(ActionEvent event) {
         if(loggedInManager != null) {
             int communityID = this.loggedInManager.getCommunityId();
@@ -68,10 +73,10 @@ public class RequestedTasks {
         else{
             //System.out.println("LoggedInUser is null in Volunteer Do task line 81");
         }
-    }
+    }*/
     public void getRequestedTasksForCommunity(int communityID) {
 
-        Message message = new Message(1, LocalDateTime.now(), "get pending tasks", communityID);
+        Message message = new Message(1, LocalDateTime.now(), "get requested tasks by community", communityID);
         System.out.println("requestedTasks:before send to server");
         try {
             SimpleClient.getClient("",0).sendToServer(message);
@@ -236,8 +241,8 @@ public class RequestedTasks {
     @Subscribe
     public void handleTasksEvent(MessageEvent event){
         Message handledMessage=event.getMessage();
-        if(event.getMessage().getMessage().equals("get pending tasks: Done")){
-            List<Task> communityTasks=(List<Task>) event.getMessage().getData();
+        if(event.getMessage().getMessage().equals("get requested tasks by community: Done")){
+          /*  List<Task> communityTasks=(List<Task>) event.getMessage().getData();
             //System.out.println("I am handling the tasks for community being brought back from eventbus in Volunteer class");
             List<String> tasks_info = TasksController.getTasksInfo(communityTasks);
             //System.out.println(tasks_info);
@@ -246,7 +251,10 @@ public class RequestedTasks {
                 requestedLV.getItems().clear(); // Clear existing items
                 ObservableList<String> observableTasks = FXCollections.observableArrayList(tasks_info);
                 requestedLV.setItems(observableTasks); // Add received tasks
-            });
+            });*/
+            requestedTasksArrayList = (ArrayList<Task>) event.getMessage().getData();
+            requestedTasksInfoStrings = (ArrayList<String>) TasksController.getTasksInfo(requestedTasksArrayList);
+            requestedLV.getItems().addAll(requestedTasksInfoStrings);
         }
 
         if(event.getMessage().getMessage().equals("get task for decline: Done")) {
@@ -256,7 +264,7 @@ public class RequestedTasks {
             Platform.runLater(() -> {
                 GuiCommon guiCommon = GuiCommon.getInstance();
                 SendMessageToUser sendMessageToUser = (SendMessageToUser) guiCommon.displayNextScreen("SendMsgToUser.fxml",
-                        "Send Decline Message", stage, false);
+                        "Send Decline Message", null, false);//null was stage
                 sendMessageToUser.setRequesterID(requesterID);
                 sendMessageToUser.setLoggedInManager(loggedInManager);
                 sendMessageToUser.setTaskID(declinedTask.getTask_id());
@@ -267,20 +275,22 @@ public class RequestedTasks {
 
 
             //System.out.println("before calling delete task in handle");
-            System.out.println("before if statement, isDeclineMsgSent = "+isDeclineMsgSent);
-            //isDeclineMsgSent=true;
-            if(isDeclineMsgSent){ //call function to refresh list view and delete task from DB
-                // Assuming tasksList is the ObservableList backing the ListView
-                ObservableList<String> tasksList = requestedLV.getItems();
-                System.out.println("inside isDeclineMsgSent = True ");
-                // Remove the pending task from the data model
-                tasksList.remove(selectedTaskInfo);
-
-                // Refresh the ListView to reflect the changes
-                requestedLV.refresh();
-                deleteTask(declinedTask.getTask_id());
-
-            }
+            //System.out.println("before if statement, isDeclineMsgSent = "+isDeclineMsgSent);
+//            //isDeclineMsgSent=true;
+//            if(isDeclineMsgSent){ //call function to refresh list view and delete task from DB
+//                // Assuming tasksList is the ObservableList backing the ListView
+//                ObservableList<String> tasksList = requestedLV.getItems();
+//                System.out.println("inside isDeclineMsgSent = True ");
+//                // Remove the pending task from the data model
+//                tasksList.remove(selectedTaskInfo);
+//
+//                // Refresh the ListView to reflect the changes
+//                requestedLV.refresh();
+//                //Instead of deleting we are going to move it to a declined status
+//                //deleteTask(declinedTask.getTask_id());
+//                updateTaskStatus(declinedTask.getTask_id(),"Declined");
+//
+//            }
 
         }
 
@@ -292,7 +302,7 @@ public class RequestedTasks {
         assert BtnBack != null : "fx:id=\"BtnBack\" was not injected: check your FXML file 'RequestedTasks.fxml'.";
         assert BtnDecline != null : "fx:id=\"BtnDecline\" was not injected: check your FXML file 'RequestedTasks.fxml'.";
         assert requestedLV != null : "fx:id=\"pendingLV\" was not injected: check your FXML file 'RequestedTasks.fxml'.";
-        assert showRequested != null : "fx:id=\"showPending\" was not injected: check your FXML file 'RequestedTasks.fxml'.";
+        //assert showRequested != null : "fx:id=\"showPending\" was not injected: check your FXML file 'RequestedTasks.fxml'.";
 
         EventBus.getDefault().register(this);
     }
