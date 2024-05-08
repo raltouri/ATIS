@@ -16,7 +16,7 @@
     <children>
         <VBox prefHeight="450.0" prefWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <Label text="Task Informations">
+                <Label prefHeight="35.0" prefWidth="184.0" text="Task Information">
                     <font>
                         <Font name="System Bold" size="20.0" />
                     </font>

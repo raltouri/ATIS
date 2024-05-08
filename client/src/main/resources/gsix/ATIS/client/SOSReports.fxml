@@ -56,7 +56,7 @@
             </Text>
             <DatePicker fx:id="endDate" editable="false" layoutX="418.0" layoutY="102.0" promptText="End Date" />
             <ComboBox fx:id="comboBoxCommunity" layoutX="339.0" layoutY="62.0" prefHeight="26.0" prefWidth="139.0" promptText="Pick Community" />
-            <Button fx:id="show_Btn" layoutX="487.0" layoutY="61.0" mnemonicParsing="false" onAction="#onGenerateReport" prefHeight="27.0" prefWidth="109.0" text="Show  Reports">
+            <Button fx:id="show_Btn" layoutX="487.0" layoutY="61.0" mnemonicParsing="false" onAction="#onGenerateReport" prefHeight="27.0" prefWidth="109.0" text="Show Reports">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>
