@@ -37,14 +37,14 @@
             </ComboBox>
             <TextField fx:id="UsernameField" layoutX="75.0" layoutY="50.0" prefHeight="39.0" prefWidth="279.0" promptText="username" />
             <PasswordField fx:id="PasswordField" layoutX="77.0" layoutY="108.0" prefHeight="39.0" prefWidth="279.0" promptText="password" />
-            <ImageView fitHeight="28.0" fitWidth="30.0" layoutX="46.0" layoutY="56.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="28.0" fitWidth="30.0" layoutX="48.0" layoutY="56.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@person_icon.jpeg" />
+                  <Image url="@person_icon.jpg" />
                </image>
             </ImageView>
             <ImageView fitHeight="28.0" fitWidth="32.0" layoutX="46.0" layoutY="113.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@lock_icon.jpeg" />
+                  <Image url="@lock_icon.jpg" />
                </image>
             </ImageView>
             <Button fx:id="SoS_Btn" layoutX="11.0" layoutY="192.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="81.0" prefWidth="84.0" style="-fx-background-radius: 120; -fx-background-color: red;" text="SOS Call" textFill="WHITE">
