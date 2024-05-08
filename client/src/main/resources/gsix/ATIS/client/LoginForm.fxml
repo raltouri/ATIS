@@ -15,19 +15,19 @@
 
 <AnchorPane fx:id="window" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="379.0" prefWidth="754.0" style="-fx-background-color: #FFE2C8;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.login.LoginFrameBoundary">
    <children>
-      <Label fx:id="msgArea" layoutX="391.0" layoutY="305.0" prefHeight="39.0" prefWidth="185.0" textFill="RED">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
       <Pane layoutX="377.0" layoutY="85.0" prefHeight="282.0" prefWidth="368.0">
          <children>
-            <Button fx:id="loginButton" layoutX="141.0" layoutY="212.0" mnemonicParsing="false" onAction="#Login" prefHeight="40.0" prefWidth="122.0" style="-fx-background-color: orange; -fx-background-radius: 20;" text="Login">
+            <Label fx:id="msgArea" layoutX="78.0" layoutY="154.0" prefHeight="28.0" prefWidth="279.0" textFill="RED">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Button fx:id="loginButton" layoutX="141.0" layoutY="225.0" mnemonicParsing="false" onAction="#Login" prefHeight="40.0" prefWidth="122.0" style="-fx-background-color: orange; -fx-background-radius: 20;" text="Login">
                <font>
                   <Font size="18.0" />
                </font>
             </Button>
-            <ComboBox fx:id="roleComboBox" layoutX="114.0" layoutY="161.0" prefHeight="28.0" prefWidth="178.0">
+            <ComboBox fx:id="roleComboBox" layoutX="114.0" layoutY="185.0" prefHeight="28.0" prefWidth="178.0">
                <items>
                   <FXCollections fx:factory="observableArrayList">
                      <String fx:value="Manager" />
