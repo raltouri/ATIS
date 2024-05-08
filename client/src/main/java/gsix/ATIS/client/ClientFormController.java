@@ -56,6 +56,7 @@ public class ClientFormController {
             client.openConnection();
             scene = new Scene(loadFXML("LoginForm")); /// maybe needed to add login.LoginForm
             stage.setScene(scene);
+            stage.setTitle("ATIS");
             stage.show();
             //ClientUI.connectToServer(server,Integer.parseInt(port));
 

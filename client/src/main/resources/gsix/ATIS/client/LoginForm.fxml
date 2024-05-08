@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="window" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="379.0" prefWidth="754.0" style="-fx-background-color: #FFE2C8;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.login.LoginFrameBoundary">
+<AnchorPane fx:id="window" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="379.0" prefWidth="754.0" style="-fx-background-color: #CCE6FF;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.login.LoginFrameBoundary">
    <children>
       <Pane layoutX="377.0" layoutY="85.0" prefHeight="282.0" prefWidth="368.0">
          <children>
@@ -61,7 +61,7 @@
       </Pane>
       <ImageView fitHeight="321.0" fitWidth="376.0" layoutY="55.0">
          <image>
-            <Image url="@loginPic.jpeg" />
+            <Image url="@loginPic2.jpeg" />
          </image>
       </ImageView>
       <Label layoutX="159.0" layoutY="258.0" prefHeight="50.0" prefWidth="90.0" text="ATIS" textFill="WHITE">

@@ -358,7 +358,7 @@ public class SimpleServer extends AbstractServer {
             }
         } catch (Exception e) {
             // User not found
-            Message message = new Message(1, "Username or password is incorrect");
+            Message message = new Message(1, "username or password is incorrect!");
             return (T) message;
         }
 
@@ -767,7 +767,7 @@ public class SimpleServer extends AbstractServer {
                         message.setData(resultMessage);
                     } else {
                         message.setMessage("login request: Failed");
-                        String errMsg = "Username or password is incorrect";
+                        String errMsg = "username or password is incorrect!";
                         message.setData(errMsg);
                     }
                 }
