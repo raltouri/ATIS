@@ -134,6 +134,7 @@ public class Volunteer {
             UserHomePageBoundary userHomePage = (UserHomePageBoundary) guiCommon.displayNextScreen("UserHomePage.fxml",
                     "Community User Home Page", stage, true);  // Example for opening new screen
             userHomePage.setLoggedInUser(loggedInUser);
+            EventBus.getDefault().unregister(this);
         } else {
             // Handle the case when no task is selected
             System.out.println("Please select a task to pick.");

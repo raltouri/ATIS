@@ -124,6 +124,7 @@ public class OpenRequestBoundary {
         assert volunteer_id_Lbl != null : "fx:id=\"volunteer_id_Lbl\" was not injected: check your FXML file 'OpenRequest.fxml'.";
 
         this.status_Lbl.setText("Request");
+
     }
 
 }

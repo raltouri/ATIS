@@ -75,6 +75,7 @@ public class ManagerHomePageBoundary {
                 ("SOSReports.fxml", "SOS Reports", stage, true);  // Example for opening new screen
 
         sosReports.setLoggedInUser(loggedInUser);
+        EventBus.getDefault().unregister(this);
     }
 
     @FXML
@@ -85,6 +86,7 @@ public class ManagerHomePageBoundary {
                 ("CommunityMembers.fxml", "Community Members", stage, true);  // Example for opening new screen
 
         communityMembers.setLoggedInUser(loggedInUser);
+        EventBus.getDefault().unregister(this);
     }
 
     @FXML
@@ -108,6 +110,7 @@ public class ManagerHomePageBoundary {
         // Example for opening new screen
 
         ShowMessagesViewerPage.setLoggedInUser(loggedInUser);
+        EventBus.getDefault().unregister(this);
     }
 
     @FXML
