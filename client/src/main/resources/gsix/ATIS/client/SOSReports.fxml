@@ -12,9 +12,9 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="633.0" prefWidth="839.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.manager.SOSReports">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="633.0" prefWidth="818.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.manager.SOSReports">
    <children>
-      <BarChart fx:id="barChart" layoutX="29.0" layoutY="165.0" prefHeight="420.0" prefWidth="636.0">
+      <BarChart fx:id="barChart" layoutX="29.0" layoutY="165.0" prefHeight="374.0" prefWidth="636.0">
         <xAxis>
           <CategoryAxis side="BOTTOM" />
         </xAxis>
@@ -22,12 +22,12 @@
           <NumberAxis side="LEFT" />
         </yAxis>
       </BarChart>
-      <Button fx:id="btnBack" layoutX="681.0" layoutY="506.0" mnemonicParsing="false" onAction="#backToManagerHomePage" prefHeight="62.0" prefWidth="130.0" text="Back">
+      <Button fx:id="btnBack" layoutX="354.0" layoutY="553.0" mnemonicParsing="false" onAction="#backToManagerHomePage" prefHeight="45.0" prefWidth="130.0" text="Back">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Button>
-      <Button fx:id="SoS_Btn" layoutX="681.0" layoutY="377.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="101.0" prefWidth="130.0" text="SOS Call" textFill="RED">
+      <Button fx:id="SoS_Btn" layoutX="534.0" layoutY="545.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="62.0" prefWidth="130.0" text="SOS Call" textFill="RED">
          <font>
             <Font name="System Bold" size="24.0" />
          </font></Button>
