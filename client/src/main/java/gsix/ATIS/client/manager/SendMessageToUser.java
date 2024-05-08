@@ -138,7 +138,7 @@ public class SendMessageToUser {
     @Subscribe
     public void handleTasksEvent(MessageEvent event){
         Message handledMessage=event.getMessage();
-        if(handledMessage.getMessage().equals("delete requested task: Done")){
+        if(handledMessage.getMessage().equals("update task status: Done")){
             System.out.println("SendToMsgToUser Class in handleTasksEvent");
             //requestedTasks.setDeclineMsgSent(true);
             // Display a pop-up indicating that the message was sent to the user
