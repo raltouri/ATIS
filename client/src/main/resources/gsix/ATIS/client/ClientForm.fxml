@@ -28,11 +28,17 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #f0f0f0;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.ClientFormController">
    <children>
-      <Label layoutX="50.0" layoutY="122.0" text="Server IP:" />
-      <Label layoutX="50.0" layoutY="227.0" text="Server Port:" />
+      <Label layoutX="64.0" layoutY="122.0" text="Server IP:">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font></Label>
+      <Label layoutX="64.0" layoutY="227.0" text="Server Port:">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font></Label>
       <TextField fx:id="ip_TF" layoutX="150.0" layoutY="112.0" prefHeight="39.0" prefWidth="400.0" promptText="Enter IP Address" />
       <TextField fx:id="port_TF" layoutX="150.0" layoutY="217.0" prefHeight="39.0" prefWidth="400.0" promptText="Enter Port Number" />
-      <Button fx:id="connectToServer_Btn" layoutX="250.0" layoutY="292.0" mnemonicParsing="false" onAction="#ConnectToServer" prefHeight="39.0" prefWidth="114.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Connect To Server" />
+      <Button fx:id="connectToServer_Btn" layoutX="250.0" layoutY="292.0" mnemonicParsing="false" onAction="#ConnectToServer" prefHeight="39.0" prefWidth="114.0" style="-fx-background-color: #1dbf38; -fx-text-fill: white;" text="Connect To Server" textFill="WHITE" />
       <Text layoutX="181.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Connect To Server:" wrappingWidth="250.93682861328125">
          <font>
             <Font name="System Bold" size="27.0" />

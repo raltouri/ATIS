@@ -6,38 +6,30 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="602.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.user.MyTasksPage">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="413.0" prefWidth="645.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.user.MyTasksPage">
    <children>
-      <ListView fx:id="requested_LV" layoutX="16.0" layoutY="100.0" prefHeight="200.0" prefWidth="282.0" />
-      <ListView fx:id="Volunteered_LV" layoutX="307.0" layoutY="100.0" prefHeight="200.0" prefWidth="282.0" />
-      <Label layoutX="63.0" layoutY="73.0" prefHeight="22.0" prefWidth="146.0" text="   Requested Tasks :" textAlignment="CENTER">
+      <ListView fx:id="requested_LV" layoutX="8.0" layoutY="100.0" prefHeight="223.0" prefWidth="311.0" />
+      <ListView fx:id="Volunteered_LV" layoutX="326.0" layoutY="100.0" prefHeight="223.0" prefWidth="311.0" />
+      <Label layoutX="94.0" layoutY="73.0" prefHeight="22.0" prefWidth="146.0" text="   Requested Tasks:" textAlignment="CENTER">
          <font>
             <Font name="System Bold" size="15.0" />
          </font></Label>
-      <Label layoutX="375.0" layoutY="73.0" prefHeight="22.0" prefWidth="146.0" text="Volunteered Tasks :">
+      <Label layoutX="404.0" layoutY="73.0" prefHeight="22.0" prefWidth="146.0" text="Volunteered Tasks:">
          <font>
             <Font name="System Bold" size="15.0" />
          </font></Label>
-      <Label layoutX="211.0" layoutY="22.0" prefHeight="36.0" prefWidth="179.0" text="My Tasks Page">
+      <Label layoutX="236.0" layoutY="22.0" prefHeight="36.0" prefWidth="179.0" text="My Tasks Page">
          <font>
             <Font name="System Bold" size="25.0" />
          </font>
       </Label>
-      <Button fx:id="back_Btn" layoutX="258.0" layoutY="317.0" mnemonicParsing="false" onAction="#goBack" prefHeight="49.0" prefWidth="83.0" text="Back">
+      <Button fx:id="back_Btn" layoutX="264.0" layoutY="337.0" mnemonicParsing="false" onAction="#goBack" prefHeight="58.0" prefWidth="116.0" text="Back">
          <font>
-            <Font name="System Bold" size="12.0" />
+            <Font name="System Bold" size="14.0" />
          </font></Button>
-      <Button fx:id="requested_Btn" layoutX="71.0" layoutY="317.0" mnemonicParsing="false" onAction="#showRequestedTasks" prefHeight="49.0" prefWidth="146.0" text="Show Requested Tasks">
+      <Button fx:id="SoS_Btn" layoutX="413.0" layoutY="338.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="58.0" prefWidth="132.0" text="SOS Call" textFill="RED">
          <font>
-            <Font name="System Bold" size="12.0" />
-         </font></Button>
-      <Button fx:id="volunteered_Btn" layoutX="369.0" layoutY="317.0" mnemonicParsing="false" onAction="#ShowVolunteeredTasks" prefHeight="49.0" prefWidth="157.0" text="Show Volunteered Tasks">
-         <font>
-            <Font name="System Bold" size="12.0" />
-         </font></Button>
-      <Button fx:id="SoS_Btn" layoutX="487.0" layoutY="15.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="86.0" prefWidth="101.0" text="SOS Call" textFill="RED">
-         <font>
-            <Font name="System Bold" size="18.0" />
+            <Font name="System Bold" size="24.0" />
          </font></Button>
    </children>
 </AnchorPane>

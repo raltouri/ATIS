@@ -73,7 +73,7 @@ public class ShowMessageBoxController {
         sosBoundary.setRequester(loggedInUser);
     }
     //  SOS
-    @FXML
+    /*@FXML
     void ShowReceivedMessages(ActionEvent event) {
         if(loggedInUser!=null) {
             String userId = this.loggedInUser.getUser_id();
@@ -86,7 +86,7 @@ public class ShowMessageBoxController {
         }
 
 
-    }
+    }*/
 
     private void getReceivedMessages(String userId) {
         Message message = new Message(1, LocalDateTime.now(), "get received messages", userId);
@@ -110,7 +110,7 @@ public class ShowMessageBoxController {
 
     }
 
-    @FXML
+    /*@FXML
     void showSentMessages(ActionEvent event) {
         if(loggedInUser!=null) {
             String userId = this.loggedInUser.getUser_id();
@@ -121,7 +121,7 @@ public class ShowMessageBoxController {
             System.out.println("LoggedInUser is null in ShowMessages showSentMesages");
         }
 
-    }
+    }*/
 
     private void getSentMessages(String userId) {
         Message message = new Message(1, LocalDateTime.now(), "get sent messages", userId);
@@ -194,7 +194,11 @@ public class ShowMessageBoxController {
         return messages_info;
     }
     public void setLoggedInUser(User loggedInUser) {
+
         this.loggedInUser=loggedInUser;
+        String userID = loggedInUser.getUser_id();
+        getReceivedMessages(userID);
+        getSentMessages(userID);
     }
 
 }

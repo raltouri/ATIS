@@ -6,23 +6,30 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.manager.ShowMessagesViewer">
+<AnchorPane prefHeight="400.0" prefWidth="644.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.manager.ShowMessagesViewer">
    <children>
-      <ListView fx:id="Msent_LV" layoutX="77.0" layoutY="110.0" prefHeight="200.0" prefWidth="200.0" />
-      <ListView fx:id="Mreceived_LV" layoutX="316.0" layoutY="110.0" prefHeight="200.0" prefWidth="200.0" />
-      <Label layoutX="118.0" layoutY="76.0" prefHeight="17.0" prefWidth="101.0" text="   Sent Messages" textAlignment="CENTER" />
-      <Label layoutX="358.0" layoutY="76.0" prefHeight="17.0" prefWidth="129.0" text="Received Messages" />
-      <Label layoutX="154.0" layoutY="22.0" prefHeight="36.0" prefWidth="303.0" text="My Messages Page --&gt; manager">
+      <ListView fx:id="Msent_LV" layoutX="16.0" layoutY="110.0" prefHeight="200.0" prefWidth="300.0" />
+      <ListView fx:id="Mreceived_LV" layoutX="327.0" layoutY="110.0" prefHeight="200.0" prefWidth="300.0" />
+      <Label layoutX="106.0" layoutY="85.0" prefHeight="20.0" prefWidth="120.0" text="   Sent Messages:" textAlignment="CENTER">
          <font>
-            <Font size="18.0" />
+            <Font name="System Bold" size="14.0" />
+         </font></Label>
+      <Label layoutX="408.0" layoutY="85.0" prefHeight="20.0" prefWidth="137.0" text="Received Messages:">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font></Label>
+      <Label layoutX="222.0" layoutY="34.0" prefHeight="38.0" prefWidth="200.0" text="Manager Inbox">
+         <font>
+            <Font name="System Bold" size="26.0" />
          </font>
       </Label>
-      <Button fx:id="Mback_Btn" layoutX="251.0" layoutY="327.0" mnemonicParsing="false" onAction="#MgoBack" prefHeight="49.0" prefWidth="83.0" text="Back" />
-      <Button fx:id="Msent_Btn" layoutX="81.0" layoutY="327.0" mnemonicParsing="false" onAction="#MshowSentMessages" prefHeight="49.0" prefWidth="146.0" text="Show Sent Messages" />
-      <Button fx:id="Mreceived_Btn" layoutX="358.0" layoutY="327.0" mnemonicParsing="false" onAction="#MShowReceivedMessages" prefHeight="49.0" prefWidth="157.0" text="Show Received Messages" />
-      <Button fx:id="SoS_Btn" layoutX="487.0" layoutY="15.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="86.0" prefWidth="101.0" text="SOS Call" textFill="RED">
+      <Button fx:id="Mback_Btn" layoutX="267.0" layoutY="327.0" mnemonicParsing="false" onAction="#MgoBack" prefHeight="62.0" prefWidth="110.0" text="Back">
          <font>
-            <Font name="System Bold" size="18.0" />
+            <Font name="System Bold" size="14.0" />
+         </font></Button>
+      <Button fx:id="SoS_Btn" layoutX="426.0" layoutY="324.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="62.0" prefWidth="120.0" text="SOS Call" textFill="RED">
+         <font>
+            <Font name="System Bold" size="22.0" />
          </font></Button>
    </children>
 </AnchorPane>

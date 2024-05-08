@@ -12,10 +12,13 @@
             <Font name="System Bold" size="22.0" />
          </font>
       </Label>
-      <Button fx:id="Cancel_Btn" layoutX="49.0" layoutY="110.0" mnemonicParsing="false" onAction="#Cancel" prefHeight="46.0" prefWidth="97.0" text="Cancel" />
+      <Button fx:id="Cancel_Btn" layoutX="49.0" layoutY="110.0" mnemonicParsing="false" onAction="#Cancel" prefHeight="46.0" prefWidth="97.0" text="Cancel">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font></Button>
       <Button fx:id="confirmSos_Btn" layoutX="206.0" layoutY="110.0" mnemonicParsing="false" onAction="#Confirm" prefHeight="46.0" prefWidth="97.0" text="Confirm" textFill="#f2092c">
          <font>
-            <Font name="System Bold" size="12.0" />
+            <Font name="System Bold" size="14.0" />
          </font></Button>
    </children>
 </AnchorPane>

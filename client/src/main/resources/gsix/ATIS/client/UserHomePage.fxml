@@ -7,14 +7,29 @@
 
 <AnchorPane prefHeight="584.0" prefWidth="718.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.user.UserHomePageBoundary">
    <children>
-      <Button fx:id="open_request_Btn" layoutX="95.0" layoutY="113.0" mnemonicParsing="false" onAction="#OpenRequest" prefHeight="26.0" prefWidth="130.0" text="Open Help Request" />
-      <Button fx:id="volunteer_Btn" layoutX="95.0" layoutY="164.0" mnemonicParsing="false" onAction="#Volunteer" prefHeight="26.0" prefWidth="130.0" text="Volunteer" />
-      <Button fx:id="my_tasks_Btn" layoutX="95.0" layoutY="267.0" mnemonicParsing="false" onAction="#MyTasks" prefHeight="26.0" prefWidth="130.0" text="My Tasks" />
-      <Button fx:id="messages_inbox_Btn" layoutX="95.0" layoutY="319.0" mnemonicParsing="false" onAction="#MessagesInbox" prefHeight="26.0" prefWidth="130.0" text="Messages Inbox" />
-      <Button fx:id="message_to_manager_Btn" layoutX="95.0" layoutY="216.0" mnemonicParsing="false" onAction="#MessageToManager" prefHeight="26.0" prefWidth="130.0" text="Message To Manager" />
-      <Button fx:id="logOut" layoutX="100.0" layoutY="449.0" mnemonicParsing="false" onAction="#LogOut" prefHeight="26.0" prefWidth="120.0" text="Log Out">
+      <Button fx:id="open_request_Btn" layoutX="95.0" layoutY="113.0" mnemonicParsing="false" onAction="#OpenRequest" prefHeight="33.0" prefWidth="155.0" text="Open A Help Request" textFill="#268e19">
          <font>
-            <Font name="System Bold" size="12.0" />
+            <Font name="System Bold" size="13.0" />
+         </font></Button>
+      <Button fx:id="volunteer_Btn" layoutX="95.0" layoutY="164.0" mnemonicParsing="false" onAction="#Volunteer" prefHeight="33.0" prefWidth="155.0" text="Volunteer" textFill="#230fbc">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font></Button>
+      <Button fx:id="my_tasks_Btn" layoutX="95.0" layoutY="267.0" mnemonicParsing="false" onAction="#MyTasks" prefHeight="33.0" prefWidth="155.0" text="My Tasks">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font></Button>
+      <Button fx:id="messages_inbox_Btn" layoutX="95.0" layoutY="319.0" mnemonicParsing="false" onAction="#MessagesInbox" prefHeight="33.0" prefWidth="155.0" text="Messages Inbox">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font></Button>
+      <Button fx:id="message_to_manager_Btn" layoutX="95.0" layoutY="216.0" mnemonicParsing="false" onAction="#MessageToManager" prefHeight="33.0" prefWidth="155.0" text="Message To Manager">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font></Button>
+      <Button fx:id="logOut" layoutX="100.0" layoutY="449.0" mnemonicParsing="false" onAction="#LogOut" prefHeight="33.0" prefWidth="120.0" text="Log Out">
+         <font>
+            <Font name="System Bold Italic" size="12.0" />
          </font></Button>
       <Button fx:id="SoS_Btn" layoutX="457.0" layoutY="224.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="135.0" prefWidth="137.0" text="SOS Call" textFill="RED">
          <font>
@@ -22,7 +37,7 @@
          </font></Button>
       <Text layoutX="144.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Community Member HomePage" wrappingWidth="430.1368408203125">
          <font>
-            <Font name="System Bold" size="27.0" />
+            <Font name="System Bold Italic" size="27.0" />
          </font>
       </Text>
    </children>

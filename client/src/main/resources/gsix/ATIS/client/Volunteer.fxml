@@ -6,25 +6,25 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.user.Volunteer">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="589.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.user.Volunteer">
    <children>
-      <ListView fx:id="availableTaskListView" layoutX="60.0" layoutY="76.0" prefHeight="241.0" prefWidth="454.0" />
-      <Button fx:id="back_Btn" layoutX="152.0" layoutY="330.0" mnemonicParsing="false" onAction="#backToUserHome" prefHeight="35.0" prefWidth="100.0" text="Back">
+      <ListView fx:id="availableTaskListView" layoutX="47.0" layoutY="64.0" prefHeight="259.0" prefWidth="497.0" />
+      <Button fx:id="back_Btn" layoutX="107.0" layoutY="333.0" mnemonicParsing="false" onAction="#backToUserHome" prefHeight="54.0" prefWidth="100.0" text="Back">
          <font>
-            <Font name="System Bold" size="12.0" />
+            <Font name="System Bold" size="14.0" />
          </font></Button>
-      <Button fx:id="pickTask_Btn" layoutX="321.0" layoutY="330.0" mnemonicParsing="false" onAction="#pickTask" prefHeight="35.0" prefWidth="100.0" text="Pick task">
+      <Button fx:id="pickTask_Btn" layoutX="246.0" layoutY="333.0" mnemonicParsing="false" onAction="#pickTask" prefHeight="54.0" prefWidth="100.0" text="Pick task">
          <font>
-            <Font name="System Bold" size="12.0" />
+            <Font name="System Bold" size="14.0" />
          </font></Button>
       <Label layoutX="100.0" layoutY="27.0" text="Available Tasks for volunteering :">
          <font>
             <Font name="System Bold" size="25.0" />
          </font>
       </Label>
-      <Button fx:id="SoS_Btn" layoutX="26.0" layoutY="11.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="59.0" prefWidth="104.0" text="SOS Call" textFill="RED">
+      <Button fx:id="SoS_Btn" layoutX="389.0" layoutY="333.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="54.0" prefWidth="118.0" text="SOS Call" textFill="RED">
          <font>
-            <Font name="System Bold" size="18.0" />
+            <Font name="System Bold" size="20.0" />
          </font></Button>
    </children>
 </AnchorPane>

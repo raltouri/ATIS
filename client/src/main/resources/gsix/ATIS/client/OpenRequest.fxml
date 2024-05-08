@@ -16,9 +16,9 @@
     <children>
         <VBox prefHeight="450.0" prefWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <Label text="Task Informations">
+                <Label prefHeight="35.0" prefWidth="184.0" text="Task Information">
                     <font>
-                        <Font size="18.0" />
+                        <Font name="System Bold" size="20.0" />
                     </font>
                     <padding>
                         <Insets left="10.0" top="5.0" />
@@ -40,13 +40,31 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <Button fx:id="save_Btn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#saveBtnClicked" prefHeight="35.0" prefWidth="100.0" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
-                        <Button fx:id="back_Btn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#backBtnClicked" prefHeight="35.0" prefWidth="100.0" text="Back" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
+                        <Button fx:id="save_Btn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#saveBtnClicked" prefHeight="35.0" prefWidth="100.0" text="Save" textFill="#268e19" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font></Button>
+                        <Button fx:id="back_Btn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#backBtnClicked" prefHeight="35.0" prefWidth="100.0" text="Back" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                     <font>
+                        <Font size="14.0" />
+                     </font></Button>
                         <Label text="Task ID" visible="false" />
-                        <Label text="Requested Operation :" GridPane.rowIndex="1" />
-                        <Label text="Status :" GridPane.rowIndex="2" />
-                        <Label text="Requester ID :" GridPane.rowIndex="3" />
-                        <Label text="Volunteer ID :" GridPane.rowIndex="4" />
+                        <Label text="Requested Operation :" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font></Label>
+                        <Label text="Status :" GridPane.rowIndex="2">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font></Label>
+                        <Label text="Requester ID :" GridPane.rowIndex="3">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font></Label>
+                        <Label text="Volunteer ID :" GridPane.rowIndex="4">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font></Label>
                         <Label text="Time" visible="false" GridPane.rowIndex="5" />
                         <Label fx:id="task_id_Lbl" text="Label" visible="false" GridPane.columnIndex="1" />
                         <Label fx:id="requster_id_Lbl" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
