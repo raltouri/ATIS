@@ -16,15 +16,15 @@
       </Text>
       <Button fx:id="BtnApprove" layoutX="446.0" layoutY="72.0" mnemonicParsing="false" onAction="#ApproveTask" prefHeight="40.0" prefWidth="132.0" text="Approve">
          <font>
-            <Font name="System Bold" size="12.0" />
+            <Font name="System Bold" size="14.0" />
          </font></Button>
       <Button fx:id="BtnDecline" layoutX="446.0" layoutY="138.0" mnemonicParsing="false" onAction="#DeclineTask" prefHeight="40.0" prefWidth="132.0" text="Decline">
          <font>
-            <Font name="System Bold" size="12.0" />
+            <Font name="System Bold" size="14.0" />
          </font></Button>
       <Button fx:id="BtnBack" layoutX="223.0" layoutY="357.0" mnemonicParsing="false" onAction="#BackToManagerHome" prefHeight="27.0" prefWidth="154.0" text="Back">
          <font>
-            <Font name="System Bold" size="12.0" />
+            <Font name="System Bold" size="14.0" />
          </font></Button>
       <Button fx:id="SoS_Btn" layoutX="449.0" layoutY="220.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="118.0" prefWidth="130.0" text="SOS Call" textFill="RED">
          <font>

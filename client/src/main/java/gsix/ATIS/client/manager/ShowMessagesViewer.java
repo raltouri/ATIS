@@ -63,7 +63,11 @@ public class ShowMessagesViewer {
     private Stage stage;
 
     public void setLoggedInUser(User loggedInUser) {
+
         this.loggedInUser=loggedInUser;
+        String userID = loggedInUser.getUser_id();
+        getSentMessages(userID);
+        getReceivedMessages(userID);
     }
 
     //  SOS
@@ -78,7 +82,7 @@ public class ShowMessagesViewer {
     //  SOS
 
     ///------------------------------------btns------------------------------------
-    @FXML
+    /*@FXML
     void MShowReceivedMessages(ActionEvent event) {
         if(loggedInUser!=null) {
             String userId = this.loggedInUser.getUser_id();
@@ -87,7 +91,7 @@ public class ShowMessagesViewer {
         else{
             System.out.println("LoggedInUser is null in ShowMessages showReceivedMesages");
         }
-    }
+    }*/
 
     @FXML
     void MgoBack(ActionEvent event) {
@@ -101,7 +105,7 @@ public class ShowMessagesViewer {
         managerHomePage.setLoggedInUser(loggedInUser);
     }
 
-    @FXML
+    /*@FXML
     void MshowSentMessages(ActionEvent event) {
         if(loggedInUser!=null) {
             String userId = this.loggedInUser.getUser_id();
@@ -111,11 +115,20 @@ public class ShowMessagesViewer {
         else{
             System.out.println("LoggedInUser is null in ShowMessages showSentMesages");
         }
-    }
+    }*/
     ///-----------------------------helper functions-------------------------------------------
     private void getSentMessages(String userId) {
         Message message = new Message(1, LocalDateTime.now(), "get sent messages", userId);
         System.out.println("ShowMessages: Sent Messages");
+        try {
+            SimpleClient.getClient("",0).sendToServer(message);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private void getReceivedMessages(String userId) {
+        Message message = new Message(1, LocalDateTime.now(), "get received messages", userId);
+        System.out.println("ShowMessages: Received Messages");
         try {
             SimpleClient.getClient("",0).sendToServer(message);
         } catch (IOException e) {

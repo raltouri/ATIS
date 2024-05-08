@@ -92,7 +92,7 @@ public class MyTasksPage {
 
         EventBus.getDefault().register(this);
     }
-    @FXML
+    /*@FXML
     void showRequestedTasks(ActionEvent event) {
         if(loggedInUser!=null) {
             String userId = this.loggedInUser.getUser_id();
@@ -104,7 +104,7 @@ public class MyTasksPage {
             System.out.println("LoggedInUser is null in MyTasksPage showRequestedTasks");
         }
 
-    }
+    }*/
 
     private void getRequestedTasks(String userId) {
         Message message = new Message(1, LocalDateTime.now(), "get requested tasks", userId);
@@ -116,7 +116,7 @@ public class MyTasksPage {
         }
     }
 
-    @FXML
+    /*@FXML
     void ShowVolunteeredTasks(ActionEvent event) {
         if(loggedInUser!=null) {
             String userId = this.loggedInUser.getUser_id();
@@ -128,7 +128,7 @@ public class MyTasksPage {
             System.out.println("LoggedInUser is null in MyTasksPage showRequestedTasks");
         }
 
-    }
+    }*/
 
     private void getVolunteeredTasks(String userId) {
         Message message = new Message(1, LocalDateTime.now(), "get volunteered tasks", userId);
@@ -172,7 +172,11 @@ public class MyTasksPage {
 
     }
 
-    public void setLoggedInUser(User loggedInUser) {
-        this.loggedInUser=loggedInUser;
+    public void setLoggedInUser(User user) {
+
+        this.loggedInUser=user;
+        String userID = loggedInUser.getUser_id();
+        getRequestedTasks(userID);
+        getVolunteeredTasks(userID);
     }
 }
