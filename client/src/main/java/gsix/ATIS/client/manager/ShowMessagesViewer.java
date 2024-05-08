@@ -105,6 +105,7 @@ public class ShowMessagesViewer {
                 "Manager Home Page", stage, true);  // Example for opening new screen
 
         managerHomePage.setLoggedInUser(loggedInUser);
+        EventBus.getDefault().unregister(this);
     }
 
     /*@FXML

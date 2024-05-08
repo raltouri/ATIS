@@ -83,6 +83,7 @@ public class UserHomePageBoundary {
                 "Community User Send Message to Manager Page", stage, true);  // Example for opening new screen
 
         sendMessageToManagerPage.setLoggedInUser(loggedInUser);
+        EventBus.getDefault().unregister(this);
 
     }
 
@@ -95,6 +96,7 @@ public class UserHomePageBoundary {
                 "Community User Show Message Box Page", stage, true);  // Example for opening new screen
 
         showMessageBoxControllerPage.setLoggedInUser(loggedInUser);
+        EventBus.getDefault().unregister(this);
 
     }
 
@@ -107,6 +109,7 @@ public class UserHomePageBoundary {
                 "Community User My Tasks Page", stage, true);  // Example for opening new screen
 
         myTasksPage.setLoggedInUser(loggedInUser);
+        EventBus.getDefault().unregister(this);
 
     }
 
@@ -119,6 +122,7 @@ public class UserHomePageBoundary {
         OpenRequestBoundary openRequestBoundary = (OpenRequestBoundary) guiCommon.displayNextScreen
                 ("OpenRequest.fxml", "Open Help Request", stage, true);
         openRequestBoundary.setRequesterInfo(loggedInUser);
+        EventBus.getDefault().unregister(this);
         //stage.close();
     }
 
@@ -131,6 +135,7 @@ public class UserHomePageBoundary {
                 "Community User Volunteer Page", stage, true);  // Example for opening new screen
 
         volunteerPage.setLoggedInUser(loggedInUser);
+        EventBus.getDefault().unregister(this);
     }
 
     @Subscribe
