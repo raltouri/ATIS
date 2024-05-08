@@ -14,11 +14,11 @@
             <Font name="System Bold" size="25.0" />
          </font>
       </Text>
-      <Button fx:id="BtnApprove" layoutX="446.0" layoutY="72.0" mnemonicParsing="false" onAction="#ApproveTask" prefHeight="40.0" prefWidth="132.0" text="Approve">
+      <Button fx:id="BtnApprove" layoutX="446.0" layoutY="72.0" mnemonicParsing="false" onAction="#ApproveTask" prefHeight="40.0" prefWidth="132.0" text="Approve" textFill="#268e19">
          <font>
             <Font name="System Bold" size="14.0" />
          </font></Button>
-      <Button fx:id="BtnDecline" layoutX="446.0" layoutY="138.0" mnemonicParsing="false" onAction="#DeclineTask" prefHeight="40.0" prefWidth="132.0" text="Decline">
+      <Button fx:id="BtnDecline" layoutX="446.0" layoutY="138.0" mnemonicParsing="false" onAction="#DeclineTask" prefHeight="40.0" prefWidth="132.0" text="Decline" textFill="#f2092c">
          <font>
             <Font name="System Bold" size="14.0" />
          </font></Button>
