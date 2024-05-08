@@ -91,7 +91,7 @@ public class SOSReports implements Initializable {
                     "get sos requests for community between dates",
                     new Object[]{loggedInManager.getCommunityId(), start, end}
             );
-        } else {
+        } else if("All Communities".equals(selectedCommunity)){
             // Fetch reports for all communities
             message = new Message(
                     1,
@@ -99,6 +99,15 @@ public class SOSReports implements Initializable {
                     "get sos requests for all communities between dates",
                     new LocalDate[]{start, end}
             );
+        }
+        else{
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Invalid Community Selection");
+            alert.setHeaderText("No Community selected");
+            alert.setContentText("You need to choose a community");
+
+            alert.showAndWait(); // Displays the alert and waits for user acknowledgment
+            return;
         }
 
         try {
