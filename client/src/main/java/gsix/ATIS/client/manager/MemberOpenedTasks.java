@@ -72,6 +72,7 @@ public class MemberOpenedTasks {
         CommunityMembers communityMembers = (CommunityMembers) guiCommon.displayNextScreen("CommunityMembers.fxml",
                 "Community Members", stage, true);  // Example for opening new screen
         communityMembers.setLoggedInUser(loggedInManager);
+        EventBus.getDefault().unregister(this);
     }
 
     private void getRequestedTasks(String userId) {

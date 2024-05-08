@@ -252,6 +252,10 @@ public class RequestedTasks {
         ManagerHomePageBoundary managerHomePageBoundary = (ManagerHomePageBoundary) guiCommon.displayNextScreen("ManagerHomePage.fxml",
                 "Manager Home Page", stage, true);  // Example for opening new screen
         managerHomePageBoundary.setLoggedInUser(loggedInManager);
+        EventBus.getDefault().unregister(this);
+        /*stage.close();
+        stage=null;
+*/
     }
 
     @Subscribe
@@ -284,7 +288,7 @@ public class RequestedTasks {
                 sendMessageToUser.setRequesterID(requesterID);
                 sendMessageToUser.setLoggedInManager(loggedInManager);
                 sendMessageToUser.setTaskID(declinedTask.getTask_id());
-                sendMessageToUser.setRequestedTasks(this);
+                //sendMessageToUser.setRequestedTasks(this);
                 //System.out.println(declinedTask.getTask_id());
 
             });

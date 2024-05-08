@@ -77,6 +77,12 @@ public class SimpleClient extends AbstractClient {
 		}else if(message.getMessage().equals("notify overdue task")){
 			MessageEvent messageEvent=new MessageEvent(message);
 			EventBus.getDefault().post(messageEvent);
+		}else if(message.getMessage().equals("get sent messages: Done")){
+			MessageEvent messageEvent=new MessageEvent(message);
+			EventBus.getDefault().post(messageEvent);
+		}else if(message.getMessage().equals("get received messages: Done")){
+			MessageEvent messageEvent=new MessageEvent(message);
+			EventBus.getDefault().post(messageEvent);
 		}else {
 			EventBus.getDefault().post(new MessageEvent(message));
 		}

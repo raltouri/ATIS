@@ -115,10 +115,9 @@ public class ManagerHomePageBoundary {
         stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
         GuiCommon guiCommon = GuiCommon.getInstance();
         RequestedTasks requestedTasks = (RequestedTasks) guiCommon.displayNextScreen("RequestedTasks.fxml",
-                "Community's Requested Tasks Page", stage, true);  // Example for opening new screen
-
+                "Community's Requested Tasks Page", null, false);  // Example for opening new screen
         requestedTasks.setLoggedInUser(loggedInUser);
-
+        stage.close();
     }
 
     @FXML
@@ -149,6 +148,7 @@ public class ManagerHomePageBoundary {
         // Display the login screen
         GuiCommon guiCommon = GuiCommon.getInstance();
         guiCommon.displayNextScreen("LoginForm.fxml", "Login Screen", stage, true);
+        EventBus.getDefault().unregister(this);
 
     }
     @FXML

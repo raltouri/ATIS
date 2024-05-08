@@ -83,6 +83,7 @@ public class CommunityMembers {
         ManagerHomePageBoundary managerHomePageBoundary = (ManagerHomePageBoundary) guiCommon.displayNextScreen("ManagerHomePage.fxml",
                 "Manager Home Page", stage, true);  // Example for opening new screen
         managerHomePageBoundary.setLoggedInUser(loggedInManager);
+        EventBus.getDefault().unregister(this);
     }
 
     @FXML

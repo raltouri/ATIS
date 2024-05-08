@@ -1030,7 +1030,8 @@ public class SimpleServer extends AbstractServer {
                          * return secondsDifference % 2*60*60 == 0, to get overdue tasks once every 2 hours and so on...
                          * return secondsDifference % 10 == 0, to get overdue tasks once every 10 seconds for test purposes.
                          **/
-                        return secondsDifference % 24*60*60 == 0; // gets task if overdue once every 24 hours
+                        //return secondsDifference % 24*60*60 == 0; // gets task if overdue once every 24 hours
+                        return secondsDifference % 10 == 0;
                     })
                     .collect(Collectors.toList());
 
