@@ -704,7 +704,7 @@ public class SimpleServer extends AbstractServer {
 
                 Task testUpdate = getEntityById(Task.class, updatedTaskID);
                 message.setData(testUpdate);
-                message.setMessage("change task status: Done");
+                message.setMessage("update task status: Done");
                 client.sendToClient(message);
 
             } else if (request.equals("delete task")) {

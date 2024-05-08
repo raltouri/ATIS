@@ -81,7 +81,7 @@ public class SendMessageToManager {
 
     }
 
-    @FXML
+    /*@FXML
     void showUnfinishedTasks(ActionEvent event) {
         if(loggedInUser!=null) {
             String userId = this.loggedInUser.getUser_id();
@@ -92,7 +92,7 @@ public class SendMessageToManager {
             System.out.println("LoggedInUser is null in ShowMessages showUnfinishedTasks");
         }
 
-    }
+    }*/
 
     private void getUnfinishedTasks(String userId) {
         Message message = new Message(1, LocalDateTime.now(), "get unfinished tasks", userId);
@@ -235,7 +235,10 @@ public class SendMessageToManager {
         alert.showAndWait();
     }
     public  void setLoggedInUser(User loggedUser){
+
         this.loggedInUser = loggedUser;
+        String userID = loggedUser.getUser_id();
+        getUnfinishedTasks(userID);
     }
 
 }

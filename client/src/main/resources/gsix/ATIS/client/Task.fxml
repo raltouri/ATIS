@@ -12,13 +12,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="450.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.TaskViewController">
+<AnchorPane prefHeight="460.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.TaskViewController">
    <children>
-      <VBox prefHeight="450.0" prefWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox prefHeight="460.0" prefWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label text="Task Informations">
+            <Label text="Task Information">
                <font>
-                  <Font size="18.0" />
+                  <Font name="System Bold Italic" size="20.0" />
                </font>
                <padding>
                   <Insets left="10.0" top="5.0" />
@@ -40,20 +40,38 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button fx:id="save_Btn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#saveBtnClicked" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                  <Button fx:id="save_Btn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#saveBtnClicked" prefHeight="32.0" prefWidth="90.0" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
                      <font>
-                        <Font name="System Bold" size="12.0" />
+                        <Font name="System Bold" size="13.5" />
                      </font></Button>
-                  <Button fx:id="back_Btn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#backBtnClicked" text="Back" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                  <Button fx:id="back_Btn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#backBtnClicked" prefHeight="32.0" prefWidth="90.0" text="Back" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
                      <font>
-                        <Font name="System Bold" size="12.0" />
+                        <Font name="System Bold" size="13.5" />
                      </font></Button>
-                  <Label text="Task ID:" />
-                  <Label text="Requested Operation:" GridPane.rowIndex="1" />
-                  <Label text="Status:" GridPane.rowIndex="2" />
-                  <Label text="Requester ID:" GridPane.rowIndex="3" />
-                  <Label text="Volunteer ID:" GridPane.rowIndex="4" />
-                  <Label text="Time:" GridPane.rowIndex="5" />
+                  <Label text="Task ID:">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font></Label>
+                  <Label text="Requested Operation:" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font></Label>
+                  <Label text="Status:" GridPane.rowIndex="2">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font></Label>
+                  <Label text="Requester ID:" GridPane.rowIndex="3">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font></Label>
+                  <Label text="Volunteer ID:" GridPane.rowIndex="4">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font></Label>
+                  <Label text="Time:" GridPane.rowIndex="5">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font></Label>
                   <Label fx:id="task_id_Lbl" text="Label" GridPane.columnIndex="1" />
                   <Label fx:id="requster_id_Lbl" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <Label fx:id="volunteer_id_Lbl" text="No One Yet" GridPane.columnIndex="1" GridPane.rowIndex="4" />

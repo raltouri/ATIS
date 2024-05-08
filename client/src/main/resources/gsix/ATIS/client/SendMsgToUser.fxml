@@ -6,33 +6,33 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="371.0" prefWidth="463.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.manager.SendMessageToUser">
+<AnchorPane prefHeight="371.0" prefWidth="578.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.manager.SendMessageToUser">
    <children>
-      <TextField fx:id="messageTB" alignment="TOP_LEFT" layoutX="57.0" layoutY="96.0" prefHeight="193.0" prefWidth="354.0" promptText="Decline reason:" />
+      <TextField fx:id="messageTB" alignment="TOP_LEFT" layoutX="31.0" layoutY="97.0" prefHeight="193.0" prefWidth="400.0" promptText="Decline reason:" />
       <Button fx:id="BtnClose" layoutX="121.0" layoutY="300.0" mnemonicParsing="false" onAction="#Close" prefHeight="45.0" prefWidth="79.0" text="Close">
          <font>
-            <Font name="System Bold" size="12.0" />
+            <Font name="System Bold" size="14.0" />
          </font></Button>
       <Button fx:id="BtnSend" layoutX="264.0" layoutY="300.0" mnemonicParsing="false" onAction="#SendDeclineMsgToUser" prefHeight="45.0" prefWidth="79.0" text="Send">
          <font>
-            <Font name="System Bold" size="12.0" />
+            <Font name="System Bold" size="14.0" />
          </font></Button>
-      <Text layoutX="68.0" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sending Decline message to:" wrappingWidth="326.4">
+      <Text layoutX="123.0" layoutY="49.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sending Decline message to:" wrappingWidth="332.8000244140625">
          <font>
             <Font name="System Bold" size="24.0" />
          </font>
       </Text>
-      <Text layoutX="57.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" text="requester of task :" wrappingWidth="127.73670196533203">
+      <Text layoutX="33.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" text="requester of task :" wrappingWidth="127.73670196533203">
          <font>
             <Font name="System Bold" size="15.0" />
          </font>
       </Text>
-      <Text fx:id="taskIdTV" layoutX="191.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Task ID" wrappingWidth="59.6708984375">
+      <Text fx:id="taskIdTV" layoutX="167.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Task ID" wrappingWidth="59.6708984375">
          <font>
             <Font name="System Bold" size="15.0" />
          </font>
       </Text>
-      <Button fx:id="SoS_Btn" layoutX="449.0" layoutY="220.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="118.0" prefWidth="130.0" text="SOS Call" textFill="RED">
+      <Button fx:id="SoS_Btn" layoutX="440.0" layoutY="240.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="118.0" prefWidth="130.0" text="SOS Call" textFill="RED">
          <font>
             <Font name="System Bold" size="24.0" />
          </font></Button>

@@ -16,15 +16,15 @@
       </Label>
       <Button fx:id="btnBack" layoutX="232.0" layoutY="356.0" mnemonicParsing="false" onAction="#BackToManagerHome" prefHeight="29.0" prefWidth="134.0" text="Back">
          <font>
-            <Font name="System Bold" size="12.0" />
+            <Font name="System Bold" size="14.0" />
          </font></Button>
       <Button fx:id="btnRequests" layoutX="442.0" layoutY="102.0" mnemonicParsing="false" onAction="#showOpenedRequests" prefHeight="30.0" prefWidth="144.0" text="Opened Requests">
          <font>
-            <Font name="System Bold" size="12.0" />
+            <Font name="System Bold" size="14.0" />
          </font></Button>
       <Button fx:id="btnVolunteered" layoutX="442.0" layoutY="157.0" mnemonicParsing="false" onAction="#showVolunteeredTasks" prefHeight="30.0" prefWidth="144.0" text="Volunteered Tasks">
          <font>
-            <Font name="System Bold" size="12.0" />
+            <Font name="System Bold" size="14.0" />
          </font></Button>
       <Button fx:id="SoS_Btn" layoutX="449.0" layoutY="220.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="118.0" prefWidth="130.0" text="SOS Call" textFill="RED">
          <font>

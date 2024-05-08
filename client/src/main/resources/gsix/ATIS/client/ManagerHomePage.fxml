@@ -14,22 +14,31 @@
          </font></Button>
       <Text layoutX="156.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Manager HomePage" wrappingWidth="274.93682861328125">
          <font>
-            <Font name="System Bold" size="27.0" />
+            <Font name="System Bold Italic" size="27.0" />
          </font>
       </Text>
       <Pane layoutX="52.0" layoutY="70.0" prefHeight="244.0" prefWidth="429.0">
          <children>
-            <Button fx:id="RequestedTask" layoutX="14.0" layoutY="23.0" mnemonicParsing="false" onAction="#ViewRequestedTasks" prefHeight="34.0" prefWidth="160.0" text="Requested Tasks" />
-            <Button fx:id="btnSOSReports" layoutX="14.0" layoutY="88.0" mnemonicParsing="false" onAction="#ViewSOSReports" prefHeight="34.0" prefWidth="160.0" text="View SOS Reports" textFill="#f2092c">
+            <Button fx:id="RequestedTask" layoutX="14.0" layoutY="23.0" mnemonicParsing="false" onAction="#ViewRequestedTasks" prefHeight="34.0" prefWidth="177.0" text="Requested Tasks" textFill="#268e19">
                <font>
-                  <Font name="System Bold" size="12.0" />
+                  <Font name="System Bold Italic" size="13.0" />
+               </font></Button>
+            <Button fx:id="btnSOSReports" layoutX="14.0" layoutY="88.0" mnemonicParsing="false" onAction="#ViewSOSReports" prefHeight="34.0" prefWidth="177.0" text="View SOS Reports" textFill="#f2092c">
+               <font>
+                  <Font name="System Bold" size="13.0" />
                </font>
             </Button>
-            <Button fx:id="viewMsges" layoutX="236.0" layoutY="23.0" mnemonicParsing="false" onAction="#ViewMessages" prefHeight="34.0" prefWidth="160.0" text="View Messages" />
-            <Button fx:id="btnViewMembers" layoutX="236.0" layoutY="88.0" mnemonicParsing="false" onAction="#ViewCommunityMembers" prefHeight="34.0" prefWidth="160.0" text="View Community Members" />
-            <Button fx:id="logOut" layoutX="14.0" layoutY="196.0" mnemonicParsing="false" onAction="#logOut" prefHeight="34.0" prefWidth="130.0" text="Log Out">
+            <Button fx:id="viewMsges" layoutX="236.0" layoutY="23.0" mnemonicParsing="false" onAction="#ViewMessages" prefHeight="34.0" prefWidth="177.0" text="View Messages">
                <font>
-                  <Font name="System Bold" size="12.0" />
+                  <Font size="13.0" />
+               </font></Button>
+            <Button fx:id="btnViewMembers" layoutX="236.0" layoutY="88.0" mnemonicParsing="false" onAction="#ViewCommunityMembers" prefHeight="34.0" prefWidth="177.0" text="View Community Members">
+               <font>
+                  <Font size="13.0" />
+               </font></Button>
+            <Button fx:id="logOut" layoutX="14.0" layoutY="196.0" mnemonicParsing="false" onAction="#logOut" prefHeight="34.0" prefWidth="137.0" text="Log Out">
+               <font>
+                  <Font name="System Bold Italic" size="13.0" />
                </font>
             </Button>
          </children>
