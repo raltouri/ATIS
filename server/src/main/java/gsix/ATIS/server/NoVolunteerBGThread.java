@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+
 /*
  * TO START THE THREAD :
  * NoVolunteerBGThread bgThread = new NoVolunteerBGThread();
@@ -25,6 +26,8 @@ public class NoVolunteerBGThread implements Runnable{
 
     private Timer timer;
     private SimpleServer server;
+
+    private final int THREAD_CYCLE_SECONDS= 20;
 /*    private List<Task> alllOverDuePendingTasks = null;
     private List<User> community_users = null;
     private Task foundTask = null;
@@ -52,7 +55,7 @@ public class NoVolunteerBGThread implements Runnable{
                 System.out.println("Background thread is running...");
                 getAllSystemOverDuePendingTasks();
             }
-        }, 0, 20*1000); // Checks every 60*60 seconds (1 Hour), put 10*1000 to check every 10 seconds
+        }, 0, THREAD_CYCLE_SECONDS*1000); // Checks every 60*60 seconds (1 Hour), put 10*1000 to check every 10 seconds
     }
 
     private void getAllSystemOverDuePendingTasks() {

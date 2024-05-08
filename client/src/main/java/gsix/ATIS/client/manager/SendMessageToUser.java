@@ -140,7 +140,7 @@ public class SendMessageToUser {
         Message handledMessage=event.getMessage();
         if(handledMessage.getMessage().equals("delete requested task: Done")){
             System.out.println("SendToMsgToUser Class in handleTasksEvent");
-            requestedTasks.setDeclineMsgSent(true);
+            //requestedTasks.setDeclineMsgSent(true);
             // Display a pop-up indicating that the message was sent to the user
             //Platform.runLater(() -> showAlert("Message Sent", "The message was successfully sent to the manager."));
             Platform.runLater(() -> {

@@ -30,6 +30,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public class ShowMessagesViewer {
 
@@ -136,6 +138,7 @@ public class ShowMessagesViewer {
         }
     }
 
+    @Subscribe
     public void handleTasksEvent(MessageEvent event){
         Message handledMessage=event.getMessage();
 
@@ -195,6 +198,7 @@ public class ShowMessagesViewer {
         assert Msent_Btn != null : "fx:id=\"Msent_Btn\" was not injected: check your FXML file 'MessagesViewerPage.fxml'.";
         assert Msent_LV != null : "fx:id=\"Msent_LV\" was not injected: check your FXML file 'MessagesViewerPage.fxml'.";
 
+        EventBus.getDefault().register(this);
     }
 
 }

@@ -108,6 +108,7 @@ public class Volunteer {
         UserHomePageBoundary userHomePage = (UserHomePageBoundary) guiCommon.displayNextScreen("UserHomePage.fxml",
                 "Community User Home Page", stage, true);  // Example for opening new screen
         userHomePage.setLoggedInUser(loggedInUser);
+        EventBus.getDefault().unregister(this);
     }
 
     @FXML

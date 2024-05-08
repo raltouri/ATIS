@@ -175,10 +175,10 @@ public class UserHomePageBoundary {
         }
 
         GuiCommon guiCommon = GuiCommon.getInstance();
-        /*LoginFrameBoundary loginFrameBoundary = (LoginFrameBoundary)*/ guiCommon.displayNextScreen("LoginForm.fxml",
+        /*LoginFrameBoundary loginFrameBoundary = (LoginFrameBoundary)*/
+        guiCommon.displayNextScreen("LoginForm.fxml",
                 "Login Screen", stage, true);  // Example for opening new screen
-
-
+        EventBus.getDefault().unregister(this);
     }
 
     public void setLoggedInUser(User loggedUser) {
