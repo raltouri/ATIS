@@ -40,7 +40,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <Button fx:id="save_Btn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#saveBtnClicked" prefHeight="35.0" prefWidth="100.0" text="Save" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                        <Button fx:id="save_Btn" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#saveBtnClicked" prefHeight="35.0" prefWidth="100.0" text="Save" textFill="#268e19" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font></Button>
