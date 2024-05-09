@@ -105,6 +105,7 @@ public class OpenRequestBoundary {
             alert.setContentText("Your request has been sent to the manager for approval.");
             alert.showAndWait(); // Wait for the user to close the alert
 
+
             //GuiCommon.getInstance().displayNextScreen("UserHomePage.fxml", "Community User Home Page", stage, true);
             UserHomePageBoundary userHomePage = (UserHomePageBoundary) GuiCommon.getInstance().displayNextScreen("UserHomePage.fxml",
                     "Community User Home Page", stage, true);  // Example for opening new screen
