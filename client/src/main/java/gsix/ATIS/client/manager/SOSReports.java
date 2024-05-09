@@ -195,6 +195,15 @@ public class SOSReports implements Initializable {
                 LocalDate date = sos.getTime().toLocalDate(); // Convert to LocalDate
                 dailySOSCount.put(date, dailySOSCount.getOrDefault(date, 0) + 1);
             }
+            // If there's no data, display an alert
+            if (dailySOSCount.isEmpty()) {
+                Alert noDataAlert = new Alert(Alert.AlertType.INFORMATION);
+                noDataAlert.setTitle("No SOS Requests");
+                noDataAlert.setHeaderText("No SOS requests found");
+                noDataAlert.setContentText("No SOS requests were found for the selected date range.");
+                noDataAlert.showAndWait();
+                return; // Exit early to avoid updating the chart
+            }
 
             // Update the BarChart
             XYChart.Series<String, Number> series = new XYChart.Series<>();
