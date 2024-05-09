@@ -19,6 +19,7 @@ import gsix.ATIS.entities.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -97,12 +98,19 @@ public class OpenRequestBoundary {
             //System.out.println("before send to server GetAllTasks command");
             SimpleClient.getClient("",0).sendToServer(message);
             //System.out.println("after send to server GetAllTasks command");
+            // Show the alert to confirm that the request has been sent to the manager
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Request Sent");
+            alert.setHeaderText(null);
+            alert.setContentText("Your request has been sent to the manager for approval.");
+            alert.showAndWait(); // Wait for the user to close the alert
 
             //GuiCommon.getInstance().displayNextScreen("UserHomePage.fxml", "Community User Home Page", stage, true);
             UserHomePageBoundary userHomePage = (UserHomePageBoundary) GuiCommon.getInstance().displayNextScreen("UserHomePage.fxml",
                     "Community User Home Page", stage, true);  // Example for opening new screen
             userHomePage.setLoggedInUser(requester);
             /// make (UserHome page) or (Server) send the manager message to approve the task
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
