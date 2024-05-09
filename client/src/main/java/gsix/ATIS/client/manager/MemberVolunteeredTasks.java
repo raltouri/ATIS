@@ -71,10 +71,11 @@ public class MemberVolunteeredTasks {
     public void BackToCommunityMembersScreen(ActionEvent event) {
         stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
         GuiCommon guiCommon = GuiCommon.getInstance();
-        CommunityMembers communityMembers = (CommunityMembers) guiCommon.displayNextScreen("CommunityMembers.fxml",
+        /*CommunityMembers communityMembers = (CommunityMembers) guiCommon.displayNextScreen("CommunityMembers.fxml",
                 "Community Members", stage, true);  // Example for opening new screen
         communityMembers.setLoggedInUser(loggedInManager);
-        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(this);*/
+        stage.close();
     }
 
     private void getVolunteeredTasks(String userId) {

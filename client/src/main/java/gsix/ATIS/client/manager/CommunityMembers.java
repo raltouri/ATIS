@@ -101,7 +101,7 @@ public class CommunityMembers {
             Platform.runLater(() -> {
                 GuiCommon guiCommon = GuiCommon.getInstance();
                 MemberOpenedTasks memberOpenedTasks = (MemberOpenedTasks) guiCommon.displayNextScreen("MemberOpenedTasks.fxml",
-                        "opened Tasks", stage, false);  // Example for opening new screen
+                        "opened Tasks", null, false);  // Example for opening new screen
                 memberOpenedTasks.setLoggedInUser(loggedInManager);
                 memberOpenedTasks.setCommunityMember(memberID);
                 //flag = "";
@@ -140,7 +140,7 @@ public class CommunityMembers {
             Platform.runLater(() -> {
                 GuiCommon guiCommon = GuiCommon.getInstance();
                 MemberVolunteeredTasks memberVolunteeredTasks = (MemberVolunteeredTasks) guiCommon.displayNextScreen("MemberVolunteeredTasks.fxml",
-                        "Volunteered Tasks", stage, false);  // Example for opening new screen
+                        "Volunteered Tasks", null, false);  // Example for opening new screen
                 memberVolunteeredTasks.setLoggedInUser(loggedInManager);
                 memberVolunteeredTasks.setCommunityMember(memberID);
                 //flag = "";
