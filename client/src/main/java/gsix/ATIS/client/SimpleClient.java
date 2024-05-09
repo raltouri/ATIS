@@ -17,7 +17,9 @@ public class SimpleClient extends AbstractClient {
 	protected void handleMessageFromServer(Object msg) {
 		Message message = (Message) msg;
 		System.out.println("I am in handle from server");
-		if(message.getMessage().equals("get all tasks: Done")){
+		MessageEvent messageEvent=new MessageEvent(message);
+		EventBus.getDefault().post(messageEvent);
+		/*if(message.getMessage().equals("get all tasks: Done")){
 			System.out.println("I am in handle from server get all done");
 			//List<Task> allTasks = (List<Task>) message.getData();
 			MessageEvent messageEvent=new MessageEvent(message);
@@ -85,7 +87,7 @@ public class SimpleClient extends AbstractClient {
 			EventBus.getDefault().post(messageEvent);
 		}else {
 			EventBus.getDefault().post(new MessageEvent(message));
-		}
+		}*/
 	}
 	
 	public static SimpleClient getClient(String server_ip,int server_port) {

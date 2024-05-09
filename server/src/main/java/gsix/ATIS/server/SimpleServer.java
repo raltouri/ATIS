@@ -31,48 +31,58 @@ public class SimpleServer extends AbstractServer {
 
 
 
+    // Method to check if the tasks table is empty
+    private static boolean isTasksTableEmpty() {
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        query.select(builder.count(query.from(Task.class)));
+        Long count = session.createQuery(query).uniqueResult();
+        return count == 0;
+    }
     private static void initializeData() throws Exception {
 
-        // Check if tasks exist before creating and saving
-        if (!taskExists(1)) {
-            Task t1 = new Task(1,"1","car repair",LocalDateTime.now(),TaskStatus.Request);
-            session.save(t1);
-        }
-        if (!taskExists(2)) {
-            Task t2 = new Task(2,"2","wash machine repair",LocalDateTime.now(),TaskStatus.Pending);
-            session.save(t2);
-        }
-        if (!taskExists(3)) {
-            Task t3 = new Task(3,"3","fridge repair",LocalDateTime.now(),TaskStatus.Pending);
-            session.save(t3);
-        }
-        if (!taskExists(4)) {
-            Task t4 = new Task(4,"4","buy groceries",LocalDateTime.now(),TaskStatus.Pending);
-            session.save(t4);
-        }
-        if (!taskExists(5)) {
-            Task t5 = new Task(5,"5","CHECK CODE PLEASE",LocalDateTime.now(),TaskStatus.Pending);
-            session.save(t5);
-        }
-        if (!taskExists(6)) {
-            Task t6 = new Task(6,"6","VALIDATE CODE PLEASE",LocalDateTime.now(),TaskStatus.Pending);
-            session.save(t6);
-        }
-        if (!taskExists(7)) {
-            Task t7 = new Task(7,"7","Task 7",LocalDateTime.now(),TaskStatus.Pending);
-            session.save(t7);
-        }
-        if (!taskExists(8)) {
-            Task t8 = new Task(8,"8","Task 8",LocalDateTime.now(),TaskStatus.Pending);
-            session.save(t8);
-        }
-        if (!taskExists(9)) {
-            Task t9 = new Task(9,"9","Task 9",LocalDateTime.now(),TaskStatus.Pending);
-            session.save(t9);
-        }
+        if(isTasksTableEmpty()) {
+            // Check if tasks exist before creating and saving
+            if (!taskExists(1)) {
+                Task t1 = new Task(1, "1", "car repair", LocalDateTime.now(), TaskStatus.Request);
+                session.save(t1);
+            }
+            if (!taskExists(2)) {
+                Task t2 = new Task(2, "2", "wash machine repair", LocalDateTime.now(), TaskStatus.Pending);
+                session.save(t2);
+            }
+            if (!taskExists(3)) {
+                Task t3 = new Task(3, "3", "fridge repair", LocalDateTime.now(), TaskStatus.Pending);
+                session.save(t3);
+            }
+            if (!taskExists(4)) {
+                Task t4 = new Task(4, "4", "buy groceries", LocalDateTime.now(), TaskStatus.Pending);
+                session.save(t4);
+            }
+            if (!taskExists(5)) {
+                Task t5 = new Task(5, "5", "CHECK CODE PLEASE", LocalDateTime.now(), TaskStatus.Pending);
+                session.save(t5);
+            }
+            if (!taskExists(6)) {
+                Task t6 = new Task(6, "6", "VALIDATE CODE PLEASE", LocalDateTime.now(), TaskStatus.Pending);
+                session.save(t6);
+            }
+            if (!taskExists(7)) {
+                Task t7 = new Task(7, "7", "Task 7", LocalDateTime.now(), TaskStatus.Pending);
+                session.save(t7);
+            }
+            if (!taskExists(8)) {
+                Task t8 = new Task(8, "8", "Task 8", LocalDateTime.now(), TaskStatus.Pending);
+                session.save(t8);
+            }
+            if (!taskExists(9)) {
+                Task t9 = new Task(9, "9", "Task 9", LocalDateTime.now(), TaskStatus.Pending);
+                session.save(t9);
+            }
 
-        session.flush();
-        session.getTransaction().commit();
+            session.flush();
+            session.getTransaction().commit();
+        }
     }
 
     // Method to check if a task with a given ID exists
@@ -1031,7 +1041,7 @@ public class SimpleServer extends AbstractServer {
                          * return secondsDifference % 10 == 0, to get overdue tasks once every 10 seconds for test purposes.
                          **/
                         //return secondsDifference % 24*60*60 == 0; // gets task if overdue once every 24 hours
-                        return secondsDifference % 10 == 0;
+                        return secondsDifference % 1 == 0;
                     })
                     .collect(Collectors.toList());
 
