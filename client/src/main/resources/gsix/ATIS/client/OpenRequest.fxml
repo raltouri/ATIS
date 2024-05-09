@@ -77,11 +77,15 @@
                         <Insets left="10.0" />
                     </padding>
                 </GridPane>
+              <Button fx:id="SoS_Btn" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="118.0" prefWidth="130.0" style="-fx-background-radius: 120; -fx-background-color: red;" text="SOS Call" textFill="WHITE">
+                  <font>
+                      <Font name="System Bold" size="24.0" />
+                  </font>
+               <VBox.margin>
+                  <Insets left="300.0" />
+               </VBox.margin>
+            </Button>
             </children>
         </VBox>
-        <Button fx:id="SoS_Btn" layoutX="449.0" layoutY="220.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="118.0" prefWidth="130.0" text="SOS Call" textFill="RED">
-            <font>
-                <Font name="System Bold" size="24.0" />
-            </font></Button>
     </children>
 </AnchorPane>
