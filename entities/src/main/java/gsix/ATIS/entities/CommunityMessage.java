@@ -57,7 +57,7 @@ public class CommunityMessage implements Serializable {
                 "message_id=" + message_id +
                 ", sender_id='" + sender_id + '\'' +
                 ", receiver_id='" + receiver_id + '\'' +
-                ", content='" + content + '\'' +
+                ", content:'" + content + '\'' +
                 '}';
     }
 }

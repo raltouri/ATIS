@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.ResourceBundle;
 
 import gsix.ATIS.client.SimpleClient;
@@ -106,6 +107,7 @@ public class MemberVolunteeredTasks {
             memberVolunteeredTasksArrayList = (ArrayList<Task>) event.getMessage().getData();
             if(!memberVolunteeredTasksArrayList.isEmpty()){
                 Platform.runLater(() -> {
+                    memberVolunteeredTasksArrayList.sort(Comparator.comparing(Task::getTime).reversed());
                     memberVolunteeredTasksInfoString = (ArrayList<String>) TasksController.getTasksInfo(memberVolunteeredTasksArrayList);
                     volunteeredLV.getItems().addAll(memberVolunteeredTasksInfoString);
                 });

@@ -25,6 +25,8 @@ import org.greenrobot.eventbus.Subscribe;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class RequestedTasks {
@@ -273,6 +275,8 @@ public class RequestedTasks {
                 requestedLV.setItems(observableTasks); // Add received tasks
             });*/
             requestedTasksArrayList = (ArrayList<Task>) event.getMessage().getData();
+            // Sort the tasks by time in descending order
+            requestedTasksArrayList.sort(Comparator.comparing(Task::getTime).reversed());
             requestedTasksInfoStrings = (ArrayList<String>) TasksController.getTasksInfo(requestedTasksArrayList);
             requestedLV.getItems().addAll(requestedTasksInfoStrings);
         }
@@ -287,6 +291,7 @@ public class RequestedTasks {
                         "Send Decline Message", null, false);//null was stage
                 sendMessageToUser.setRequesterID(requesterID);
                 sendMessageToUser.setLoggedInManager(loggedInManager);
+                sendMessageToUser.setDeclinedTaskID(declinedTask.getTask_id()+"");
                 sendMessageToUser.setTaskID(declinedTask.getTask_id());
                 //sendMessageToUser.setRequestedTasks(this);
                 //System.out.println(declinedTask.getTask_id());
