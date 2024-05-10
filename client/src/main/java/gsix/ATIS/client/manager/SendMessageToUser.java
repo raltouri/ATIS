@@ -58,6 +58,8 @@ public class SendMessageToUser {
     private User loggedInManager;
     private String requesterID;
     RequestedTasks requestedTasks = null;
+    private String declinedTaskID;
+
     public void setRequestedTasks(RequestedTasks requestedTasks) {
         this.requestedTasks = requestedTasks;
     }
@@ -89,6 +91,9 @@ public class SendMessageToUser {
     public void setRequesterID(String requesterID) {
         this.requesterID = requesterID;
     }
+    public void setDeclinedTaskID(String declinedID) {
+        this.declinedTaskID = declinedID;
+    }
 
     @FXML
     void Close(ActionEvent event) {
@@ -113,11 +118,13 @@ public class SendMessageToUser {
     @FXML
     void SendDeclineMsgToUser(ActionEvent event) {
         stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
-        String msg = messageTB.getText();
-        if(msg.isEmpty()){
+        String msgTB = messageTB.getText();
+        if(msgTB.isEmpty()){
             showEmptyMessageBoxAlert();
             return;
         }
+        String msg = "[Declined Task Notification]: Your Requested Task with ID = " + declinedTaskID +
+                " is declined.\n" + "Decline Reason: " + msgTB;
         String managerID = loggedInManager.getUser_id();
         CommunityMessageController.send(managerID,requesterID,msg);
         //need code to change status to decline

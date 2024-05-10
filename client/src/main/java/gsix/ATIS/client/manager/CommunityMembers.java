@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -182,6 +183,7 @@ public class CommunityMembers {
         Message handledMessage=event.getMessage();
         if(event.getMessage().getMessage().equals("get all community users: Done")) {
             membersArrayList = (ArrayList<User>) event.getMessage().getData();
+            membersArrayList.sort(Comparator.comparing(User::getUser_id));
             if (!membersArrayList.isEmpty()){
                 Platform.runLater(() -> {
                     membersInfoString = getUsersInfoString(membersArrayList);
