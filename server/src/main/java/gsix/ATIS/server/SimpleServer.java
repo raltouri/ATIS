@@ -842,7 +842,7 @@ public class SimpleServer extends AbstractServer {
             CommunityMessage communityMessage = new CommunityMessage();
             communityMessage.setSender_id(senderID);
             communityMessage.setReceiver_id(receiverID);
-            communityMessage.setContent(messageContent);
+            communityMessage.setContent("\n"+messageContent);
 
             // Save the communityMessage object to the database
             session.save(communityMessage);
