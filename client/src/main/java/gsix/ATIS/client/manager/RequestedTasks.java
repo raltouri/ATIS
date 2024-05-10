@@ -160,7 +160,7 @@ public class RequestedTasks {
         // Example: You may use JDBC or an ORM framework to execute an update query
         // Example query: UPDATE tasks SET status = 'pending' WHERE id = taskId;
         String info = taskId +","+ newStatus;
-        Message message = new Message(1, LocalDateTime.now(), "update task status",info);
+        Message message = new Message(1, LocalDateTime.now(), "update task status Pending",info);
         System.out.println("task id="+taskId+"new status="+newStatus);
         try {
             SimpleClient.getClient("",0).sendToServer(message);
@@ -279,6 +279,11 @@ public class RequestedTasks {
             requestedTasksArrayList.sort(Comparator.comparing(Task::getTime).reversed());
             requestedTasksInfoStrings = (ArrayList<String>) TasksController.getTasksInfo(requestedTasksArrayList);
             requestedLV.getItems().addAll(requestedTasksInfoStrings);
+        }
+        if(event.getMessage().getMessage().equals("update task status Pending: Done")) {
+            Task declinedTask = (Task) event.getMessage().getData(); // send msg to all that new task is online
+            String requesterID = declinedTask.getRequester_id();
+            //System.out.println("");
         }
 
         if(event.getMessage().getMessage().equals("get task for decline: Done")) {

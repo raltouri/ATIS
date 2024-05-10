@@ -717,7 +717,23 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("update task status: Done");
                 client.sendToClient(message);
 
-            } else if (request.equals("delete task")) {
+            }
+            else if (request.equals("update task status Pending")) {
+
+                String updatedTaskIDInfo = (String) message.getData(); // string="taskID,status"
+                String[] parts = updatedTaskIDInfo.split(",");
+                System.out.println(Arrays.toString(parts)); //////////////////
+                int updatedTaskID = Integer.parseInt(parts[0]);
+                String newStatus = parts[1];
+
+                updateTaskByID(updatedTaskID, newStatus);
+
+                Task testUpdate = getEntityById(Task.class, updatedTaskID);
+                message.setData(testUpdate);
+                message.setMessage("update task status Pending: Done");
+                client.sendToClient(message);
+
+            }else if (request.equals("delete task")) {
 
                 int taskID = (int) message.getData();
                 System.out.println("in server in delete task command");
