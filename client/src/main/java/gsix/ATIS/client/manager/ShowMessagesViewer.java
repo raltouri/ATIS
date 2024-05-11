@@ -13,6 +13,7 @@ import gsix.ATIS.client.common.SosBoundary;
 import gsix.ATIS.client.user.UserHomePageBoundary;
 import gsix.ATIS.entities.CommunityMessage;
 import gsix.ATIS.entities.Message;
+import gsix.ATIS.entities.Task;
 import gsix.ATIS.entities.User;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -144,9 +146,10 @@ public class ShowMessagesViewer {
         Message handledMessage=event.getMessage();
 
         if(handledMessage.getMessage().equals("get sent messages: Done")){
-            List<CommunityMessage> sentMessages=(List<CommunityMessage>) handledMessage.getData();
+            ArrayList<CommunityMessage> sentMessages=(ArrayList<CommunityMessage>) handledMessage.getData();
+            sentMessages.sort(Comparator.comparing(CommunityMessage::getTime).reversed());
             System.out.println("I am handling the sent messages being brought back from eventbus in ShowMessageBox class");
-            List<String> messages_info ;
+            ArrayList<String> messages_info ;
             //Code to get message sent
             messages_info=getSentMessagesInfo(sentMessages);
 
@@ -159,9 +162,10 @@ public class ShowMessagesViewer {
             });
         }
         if(handledMessage.getMessage().equals("get received messages: Done")){
-            List<CommunityMessage> receivedMessages=(List<CommunityMessage>) handledMessage.getData();
+            ArrayList<CommunityMessage> receivedMessages=(ArrayList<CommunityMessage>) handledMessage.getData();
+            receivedMessages.sort(Comparator.comparing(CommunityMessage::getTime).reversed());
             System.out.println("I am handling the received messages being brought back from eventbus in showMessageBox class");
-            List<String> messages_info ;
+            ArrayList<String> messages_info ;
             //Code to get message sent
             messages_info=getReceivedMessagesInfo(receivedMessages);
             System.out.println(messages_info);
@@ -172,19 +176,33 @@ public class ShowMessagesViewer {
                 Mreceived_LV.setItems(observableTasks); // Add received tasks
             });
         }
-
+        if(handledMessage.getMessage().equals("open request: Done")){
+            getSentMessages(loggedInUser.getUser_id());
+            getReceivedMessages(loggedInUser.getUser_id());
+        }
+        if(handledMessage.getMessage().equals("Send Volunteering Task End and Update To Done: Done")){
+            getSentMessages(loggedInUser.getUser_id());
+            getReceivedMessages(loggedInUser.getUser_id());
+        }
+        if(handledMessage.getMessage().equals("open request: Done")){
+            getSentMessages(loggedInUser.getUser_id());
+            getReceivedMessages(loggedInUser.getUser_id());
+        }if(handledMessage.getMessage().equals("start volunteering to task : Done")){
+            getSentMessages(loggedInUser.getUser_id());
+            getReceivedMessages(loggedInUser.getUser_id());
+        }
     }
 
-    public static List<String> getSentMessagesInfo(List<CommunityMessage> messages) {
-        List<String> messages_info = new ArrayList<>();
+    public static ArrayList<String> getSentMessagesInfo(ArrayList<CommunityMessage> messages) {
+        ArrayList<String> messages_info = new ArrayList<>();
         for (CommunityMessage message : messages) {
             messages_info.add("Message ID:" + message.getMessage_id() +  ", Receiver: " + message.getReceiver_id()+ ", Content: " + message.getContent());
         }
         return messages_info;
     }
 
-    public static List<String> getReceivedMessagesInfo(List<CommunityMessage> messages) {
-        List<String> messages_info = new ArrayList<>();
+    public static ArrayList<String> getReceivedMessagesInfo(ArrayList<CommunityMessage> messages) {
+        ArrayList<String> messages_info = new ArrayList<>();
         for (CommunityMessage message : messages) {
             messages_info.add("Message ID:" + message.getMessage_id() +  ", Sender: " + message.getSender_id()+ ", Content: " + message.getContent());
         }

@@ -13,6 +13,7 @@ import gsix.ATIS.client.TasksController;
 import gsix.ATIS.client.common.GuiCommon;
 import gsix.ATIS.client.common.MessageEvent;
 import gsix.ATIS.client.common.SosBoundary;
+import gsix.ATIS.entities.CommunityMessage;
 import gsix.ATIS.entities.Message;
 import gsix.ATIS.entities.Task;
 import gsix.ATIS.entities.User;
@@ -58,7 +59,7 @@ public class SendMessageToUser {
     private User loggedInManager;
     private String requesterID;
     RequestedTasks requestedTasks = null;
-    private String declinedTaskID;
+    private int declinedTaskID;
 
     public void setRequestedTasks(RequestedTasks requestedTasks) {
         this.requestedTasks = requestedTasks;
@@ -76,12 +77,6 @@ public class SendMessageToUser {
     }
     //  SOS
 
-    private int taskID;
-    public void setTaskID(int taskID) {
-        this.taskID = taskID;
-        taskIdTV.setText(taskID+"");
-    }
-
 
 
     public void setLoggedInManager(User loggedInUser) {
@@ -91,7 +86,7 @@ public class SendMessageToUser {
     public void setRequesterID(String requesterID) {
         this.requesterID = requesterID;
     }
-    public void setDeclinedTaskID(String declinedID) {
+    public void setDeclinedTaskID(int declinedID) {
         this.declinedTaskID = declinedID;
     }
 
@@ -126,16 +121,21 @@ public class SendMessageToUser {
         String msg = "[Declined Task Notification]: Your Requested Task with ID = " + declinedTaskID +
                 " is declined.\n" + "Decline Reason: " + msgTB;
         String managerID = loggedInManager.getUser_id();
-        CommunityMessageController.send(managerID,requesterID,msg);
+        //CommunityMessageController.send(managerID,requesterID,msg); //// no requester
         //need code to change status to decline
 
-
-        //send task ID to server to update status to declined
-        String message=taskID+","+"Declined";
-        Message message2 = new Message(1, LocalDateTime.now(), "update task status",message);
+        // Task requester id is not available here so we put it empty, at server it should been available
+        CommunityMessage communityMessage = new CommunityMessage(managerID,"",msg);
+        Message declineMessageInfo = new Message(1,declinedTaskID+"",communityMessage);
+        // HERE WE ENCAPSULATE DECLINE MESSAGE INTO MESSAGE TYPE AS DATA FIELD
+        Message message = new Message(1, LocalDateTime.now(), "Decline Task and Send Decline message to Requester",declineMessageInfo);
         System.out.println("Community Message Controller : sending the message");
         try {
-            SimpleClient.getClient("",0).sendToServer(message2);
+            SimpleClient.getClient("",0).sendToServer(message);
+
+            showDeclineMessageSentAlert();
+            stage.close();
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -145,25 +145,25 @@ public class SendMessageToUser {
     @Subscribe
     public void handleTasksEvent(MessageEvent event){
         Message handledMessage=event.getMessage();
-        if(handledMessage.getMessage().equals("update task status: Done")){
-            System.out.println("SendToMsgToUser Class in handleTasksEvent");
+        if(handledMessage.getMessage().equals("Decline Task and Send Decline message to Requester: Done")){
+       /*     System.out.println("SendToMsgToUser Class in handleTasksEvent");
             //requestedTasks.setDeclineMsgSent(true);
             // Display a pop-up indicating that the message was sent to the user
             //Platform.runLater(() -> showAlert("Message Sent", "The message was successfully sent to the manager."));
             Platform.runLater(() -> {
 
                 showDeclineMessageSentAlert();
-                /*GuiCommon guiCommon = GuiCommon.getInstance();
+                *//*GuiCommon guiCommon = GuiCommon.getInstance();
                 RequestedTasks requestedTasks = (RequestedTasks) guiCommon.displayNextScreen("RequestedTasks.fxml",
                         "Manager Home Page", stage, true);  // Example for opening new screen
-                requestedTasks.setLoggedInUser(loggedInManager);*/
+                requestedTasks.setLoggedInUser(loggedInManager);*//*
                 stage.close();
             });
 
 
 
 
-
+*/
         }
 
     }

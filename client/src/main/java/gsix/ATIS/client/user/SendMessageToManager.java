@@ -123,9 +123,21 @@ public class SendMessageToManager {
             return; // Exit the method, don't proceed further
         }
         communityID= loggedInUser.getCommunityId();
-
+        //updating that the task is now Done and not in process
+        // Get the selected task from the ListView
+        String selectedTaskInfo = inProcess_LV.getSelectionModel().getSelectedItem();
+        // Parse the selected task information to get the task ID
+        int taskId = extractTaskId(selectedTaskInfo);
+        Task taskToUpdate = new Task(taskId,loggedInUser.getUser_id(),givenMessage);
+        Message message2 = new Message(1, LocalDateTime.now(), "Send Volunteering Task End and Update To Done", taskToUpdate);
+        System.out.println("Send to Manager getting Manager id");
+        try {
+            SimpleClient.getClient("",0).sendToServer(message2);
+        } catch (Exception e) {
+            System.out.println("Error:  "+e.getMessage());
+        }
         //get manager id from community table using comunity id
-        Message message2 = new Message(1, LocalDateTime.now(), "get manager id", communityID);
+        /**Message message2 = new Message(1, LocalDateTime.now(), "get manager id", communityID);
         System.out.println("Send to Manager getting Manager id");
         try {
             SimpleClient.getClient("",0).sendToServer(message2);
@@ -139,7 +151,7 @@ public class SendMessageToManager {
         int taskId = extractTaskId(selectedTaskInfo);
         System.out.println("task id is : "+taskId);
         // Update the task status in the database
-        updateTaskStatus(taskId, "Done");
+        updateTaskStatus(taskId, "Done");*/
         // Implement logic to navigate back to the user's home page
         //open a new page
         stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
@@ -192,6 +204,7 @@ public class SendMessageToManager {
     public void handleTasksEvent(MessageEvent event){
         Message handledMessage=event.getMessage();
         //ADDED BY AYAL
+        System.out.println("im inside SendToManager handle tasks");
         if(handledMessage.getMessage().equals("manager id is here")){
             System.out.println("im inside SendToManager handle tasks manager id is here");
             //get the manager id from the handled message
@@ -200,6 +213,7 @@ public class SendMessageToManager {
             //get the message from the text field
             String message=message_TF.getText();
             //sending messages via CommunityMessageController
+            System.out.println("Sending message to Manager about Done volunteering to task. \nMesaage: "+message);
             CommunityMessageController.send(loggedInUser.getUser_id(),managerID,message);
 
 

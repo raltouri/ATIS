@@ -13,6 +13,7 @@ import java.util.ResourceBundle;
 
 import gsix.ATIS.client.common.GuiCommon;
 import gsix.ATIS.client.common.SosBoundary;
+import gsix.ATIS.entities.TaskStatus;
 import javafx.event.ActionEvent;
 
 import gsix.ATIS.client.SimpleClient;
@@ -97,7 +98,12 @@ public class Volunteer {
                 availableTaskListView.setItems(observableTasks); // Add received tasks
             });
         }
-
+        if(event.getMessage().getMessage().equals("update task status Pending: Done")){
+            getTasksForCommunity(loggedInUser.getUser_id());
+        }
+        if(event.getMessage().getMessage().equals("start volunteering to task : Done")){
+            getTasksForCommunity(loggedInUser.getUser_id());
+        }
     }
     @FXML
     private void backToUserHome(ActionEvent event) {
@@ -121,7 +127,7 @@ public class Volunteer {
             int taskId = extractTaskId(selectedTaskInfo);
             System.out.println("task id is : "+taskId);
             // Update the task status in the database
-            updateTaskStatus(taskId, "in process");
+            //updateTaskStatus(taskId, "in process");
             updateTaskVolunteer(taskId,loggedInUser.getUser_id());
 
             // Show a pop-up message to indicate success
@@ -143,7 +149,8 @@ public class Volunteer {
 
     private void updateTaskVolunteer(int taskId, String volunteerID) {
         Task dummyTask=new Task(taskId,volunteerID);
-        Message message = new Message(1, LocalDateTime.now(), "update task volunteer",dummyTask);
+        dummyTask.setStatus(TaskStatus.inProcess);
+        Message message = new Message(1, LocalDateTime.now(), "start volunteering to task",dummyTask);
         System.out.println("Volunteer:before send to server *updateTaskVolunteer* command");
         try {
             SimpleClient.getClient("",0).sendToServer(message);

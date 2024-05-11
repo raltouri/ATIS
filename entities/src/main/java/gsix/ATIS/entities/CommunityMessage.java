@@ -2,6 +2,9 @@ package gsix.ATIS.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 @Entity
 @Table(name="community_message")
 public class CommunityMessage implements Serializable {
@@ -18,9 +21,27 @@ public class CommunityMessage implements Serializable {
     @Column(name = "content")
     private String content;
 
+    @Column(name = "time")
+    private LocalDateTime time;
+
+    public CommunityMessage(String sender_id, String receiver_id, String content) {
+        this.sender_id = sender_id;
+        this.receiver_id = receiver_id;
+        this.content = content;
+        this.time = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+    }
+
+    public CommunityMessage() {
+        LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+    }
+
     public int getMessage_id() {
         return message_id;
 
+    }
+
+    public LocalDateTime getTime() {
+        return time;
     }
 
     public void setMessage_id(int message_id) {

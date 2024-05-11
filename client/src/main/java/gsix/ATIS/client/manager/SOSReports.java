@@ -16,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -69,6 +70,10 @@ public class SOSReports implements Initializable {
     //  SOS
     @FXML
     private void onGenerateReport() {
+        showReport();
+    }
+
+    private void showReport(){
         LocalDate start = startDate.getValue();
         LocalDate end = endDate.getValue();
         LocalDate today = LocalDate.now(); // Get today's date
@@ -191,6 +196,17 @@ public class SOSReports implements Initializable {
             // Process the received SOS requests
             Map<LocalDate, Integer> dailySOSCount = new HashMap<>();
 
+            // Clear existing data from the BarChart
+            barChart.getData().clear();
+
+            // Clear categories from the X-axis
+            ((CategoryAxis) barChart.getXAxis()).getCategories().clear();
+
+            // Clear data associated with the Y-axis
+            // For a NumberAxis, you can reset its range
+            NumberAxis yAxis = (NumberAxis) barChart.getYAxis();
+            yAxis.setAutoRanging(true); // Reset the Y-axis range
+
             for (SosRequest sos : sosRequests) {
                 LocalDate date = sos.getTime().toLocalDate(); // Convert to LocalDate
                 dailySOSCount.put(date, dailySOSCount.getOrDefault(date, 0) + 1);
@@ -243,6 +259,9 @@ public class SOSReports implements Initializable {
         if(handledMessage.getMessage().equals("SOS data retrieval for community: Done")){
             List<SosRequest> sosRequests=(List<SosRequest>)handledMessage.getData();
             onSOSDataReceived(sosRequests);
+        }
+        if(handledMessage.getMessage().equals("open SoS request: Done")){
+            showReport();
         }
     }
 

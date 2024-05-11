@@ -176,7 +176,10 @@ public class ShowMessageBoxController {
                 received_LV.setItems(observableTasks); // Add received tasks
             });
         }
-
+        if(handledMessage.getMessage().equals("Decline Task and Send Decline message to Requester: Done")){
+            getReceivedMessages(loggedInUser.getUser_id());
+            getSentMessages(loggedInUser.getUser_id());
+        }
 
     }
     public static List<String> getSentMessagesInfo(List<CommunityMessage> messages) {

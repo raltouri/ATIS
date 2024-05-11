@@ -39,51 +39,52 @@ public class SimpleServer extends AbstractServer {
         Long count = session.createQuery(query).uniqueResult();
         return count == 0;
     }
-    private static void initializeData() throws Exception {
+
+    /*private static void initializeData() throws Exception {
 
         if(isTasksTableEmpty()) {
             // Check if tasks exist before creating and saving
             if (!taskExists(1)) {
-                Task t1 = new Task(1, "1", "car repair", LocalDateTime.now(), TaskStatus.Request);
+                Task t1 = new Task( "1", "car repair", LocalDateTime.now(), "Request",1);
                 session.save(t1);
             }
             if (!taskExists(2)) {
-                Task t2 = new Task(2, "2", "wash machine repair", LocalDateTime.now(), TaskStatus.Pending);
+                Task t2 = new Task("2", "wash machine repair", LocalDateTime.now(), "Pending",1);
                 session.save(t2);
             }
             if (!taskExists(3)) {
-                Task t3 = new Task(3, "3", "fridge repair", LocalDateTime.now(), TaskStatus.Pending);
+                Task t3 = new Task("3", "fridge repair", LocalDateTime.now(), "Pending",1);
                 session.save(t3);
             }
             if (!taskExists(4)) {
-                Task t4 = new Task(4, "4", "buy groceries", LocalDateTime.now(), TaskStatus.Pending);
+                Task t4 = new Task("4", "buy groceries", LocalDateTime.now(), "Pending",1);
                 session.save(t4);
             }
             if (!taskExists(5)) {
-                Task t5 = new Task(5, "5", "CHECK CODE PLEASE", LocalDateTime.now(), TaskStatus.Pending);
+                Task t5 = new Task("5", "CHECK CODE PLEASE", LocalDateTime.now(), "Pending",2);
                 session.save(t5);
             }
             if (!taskExists(6)) {
-                Task t6 = new Task(6, "6", "VALIDATE CODE PLEASE", LocalDateTime.now(), TaskStatus.Pending);
+                Task t6 = new Task("6", "VALIDATE CODE PLEASE", LocalDateTime.now(), "Pending",2);
                 session.save(t6);
             }
             if (!taskExists(7)) {
-                Task t7 = new Task(7, "7", "Task 7", LocalDateTime.now(), TaskStatus.Pending);
+                Task t7 = new Task("7", "Task 7", LocalDateTime.now(), "Pending",2);
                 session.save(t7);
             }
             if (!taskExists(8)) {
-                Task t8 = new Task(8, "8", "Task 8", LocalDateTime.now(), TaskStatus.Pending);
+                Task t8 = new Task("8", "Task 8", LocalDateTime.now(), "Pending",2);
                 session.save(t8);
             }
             if (!taskExists(9)) {
-                Task t9 = new Task(9, "9", "Task 9", LocalDateTime.now(), TaskStatus.Pending);
+                Task t9 = new Task("9", "Task 9", LocalDateTime.now(), "Pending",3);
                 session.save(t9);
             }
 
             session.flush();
             session.getTransaction().commit();
         }
-    }
+    }*/
 
     // Method to check if a task with a given ID exists
     private static boolean taskExists(int taskId) {
@@ -443,7 +444,7 @@ public class SimpleServer extends AbstractServer {
             session = sessionFactory.openSession();
             session.beginTransaction();
 
-            initializeData();
+            //initializeData();
         }
         catch (Exception e) {
             if (session != null) {
@@ -569,7 +570,8 @@ public class SimpleServer extends AbstractServer {
                 insertMessageToDataTable(messageString);
 
                 message.setMessage("send masage to manager: Done");
-                client.sendToClient(message);
+                /**client.sendToClient(message);*/
+                sendToAllClients(message);
             }
             else if(request.equals("notify no volunteer")){
                 //System.out.println("inside SimpleServer ");
@@ -589,14 +591,23 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("delete requested task: Done");
                 client.sendToClient(message);
             }
-            else if(request.equals("update task volunteer")){ //Added by Ayal
+            else if(request.equals("start volunteering to task")){ //Added by Ayal
                 System.out.println("inside simple server update task volunteer");
                 Task dummyTask = (Task) message.getData();
                 Task taskTarget=getEntityById(Task.class,dummyTask.getTask_id());
                 taskTarget.setVolunteer_id(dummyTask.getVolunteer_id());
+                taskTarget.setStatus(TaskStatus.inProcess);
                 updateTask(taskTarget);
-                message.setMessage("update task volunteer : Done");
-                client.sendToClient(message);
+
+                String managerID = getManagerID(taskTarget.getCommunity_id());
+                String msgToManager = "[Task in Process notification]: UserID "
+                        + taskTarget.getVolunteer_id() + " is currently volunteering for task "+ taskTarget.getTask_id();
+                CommunityMessage startVolunteeringMessage = new CommunityMessage(taskTarget.getVolunteer_id(),managerID,msgToManager);
+                saveMessage(startVolunteeringMessage);
+
+                message.setMessage("start volunteering to task : Done");
+                //client.sendToClient(message);
+                sendToAllClients(message);
             }
             else if(request.equals("get manager id")){ //Added by Ayal
                 System.out.println("inside SimpleServer get manager id");
@@ -605,6 +616,26 @@ public class SimpleServer extends AbstractServer {
                 System.out.println(message.getData());//if it didnt reach here it means there is a problem
                 message.setMessage("manager id is here");
                 client.sendToClient(message);
+            }
+            else if(request.equals("Send Volunteering Task End and Update To Done")){
+                System.out.println("inside SimpleServer get manager id");
+                Task dummyTask = (Task) message.getData();
+                String volunteerID = dummyTask.getVolunteer_id();
+                String MessageToManager = dummyTask.getRequested_operation();
+                Task taskDone=getEntityById(Task.class,dummyTask.getTask_id());
+
+                updateTaskByID(taskDone.getTask_id(), "Done");
+
+                //// Send message to current task requester's community manager to approve message
+                User volunteerUser = getUserById(User.class,volunteerID);
+                String managerID = getManagerID(volunteerUser.getCommunityId());
+                saveMessage(volunteerID,managerID,MessageToManager);
+
+              /*  message.setData(getManagerID(communityID));// Should change this back to getAllByCommunity , it works on getAll
+                System.out.println(message.getData());//if it didnt reach here it means there is a problem*/
+                message.setMessage("Send Volunteering Task End and Update To Done: Done");
+                //client.sendToClient(message);
+                sendToAllClients(message);
             }
             else if(request.equals("get requested tasks")){ //Added by Ayal
                 System.out.println("inside SimpleServer get requested tasks ");
@@ -731,8 +762,8 @@ public class SimpleServer extends AbstractServer {
                 Task testUpdate = getEntityById(Task.class, updatedTaskID);
                 message.setData(testUpdate);
                 message.setMessage("update task status Pending: Done");
-                client.sendToClient(message);
-
+                //client.sendToClient(message);
+                sendToAllClients(message);
             }else if (request.equals("delete task")) {
 
                 int taskID = (int) message.getData();
@@ -743,6 +774,24 @@ public class SimpleServer extends AbstractServer {
                 message.setMessage("delete task: Done");
                 client.sendToClient(message);
 
+            }else if (request.equals("Decline Task and Send Decline message to Requester")) {
+
+                Message declineMessageInfo = (Message) message.getData();
+                CommunityMessage communityMessage = (CommunityMessage) declineMessageInfo.getData();
+                int declinedTaskID = Integer.parseInt(declineMessageInfo.getMessage());
+                Task declinedTask = getEntityById(Task.class, declinedTaskID);
+                communityMessage.setReceiver_id(declinedTask.getRequester_id());
+
+                saveMessage(communityMessage);
+                updateTaskByID(declinedTaskID,"Declined");
+
+                //System.out.println("in server in delete task command");
+                Task testDeclinedTask = getEntityById(Task.class, declinedTaskID);
+                message.setData(testDeclinedTask);
+
+                message.setMessage("Decline Task and Send Decline message to Requester: Done");
+                //client.sendToClient(message);
+                sendToAllClients(message);
             }else if (request.equals("get user by id")) {
 
                 int userID = (Integer) message.getData();
@@ -764,7 +813,8 @@ public class SimpleServer extends AbstractServer {
                 //message.setData(taskID);
                 System.out.println("in server After SOS request save");
                 message.setMessage("open SoS request: Done");
-                client.sendToClient(message);
+                //client.sendToClient(message);
+                sendToAllClients(message);
             }
             else if (request.equals("log out")) {
 
@@ -810,7 +860,8 @@ public class SimpleServer extends AbstractServer {
                 Task testAdd = getEntityById(Task.class, newTask.getTask_id());
                 message.setData(testAdd);
                 message.setMessage("open request: Done");
-                client.sendToClient(message);
+                /**client.sendToClient(message);*/
+                sendToAllClients(message);
                 //// Send message to current task requester's community manager to approve message
                 User requester = getUserById(User.class,testAdd.getRequester_id());
                 String managerID = getManagerID(requester.getCommunityId());
@@ -855,7 +906,7 @@ public class SimpleServer extends AbstractServer {
             System.out.println("Transaction has BEGUN");
 
             // Create a new CommunityMessage object
-            CommunityMessage communityMessage = new CommunityMessage();
+            CommunityMessage communityMessage = new CommunityMessage(senderID,receiverID,"\n"+messageContent);
             communityMessage.setSender_id(senderID);
             communityMessage.setReceiver_id(receiverID);
             communityMessage.setContent("\n"+messageContent);
@@ -873,6 +924,36 @@ public class SimpleServer extends AbstractServer {
         }
     }
 
+    private void saveMessage(CommunityMessage communityMessage) {
+
+        // Check if the session is available and open
+        if (session == null || !session.isOpen()) {
+            session = sessionFactory.openSession();
+        }
+        // Check if there is an active transaction
+        if (session.getTransaction() != null && session.getTransaction().isActive()) {//should we roll back or commit?
+            System.out.println("There is an active transaction. Commiting...");
+            session.getTransaction().commit();
+        }
+
+        // Continue with transaction handling
+        try {
+            // Begin a new transaction
+            session.beginTransaction();
+            System.out.println("Transaction has BEGUN");
+
+            // Save the communityMessage object to the database
+            session.save(communityMessage);
+            System.out.println("After session.save");
+
+            // Commit the transaction
+            session.getTransaction().commit();
+            System.out.println("Message saved to the database.");
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            session.getTransaction().rollback();
+        }
+    }
     private void insertMessageToDataTable(String messageString) {//MADE BY Ayal
         //my messageString format is : senderID+","+receiverID+","+content
         // Find the position of the first comma
@@ -909,10 +990,10 @@ public class SimpleServer extends AbstractServer {
             System.out.println("Transaction has BEGUN");
 
             // Create a new CommunityMessage object
-            CommunityMessage communityMessage = new CommunityMessage();
-            communityMessage.setSender_id(senderID);
+            CommunityMessage communityMessage = new CommunityMessage(senderID,receiverID,"\n"+messageContent);
+            /*communityMessage.setSender_id(senderID);
             communityMessage.setReceiver_id(receiverID);
-            communityMessage.setContent("\n"+messageContent);
+            communityMessage.setContent("\n"+messageContent);*/
 
             // Save the communityMessage object to the database
             session.save(communityMessage);

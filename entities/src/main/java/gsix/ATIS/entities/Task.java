@@ -2,6 +2,7 @@ package gsix.ATIS.entities;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import javax.persistence.*;
 
@@ -26,20 +27,28 @@ public class Task implements Serializable {
     @JoinColumn(name = "requester_id", referencedColumnName = "user_id", insertable = false, updatable = false)
     private User requester;
 
-    private TaskStatus taskStatus;
+    @Column(name="community_id")
+    private int community_id;
 
     public Task() {
     }
 
-    public Task(int task_id, String volunteer_id) {
+    public Task(int task_id, String attachedMessage) {
         this.task_id = task_id;
-        this.volunteer_id = volunteer_id;
+        this.volunteer_id = attachedMessage;
     }
 
-    public Task(String requester_id, String requested_operation, TaskStatus taskStatus) {
+    public Task(int task_id, String volunteer_id, String requested_operation) {
+        this.task_id = task_id;
+        this.volunteer_id = volunteer_id;
+        this.requested_operation = requested_operation;
+    }
+
+    public Task(String requester_id, String requested_operation, TaskStatus taskStatus, int community_id) {
         this.requester_id = requester_id;
         this.requested_operation = requested_operation;
-        this.time = LocalDateTime.now();
+        this.time = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+        this.community_id = community_id;
         if (taskStatus == TaskStatus.Request){
             this.status = "Request";
         } else if (taskStatus == TaskStatus.Pending) {
@@ -75,8 +84,22 @@ public class Task implements Serializable {
         }
     }
 
+    public Task(String requester_id, String requested_operation, LocalDateTime time, String status, int community_id) {
+        this.requester_id = requester_id;
+        this.requested_operation = requested_operation;
+        this.time = time;
+        this.status = status;
+        this.community_id = community_id;
+    }
+    public Task(String requester_id, String requested_operation, String status, int community_id) {
+        this.requester_id = requester_id;
+        this.requested_operation = requested_operation;
+        this.time = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+        this.status = status;
+        this.community_id = community_id;
+    }
 
-    public Task(int task_id, String requester_id, String requested_operation, LocalDateTime time, TaskStatus status) {
+    /*public Task(int task_id, String requester_id, String requested_operation, LocalDateTime time, TaskStatus status) {
         this.task_id = task_id;
         this.requester_id = requester_id;
         this.requested_operation = requested_operation;
@@ -95,7 +118,7 @@ public class Task implements Serializable {
         else if(taskStatus == TaskStatus.inProcess){
             this.status = "in process";
         }
-    }
+    }*/
 
     public int getTask_id() {
         return task_id;
@@ -163,6 +186,11 @@ public class Task implements Serializable {
             this.status = "in process";
         }
     }
+
+    public int getCommunity_id() {
+        return community_id;
+    }
+
     @Override
     public String toString() {
         return "Task{" +

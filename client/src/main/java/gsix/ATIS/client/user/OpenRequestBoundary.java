@@ -92,7 +92,7 @@ public class OpenRequestBoundary {
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
         try {
-            Task task = new Task(this.requester.getUser_id(),this.requested_op_TxtFld.getText(),TaskStatus.Request);
+            Task task = new Task(this.requester.getUser_id(),this.requested_op_TxtFld.getText(),TaskStatus.Request,requester.getCommunityId());
 
             Message message = new Message(1, LocalDateTime.now(), "open request", task);
             //System.out.println("before send to server GetAllTasks command");
