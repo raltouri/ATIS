@@ -223,17 +223,26 @@ public class RequestedTasks {
             // Parse the selected task information to get the task ID
             int taskId = extractTaskId(selectedTaskInfo);
             stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
-            getTaskByID(taskId);
+            //getTaskByID(taskId);
             System.out.println("declined task id is : "+taskId);
 
-            // Assuming tasksList is the ObservableList backing the ListView
-            ObservableList<String> tasksList = requestedLV.getItems();
+            GuiCommon guiCommon = GuiCommon.getInstance();
+            SendMessageToUser sendMessageToUser = (SendMessageToUser) guiCommon.displayNextScreen("SendMsgToUser.fxml",
+                    "Send Decline Message", null, false);//null was stage
+            //sendMessageToUser.setRequesterID(requesterID);
+            sendMessageToUser.setLoggedInManager(loggedInManager);
+            //sendMessageToUser.setDeclinedTaskID(declinedTask.getTask_id()+"");
+            sendMessageToUser.setDeclinedTaskID(taskId);
+
+
+            /// Assuming tasksList is the ObservableList backing the ListView
+            /**ObservableList<String> tasksList = requestedLV.getItems();
 
             // Remove the pending task from the data model
             tasksList.remove(selectedTaskInfo);
 
             // Refresh the ListView to reflect the changes
-            requestedLV.refresh();
+            requestedLV.refresh();*/
 
 
 
@@ -274,19 +283,32 @@ public class RequestedTasks {
                 ObservableList<String> observableTasks = FXCollections.observableArrayList(tasks_info);
                 requestedLV.setItems(observableTasks); // Add received tasks
             });*/
+            Platform.runLater(() -> {
+            requestedLV.getItems().clear();
             requestedTasksArrayList = (ArrayList<Task>) event.getMessage().getData();
             // Sort the tasks by time in descending order
             requestedTasksArrayList.sort(Comparator.comparing(Task::getTime).reversed());
             requestedTasksInfoStrings = (ArrayList<String>) TasksController.getTasksInfo(requestedTasksArrayList);
             requestedLV.getItems().addAll(requestedTasksInfoStrings);
+            });
         }
         if(event.getMessage().getMessage().equals("update task status Pending: Done")) {
             Task declinedTask = (Task) event.getMessage().getData(); // send msg to all that new task is online
             String requesterID = declinedTask.getRequester_id();
             //System.out.println("");
         }
+        if(event.getMessage().getMessage().equals("open request: Done")) {
+            Task newTask = (Task) event.getMessage().getData(); // send msg to all that new task is online
 
-        if(event.getMessage().getMessage().equals("get task for decline: Done")) {
+            getRequestedTasksForCommunity(loggedInManager.getCommunityId());
+        }
+        if(event.getMessage().getMessage().equals("Decline Task and Send Decline message to Requester: Done")) {
+            Task newTask = (Task) event.getMessage().getData(); // send msg to all that new task is online
+
+            getRequestedTasksForCommunity(loggedInManager.getCommunityId());
+        }
+
+        /*if(event.getMessage().getMessage().equals("get task for decline: Done")) {
             Task declinedTask = (Task) event.getMessage().getData();
             String requesterID = declinedTask.getRequester_id();
             System.out.println(declinedTask.getTask_id()+" taskId before msg to user");
@@ -298,31 +320,8 @@ public class RequestedTasks {
                 sendMessageToUser.setLoggedInManager(loggedInManager);
                 sendMessageToUser.setDeclinedTaskID(declinedTask.getTask_id()+"");
                 sendMessageToUser.setTaskID(declinedTask.getTask_id());
-                //sendMessageToUser.setRequestedTasks(this);
-                //System.out.println(declinedTask.getTask_id());
-
             });
-
-
-            //System.out.println("before calling delete task in handle");
-            //System.out.println("before if statement, isDeclineMsgSent = "+isDeclineMsgSent);
-//            //isDeclineMsgSent=true;
-//            if(isDeclineMsgSent){ //call function to refresh list view and delete task from DB
-//                // Assuming tasksList is the ObservableList backing the ListView
-//                ObservableList<String> tasksList = requestedLV.getItems();
-//                System.out.println("inside isDeclineMsgSent = True ");
-//                // Remove the pending task from the data model
-//                tasksList.remove(selectedTaskInfo);
-//
-//                // Refresh the ListView to reflect the changes
-//                requestedLV.refresh();
-//                //Instead of deleting we are going to move it to a declined status
-//                //deleteTask(declinedTask.getTask_id());
-//                updateTaskStatus(declinedTask.getTask_id(),"Declined");
-//
-//            }
-
-        }
+        }*/
 
     }
 

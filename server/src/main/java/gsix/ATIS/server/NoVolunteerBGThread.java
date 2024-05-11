@@ -27,7 +27,7 @@ public class NoVolunteerBGThread implements Runnable{
     private Timer timer;
     private SimpleServer server;
 
-    private final int THREAD_CYCLE_SECONDS= 20;
+    private final int THREAD_CYCLE_SECONDS= 60*10;
 /*    private List<Task> alllOverDuePendingTasks = null;
     private List<User> community_users = null;
     private Task foundTask = null;
