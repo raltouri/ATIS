@@ -6,42 +6,42 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="384.0" prefWidth="599.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.manager.ManagerHomePageBoundary">
+<AnchorPane prefHeight="584.0" prefWidth="718.0" style="-fx-background-color: #CCE6FF;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gsix.ATIS.client.manager.ManagerHomePageBoundary">
    <children>
-      <Button fx:id="SoS_Btn" layoutX="431.0" layoutY="224.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="126.0" prefWidth="130.0" style="-fx-background-color: red; -fx-background-radius: 120;" text="SOS Call" textFill="WHITE">
+      <Button fx:id="SoS_Btn" layoutX="497.0" layoutY="202.0" mnemonicParsing="false" onAction="#OpenSosCall" prefHeight="126.0" prefWidth="130.0" style="-fx-background-color: red; -fx-background-radius: 120;" text="SOS Call" textFill="WHITE">
          <font>
             <Font name="System Bold" size="24.0" />
          </font></Button>
-      <Text layoutX="156.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Manager HomePage" wrappingWidth="274.93682861328125">
+      <Text layoutX="222.0" layoutY="60.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Community Manager" wrappingWidth="274.93682861328125">
          <font>
             <Font name="System Bold Italic" size="27.0" />
          </font>
       </Text>
-      <Pane layoutX="52.0" layoutY="70.0" prefHeight="244.0" prefWidth="429.0">
+      <Pane layoutX="53.0" layoutY="115.0" prefHeight="267.0" prefWidth="275.0">
          <children>
-            <Button fx:id="RequestedTask" layoutX="14.0" layoutY="23.0" mnemonicParsing="false" onAction="#ViewRequestedTasks" prefHeight="34.0" prefWidth="177.0" text="Requested Tasks" textFill="#268e19">
+            <Button fx:id="RequestedTask" layoutX="27.0" layoutY="22.0" mnemonicParsing="false" onAction="#ViewRequestedTasks" prefHeight="34.0" prefWidth="195.0" style="-fx-background-color: #6BC76F;" text="Requested Tasks" textFill="WHITE">
                <font>
                   <Font name="System Bold Italic" size="13.0" />
                </font></Button>
-            <Button fx:id="btnSOSReports" layoutX="14.0" layoutY="88.0" mnemonicParsing="false" onAction="#ViewSOSReports" prefHeight="34.0" prefWidth="177.0" text="View SOS Reports" textFill="#f2092c">
+            <Button fx:id="btnSOSReports" layoutX="27.0" layoutY="78.0" mnemonicParsing="false" onAction="#ViewSOSReports" prefHeight="34.0" prefWidth="195.0" style="-fx-background-color: #3398FF;" text="View SOS Reports" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>
             </Button>
-            <Button fx:id="viewMsges" layoutX="236.0" layoutY="23.0" mnemonicParsing="false" onAction="#ViewMessages" prefHeight="34.0" prefWidth="177.0" text="View Messages">
-               <font>
-                  <Font size="13.0" />
-               </font></Button>
-            <Button fx:id="btnViewMembers" layoutX="236.0" layoutY="88.0" mnemonicParsing="false" onAction="#ViewCommunityMembers" prefHeight="34.0" prefWidth="177.0" text="View Community Members">
-               <font>
-                  <Font size="13.0" />
-               </font></Button>
-            <Button fx:id="logOut" layoutX="14.0" layoutY="196.0" mnemonicParsing="false" onAction="#logOut" prefHeight="34.0" prefWidth="137.0" text="Log Out">
+            <Button fx:id="viewMsges" layoutX="27.0" layoutY="134.0" mnemonicParsing="false" onAction="#ViewMessages" prefHeight="34.0" prefWidth="195.0" style="-fx-background-color: #3398FF;" text="View Messages" textFill="WHITE">
                <font>
                   <Font name="System Bold Italic" size="13.0" />
-               </font>
-            </Button>
+               </font></Button>
+            <Button fx:id="btnViewMembers" layoutX="27.0" layoutY="190.0" mnemonicParsing="false" onAction="#ViewCommunityMembers" prefHeight="34.0" prefWidth="195.0" style="-fx-background-color: #3398FF;" text="View Community Members" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font></Button>
          </children>
       </Pane>
+      <Button fx:id="logOut" layoutX="95.0" layoutY="460.0" mnemonicParsing="false" onAction="#logOut" prefHeight="34.0" prefWidth="137.0" style="-fx-background-color: #00246B;" text="Log Out" textFill="WHITE">
+         <font>
+            <Font name="System Bold Italic" size="13.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>

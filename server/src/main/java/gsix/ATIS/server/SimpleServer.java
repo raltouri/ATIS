@@ -238,30 +238,34 @@ public class SimpleServer extends AbstractServer {
         System.out.println("I am in getAll"+lst);
         return lst;
     }
-    public static <T> List<T> getRequestedTasks(Class<T> object, String userID) {
+    public static <T> List<T> getRequestedTasks(Class<T> object, String userID,String desiredStatus) {
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
         Root<T> rootEntry = criteriaQuery.from(object);
         CriteriaQuery<T> allCriteriaQuery = criteriaQuery.select(rootEntry);
 
         // Add a condition to filter tasks based on requester_id
-        Predicate predicate = builder.equal(rootEntry.get("requester_id"), userID);
-        allCriteriaQuery.where(predicate);
+        Predicate requesterPredicate  = builder.equal(rootEntry.get("requester_id"), userID);
+        Predicate statusPredicate = builder.equal(rootEntry.get("status"), desiredStatus);
+        Predicate finalPredicate = builder.and(requesterPredicate, statusPredicate);
+        allCriteriaQuery.where(finalPredicate);
 
         TypedQuery<T> allQuery = session.createQuery(allCriteriaQuery);
         List<T> lst = allQuery.getResultList();
         System.out.println("I am in getRequested" + lst);
         return lst;
     }
-    public static <T> List<T> getVolunteeredTasks(Class<T> object, String userID) {
+    public static <T> List<T> getVolunteeredTasks(Class<T> object, String userID,String desiredStatus) {
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
         Root<T> rootEntry = criteriaQuery.from(object);
         CriteriaQuery<T> allCriteriaQuery = criteriaQuery.select(rootEntry);
 
         // Add a condition to filter tasks based on volunteer_id
-        Predicate predicate = builder.equal(rootEntry.get("volunteer_id"), userID);
-        allCriteriaQuery.where(predicate);
+        Predicate volunteerPredicate = builder.equal(rootEntry.get("volunteer_id"), userID);
+        Predicate statusPredicate = builder.equal(rootEntry.get("status"), desiredStatus);
+        Predicate finalPredicate = builder.and(volunteerPredicate, statusPredicate);
+        allCriteriaQuery.where(finalPredicate);
 
         TypedQuery<T> allQuery = session.createQuery(allCriteriaQuery);
         List<T> lst = allQuery.getResultList();
@@ -639,16 +643,20 @@ public class SimpleServer extends AbstractServer {
             }
             else if(request.equals("get requested tasks")){ //Added by Ayal
                 System.out.println("inside SimpleServer get requested tasks ");
-                String userId = (String) message.getData();
-                message.setData(getRequestedTasks((Task.class),userId));// Should change this back to getAllByCommunity , it works on getAll
+                Task dummyTask = (Task) message.getData();
+                String userId = dummyTask.getRequester_id();
+                String desiredStatus = dummyTask.getStatus();
+                message.setData(getRequestedTasks((Task.class),userId,desiredStatus));// Should change this back to getAllByCommunity , it works on getAll
                 System.out.println(message.getData());
                 message.setMessage("get requested tasks: Done");
                 client.sendToClient(message);
             }
             else if(request.equals("get volunteered tasks")){ //Added by Ayal
                 System.out.println("inside SimpleServer get volunteered tasks ");
-                String userId = (String) message.getData();
-                message.setData(getVolunteeredTasks((Task.class),userId));// Should change this back to getAllByCommunity , it works on getAll
+                Task dummyTask = (Task) message.getData();
+                String userId = dummyTask.getRequester_id();
+                String desiredStatus = dummyTask.getStatus();
+                message.setData(getVolunteeredTasks((Task.class),userId,desiredStatus));// Should change this back to getAllByCommunity , it works on getAll
                 System.out.println(message.getData());
                 message.setMessage("get volunteered tasks: Done");
                 client.sendToClient(message);
@@ -760,6 +768,8 @@ public class SimpleServer extends AbstractServer {
                 updateTaskByID(updatedTaskID, newStatus);
 
                 Task testUpdate = getEntityById(Task.class, updatedTaskID);
+                sentMsgToCommunityTaskPending(testUpdate);
+
                 message.setData(testUpdate);
                 message.setMessage("update task status Pending: Done");
                 //client.sendToClient(message);
@@ -865,7 +875,8 @@ public class SimpleServer extends AbstractServer {
                 //// Send message to current task requester's community manager to approve message
                 User requester = getUserById(User.class,testAdd.getRequester_id());
                 String managerID = getManagerID(requester.getCommunityId());
-                String messageContent = "New task has been received. Task ID: "+testAdd.getTask_id()+"\nPlease approve it so your community users can volunteer to do it\n";
+                String messageContent = "[New Task Requested]: Task ID "+testAdd.getTask_id()+
+                        "\nPlease approve it so your community users can volunteer to do it";
                 saveMessage(requester.getUser_id(),managerID,messageContent);
             }
             // Commit the transaction
@@ -886,7 +897,24 @@ public class SimpleServer extends AbstractServer {
     }
 
 
-
+    private void sentMsgToCommunityTaskPending(Task pendingTask){
+        List<User> communityMembers = getAllCommunityMembers(pendingTask.getCommunity_id());
+        String requesterID = pendingTask.getRequester_id();
+        String currentUserID = "";
+        String msgContent = "[New Task Available]: Task" + pendingTask.getTask_id() + " is currently Waiting for a volunteer";
+        String managerID = getManagerID(pendingTask.getCommunity_id());
+        for (User user : communityMembers){
+            currentUserID =user.getUser_id();
+            if (currentUserID.equals(requesterID)){
+                String reqMsgContent = "[Task Approval notification]: Your Task has been approved";
+                CommunityMessage requesterMsg = new CommunityMessage(managerID,requesterID,reqMsgContent);
+                saveMessage(requesterMsg);
+            }else{
+                CommunityMessage currentMsg = new CommunityMessage(managerID,currentUserID,msgContent);
+                saveMessage(currentMsg);
+            }
+        }
+    }
     private void saveMessage(String senderID,String receiverID, String messageContent) {
 
         // Check if the session is available and open
@@ -924,7 +952,7 @@ public class SimpleServer extends AbstractServer {
         }
     }
 
-    private void saveMessage(CommunityMessage communityMessage) {
+    public void saveMessage(CommunityMessage communityMessage) {
 
         // Check if the session is available and open
         if (session == null || !session.isOpen()) {
@@ -1010,7 +1038,7 @@ public class SimpleServer extends AbstractServer {
 
     }
 
-    private String getManagerID(int communityID) {//added by Ayal
+    public String getManagerID(int communityID) {//added by Ayal
         String managerID = null;
         Transaction transaction = null;
         try {
@@ -1132,13 +1160,63 @@ public class SimpleServer extends AbstractServer {
             List<Task> overdueTasks = tasks.stream()
                     .filter(task -> {
                         LocalDateTime taskTime = task.getTime();
-                        long secondsDifference = Duration.between(taskTime, now).getSeconds();
-                        /**
-                         * return secondsDifference % 2*60*60 == 0, to get overdue tasks once every 2 hours and so on...
-                         * return secondsDifference % 10 == 0, to get overdue tasks once every 10 seconds for test purposes.
-                         **/
-                        //return secondsDifference % 24*60*60 == 0; // gets task if overdue once every 24 hours
-                        return secondsDifference % 1 == 0;
+                        long minutesDifference  = Duration.between(taskTime, now).toMinutes();
+
+                        /**  next condition define which task have been enough time at Pending status
+                         *   1440 is how much minutes in 24 hours
+                         * */
+                        return minutesDifference > 3 && (minutesDifference % 3) < 2;
+                    })
+                    .collect(Collectors.toList());
+
+            System.out.println("Overdue tasks to check: " + overdueTasks);
+
+            return overdueTasks;
+        } catch (Exception e) {
+            //throw new RuntimeException(e);
+            System.out.println(e.getMessage());
+        } finally {
+            session.close();
+        }
+        return null;
+    }
+    public List<Task> getAllOverDueInProcessTasks() {
+
+        try {
+            sessionFactory = getSessionFactory();
+            session = sessionFactory.openSession();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Task> criteriaQuery = builder.createQuery(Task.class);
+            Root<Task> rootEntry = criteriaQuery.from(Task.class);
+            criteriaQuery.select(rootEntry);
+
+            // Create predicate for status condition
+            Predicate statusPredicate = builder.equal(rootEntry.get("status"), "in process");
+
+            // Create predicate for time condition (tasks created more than 10 seconds ago)
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime tenSecondsAgo = now.minusSeconds(10);
+            Predicate timePredicate = builder.lessThan(rootEntry.get("time"), tenSecondsAgo);
+
+            // Combine predicates with "and" to create the final condition
+            Predicate combinedPredicate = builder.and(statusPredicate, timePredicate);
+
+            criteriaQuery.where(combinedPredicate);
+
+            TypedQuery<Task> allQuery = session.createQuery(criteriaQuery);
+            List<Task> tasks = allQuery.getResultList();
+
+            // Filter tasks further to ensure they are exactly 10 seconds old
+            List<Task> overdueTasks = tasks.stream()
+                    .filter(task -> {
+                        LocalDateTime taskTime = task.getTime();
+                        long minutesDifference  = Duration.between(taskTime, now).toMinutes();
+
+                        /**  next condition define which task have been enough time at Pending status
+                         *   1440 is how much minutes in 24 hours
+                         * */
+                        return minutesDifference > 3 && (minutesDifference % 3) < 2;
                     })
                     .collect(Collectors.toList());
 
@@ -1154,3 +1232,4 @@ public class SimpleServer extends AbstractServer {
         return null;
     }
 }
+

@@ -1,5 +1,6 @@
 package gsix.ATIS.server;
 
+import gsix.ATIS.entities.CommunityMessage;
 import gsix.ATIS.entities.Message;
 import gsix.ATIS.entities.Task;
 import gsix.ATIS.entities.User;
@@ -27,7 +28,7 @@ public class NoVolunteerBGThread implements Runnable{
     private Timer timer;
     private SimpleServer server;
 
-    private final int THREAD_CYCLE_SECONDS= 60*10;
+    private final int THREAD_CYCLE_SECONDS= 60;
 /*    private List<Task> alllOverDuePendingTasks = null;
     private List<User> community_users = null;
     private Task foundTask = null;
@@ -54,6 +55,7 @@ public class NoVolunteerBGThread implements Runnable{
                 // For demonstration, I'm printing a message to console
                 System.out.println("Background thread is running...");
                 getAllSystemOverDuePendingTasks();
+                getAllSystemOverDueInProcessTasks();
             }
         }, 0, THREAD_CYCLE_SECONDS*1000); // Checks every 60*60 seconds (1 Hour), put 10*1000 to check every 10 seconds
     }
@@ -73,9 +75,29 @@ public class NoVolunteerBGThread implements Runnable{
             }
         }
     }
+    private void getAllSystemOverDueInProcessTasks() {
+        // calling server method to retrieve pending tasks
+        List<Task> allOverDueInProcessTasks = server.getAllOverDueInProcessTasks();
+        // Iterate through pending tasks
+        if (allOverDueInProcessTasks != null) {
+            for (Task task : allOverDueInProcessTasks) {
+                //if (checkNoVolunteerYet(task)) {
+                // If no volunteer yet for this task, notify community users
+                //User taskVolunteerer = getTaskVolunteer(task);
+                String managerID = server.getManagerID(task.getCommunity_id());
+                String msgContent = "[Task Volunteering took Long Time]\nYou started volunteering for task: "+ task.getTask_id()+
+                        "long time ago.\nDONT FORGET TO UPDATE MANAGER BY MESSAGE!!!";
+                CommunityMessage lateNotification = new CommunityMessage(managerID,task.getVolunteer_id(),msgContent );
+                server.saveMessage(lateNotification);
+            }
+        }
+    }
 
     private User getTaskRequester(Task task) {
         return SimpleServer.getEntityById(User.class, Integer.parseInt(task.getRequester_id()));
+    }
+    private User getTaskVolunteer(Task task) {
+        return SimpleServer.getEntityById(User.class, Integer.parseInt(task.getVolunteer_id()));
     }
 
     /**

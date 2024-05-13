@@ -191,48 +191,7 @@ public class CommunityMembers {
                 });
             }
 
-            //System.out.println("I am handling the tasks for community being brought back from eventbus in Volunteer class");
-            //List<String> tasks_info = TasksController.getTasksInfo(communityTasks);
-            //System.out.println(tasks_info);
-            // Update ListView with received tasks
-           /* Platform.runLater(() -> {
-                requestedLV.getItems().clear(); // Clear existing items
-                ObservableList<String> observableTasks = FXCollections.observableArrayList(tasks_info);
-                requestedLV.setItems(observableTasks); // Add received tasks
-            });*/
         }
-        /*if(event.getMessage().getMessage().equals("get user by id: Done")){
-            selectedMember = (User) event.getMessage().getData();
-            //System.out.println("I am handling the tasks for community being brought back from eventbus in Volunteer class");
-            //List<String> tasks_info = TasksController.getTasksInfo(communityTasks);
-            //System.out.println(tasks_info);
-            // Update ListView with received tasks
-           *//* Platform.runLater(() -> {
-                requestedLV.getItems().clear(); // Clear existing items
-                ObservableList<String> observableTasks = FXCollections.observableArrayList(tasks_info);
-                requestedLV.setItems(observableTasks); // Add received tasks
-            });*//*
-            if(flag.equals("volunteered")){
-                *//*Platform.runLater(() -> {
-                    GuiCommon guiCommon = GuiCommon.getInstance();
-                    MemberVolunteeredTasks memberVolunteeredTasks = (MemberVolunteeredTasks) guiCommon.displayNextScreen("MemberVolunteeredTasks.fxml",
-                            "Volunteered Tasks", stage, false);  // Example for opening new screen
-                    memberVolunteeredTasks.setLoggedInUser(loggedInManager);
-                    memberVolunteeredTasks.setCommunityMember(selectedMember);
-                    flag = "";
-                });
-*//*
-            } else if (flag.equals("opened")){
-               *//* Platform.runLater(() -> {
-                    GuiCommon guiCommon = GuiCommon.getInstance();
-                    MemberOpenedTasks memberOpenedTasks = (MemberOpenedTasks) guiCommon.displayNextScreen("MemberOpenedTasks.fxml",
-                            "opened Tasks", stage, false);  // Example for opening new screen
-                    memberOpenedTasks.setLoggedInUser(loggedInManager);
-                    memberOpenedTasks.setCommunityMember(selectedMember);
-                    flag = "";
-                });*//*
-            }
-        }*/
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete

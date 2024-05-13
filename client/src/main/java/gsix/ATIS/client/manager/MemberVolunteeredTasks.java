@@ -23,6 +23,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
@@ -42,11 +43,16 @@ public class MemberVolunteeredTasks {
     @FXML // fx:id="volunteeredLV"
     private ListView<String> volunteeredLV; // Value injected by FXMLLoader
 
+    @FXML
+    private ComboBox<String> desired_cmbBox;
     private Stage stage;
     private User loggedInManager = null;
     private String communityMemberID = null;
     ArrayList<Task> memberVolunteeredTasksArrayList; // from DB
     ArrayList<String> memberVolunteeredTasksInfoString; // for listView
+
+    private final String[] pickStatus = {"in process","Done"};
+    private String desiredStatusToView ="Done";
 
     public void setLoggedInUser(User loggedInManager) {
         this.loggedInManager = loggedInManager;
@@ -54,7 +60,7 @@ public class MemberVolunteeredTasks {
 
     public void setCommunityMember(String communityMemberID) {
         this.communityMemberID = communityMemberID;
-        getVolunteeredTasks(communityMemberID);
+        //getVolunteeredTasks(communityMemberID);
     }
 
     private void showNoTasksToViewAlert() {
@@ -80,7 +86,8 @@ public class MemberVolunteeredTasks {
     }
 
     private void getVolunteeredTasks(String userId) {
-        Message message = new Message(1, LocalDateTime.now(), "get volunteered tasks", userId);
+        Task dummyTask = new Task(userId,"dummy operation",desiredStatusToView,0);
+        Message message = new Message(1, LocalDateTime.now(), "get volunteered tasks", dummyTask);
         //System.out.println("MyTasksPage:before send to server *Get Volunteered Tasks* command");
         try {
             SimpleClient.getClient("",0).sendToServer(message);
@@ -94,29 +101,25 @@ public class MemberVolunteeredTasks {
     public void handleTasksEvent(MessageEvent event){
         Message handledMessage=event.getMessage();
         if(event.getMessage().getMessage().equals("get volunteered tasks: Done")){
-           /* List<Task> communityTasks=(List<Task>) event.getMessage().getData();
-            //System.out.println("I am handling the tasks for community being brought back from eventbus in Volunteer class");
-            List<String> tasks_info = TasksController.getTasksInfo(communityTasks);
-            //System.out.println(tasks_info);
-            // Update ListView with received tasks
-            Platform.runLater(() -> {
-                requestedLV.getItems().clear(); // Clear existing items
-                ObservableList<String> observableTasks = FXCollections.observableArrayList(tasks_info);
-                requestedLV.setItems(observableTasks); // Add received tasks
-            });*/
             memberVolunteeredTasksArrayList = (ArrayList<Task>) event.getMessage().getData();
+            memberVolunteeredTasksArrayList.sort(Comparator.comparing(Task::getTime).reversed());
             if(!memberVolunteeredTasksArrayList.isEmpty()){
                 Platform.runLater(() -> {
                     memberVolunteeredTasksArrayList.sort(Comparator.comparing(Task::getTime).reversed());
                     memberVolunteeredTasksInfoString = (ArrayList<String>) TasksController.getTasksInfo(memberVolunteeredTasksArrayList);
+                    volunteeredLV.getItems().clear();
                     volunteeredLV.getItems().addAll(memberVolunteeredTasksInfoString);
                 });
             }else{
                 Platform.runLater(this::showNoTasksToViewAlert);
             }
-
         }
-
+        if(event.getMessage().getMessage().equals("start volunteering to task : Done")) {
+            getVolunteeredTasks(communityMemberID);
+        }
+        if(event.getMessage().getMessage().equals("Send Volunteering Task End and Update To Done: Done")) {
+            getVolunteeredTasks(communityMemberID);
+        }
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -125,7 +128,11 @@ public class MemberVolunteeredTasks {
         assert volunteeredLV != null : "fx:id=\"volunteeredLV\" was not injected: check your FXML file 'MemberVolunteeredTasks.fxml'.";
 
         EventBus.getDefault().register(this);
-
+        desired_cmbBox.getItems().addAll(pickStatus);
+        desired_cmbBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            desiredStatusToView = newValue;
+            getVolunteeredTasks(communityMemberID);
+        });
     }
 
 

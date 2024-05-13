@@ -7,6 +7,7 @@ package gsix.ATIS.client.user;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -25,6 +26,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
@@ -54,11 +56,22 @@ public class MyTasksPage {
     @FXML // fx:id="requested_LV"
     private ListView<String> requested_LV; // Value injected by FXMLLoader
 
+    @FXML
+    private ComboBox<String> openedTasks_cmbBox;
+
+
+    @FXML
+    private ComboBox<String> voluntTasks_cmbBox;
+
     //  SOS
     @FXML
     private Button SoS_Btn;
     //  SOS
 
+    private final String[] pickOpenStatus = {"Request", "Pending","in process","Done","Declined"};
+    private String desiredOpenStatusToView ="Request";
+    private final String[] pickVolunteeredStatus = {"in process","Done"};
+    private String desiredVolunteeredStatusToView ="Done";
 
     //  SOS
     @FXML
@@ -92,6 +105,17 @@ public class MyTasksPage {
 
 
         EventBus.getDefault().register(this);
+
+        openedTasks_cmbBox.getItems().addAll(pickOpenStatus);
+        openedTasks_cmbBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            desiredOpenStatusToView = newValue;
+            getRequestedTasks(loggedInUser.getUser_id());
+        });
+        voluntTasks_cmbBox.getItems().addAll(pickVolunteeredStatus);
+        voluntTasks_cmbBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            desiredVolunteeredStatusToView = newValue;
+            getVolunteeredTasks(loggedInUser.getUser_id());
+        });
     }
     /*@FXML
     void showRequestedTasks(ActionEvent event) {
@@ -108,7 +132,10 @@ public class MyTasksPage {
     }*/
 
     private void getRequestedTasks(String userId) {
-        Message message = new Message(1, LocalDateTime.now(), "get requested tasks", userId);
+        /** CHANGE NEXT REQUEST STATUS TO COMBOBOX RESULT */
+        Task dummyTask = new Task(userId,"dummy operation",desiredOpenStatusToView,0);
+
+        Message message = new Message(1, LocalDateTime.now(), "get requested tasks", dummyTask);
         System.out.println("MyTasksPage:before send to server *Get Requested Tasks* command");
         try {
             SimpleClient.getClient("",0).sendToServer(message);
@@ -132,7 +159,10 @@ public class MyTasksPage {
     }*/
 
     private void getVolunteeredTasks(String userId) {
-        Message message = new Message(1, LocalDateTime.now(), "get volunteered tasks", userId);
+        /** CHANGE NEXT REQUEST STATUS TO COMBOBOX RESULT */
+        Task dummyTask = new Task(userId,"dummy operation",desiredVolunteeredStatusToView,0);
+
+        Message message = new Message(1, LocalDateTime.now(), "get volunteered tasks", dummyTask);
         System.out.println("MyTasksPage:before send to server *Get Volunteered Tasks* command");
         try {
             SimpleClient.getClient("",0).sendToServer(message);
@@ -148,6 +178,7 @@ public class MyTasksPage {
         //ADDED BY AYAL
         if(handledMessage.getMessage().equals("get requested tasks: Done")){
             List<Task> requestedTasks=(List<Task>) handledMessage.getData();
+            requestedTasks.sort(Comparator.comparing(Task::getTime).reversed());
             System.out.println("I am handling the requested tasks being brought back from eventbus in Volunteer class");
             List<String> tasks_info = TasksController.getTasksInfo(requestedTasks);
             System.out.println(tasks_info);
@@ -160,6 +191,7 @@ public class MyTasksPage {
         }
         if(handledMessage.getMessage().equals("get volunteered tasks: Done")){
             List<Task> volunteeredTasks=(List<Task>) handledMessage.getData();
+            volunteeredTasks.sort(Comparator.comparing(Task::getTime).reversed());
             System.out.println("I am handling the volunteered tasks being brought back from eventbus in Volunteer class");
             List<String> tasks_info = TasksController.getTasksInfo(volunteeredTasks);
             System.out.println(tasks_info);
@@ -170,14 +202,32 @@ public class MyTasksPage {
                 Volunteered_LV.setItems(observableTasks); // Add received tasks
             });
         }
-
+        /*if(event.getMessage().getMessage().equals("open request: Done")) {
+            getRequestedTasks(loggedInUser.getUser_id());
+        }*/
+        if(event.getMessage().getMessage().equals("start volunteering to task : Done")) {
+            getRequestedTasks(loggedInUser.getUser_id());
+            getVolunteeredTasks(loggedInUser.getUser_id());
+        }
+        if(event.getMessage().getMessage().equals("Send Volunteering Task End and Update To Done: Done")) {
+            getRequestedTasks(loggedInUser.getUser_id());
+            getVolunteeredTasks(loggedInUser.getUser_id());
+        }
+        if(event.getMessage().getMessage().equals("update task status Pending: Done")) {
+            getRequestedTasks(loggedInUser.getUser_id());
+            getVolunteeredTasks(loggedInUser.getUser_id());
+        }
+        if(event.getMessage().getMessage().equals("Decline Task and Send Decline message to Requester: Done")) {
+            getRequestedTasks(loggedInUser.getUser_id());
+            getVolunteeredTasks(loggedInUser.getUser_id());
+        }
     }
 
     public void setLoggedInUser(User user) {
 
         this.loggedInUser=user;
         String userID = loggedInUser.getUser_id();
-        getRequestedTasks(userID);
-        getVolunteeredTasks(userID);
+        //getRequestedTasks(userID);
+        //getVolunteeredTasks(userID);
     }
 }

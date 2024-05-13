@@ -3,6 +3,7 @@ package gsix.ATIS.client.user;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -126,40 +127,32 @@ public class SendMessageToManager {
         //updating that the task is now Done and not in process
         // Get the selected task from the ListView
         String selectedTaskInfo = inProcess_LV.getSelectionModel().getSelectedItem();
-        // Parse the selected task information to get the task ID
-        int taskId = extractTaskId(selectedTaskInfo);
-        Task taskToUpdate = new Task(taskId,loggedInUser.getUser_id(),givenMessage);
-        Message message2 = new Message(1, LocalDateTime.now(), "Send Volunteering Task End and Update To Done", taskToUpdate);
-        System.out.println("Send to Manager getting Manager id");
-        try {
-            SimpleClient.getClient("",0).sendToServer(message2);
-        } catch (Exception e) {
-            System.out.println("Error:  "+e.getMessage());
+        if (selectedTaskInfo != null) {
+            // Parse the selected task information to get the task ID
+            int taskId = extractTaskId(selectedTaskInfo);
+            givenMessage="[Task Done notification]: Task " +taskId
+                +"\nContent: "+ givenMessage;
+            Task taskToUpdate = new Task(taskId, loggedInUser.getUser_id(), givenMessage);
+            Message message2 = new Message(1, LocalDateTime.now(), "Send Volunteering Task End and Update To Done", taskToUpdate);
+            System.out.println("Send to Manager getting Manager id");
+            try {
+                SimpleClient.getClient("", 0).sendToServer(message2);
+            } catch (Exception e) {
+                System.out.println("Error:  " + e.getMessage());
+            }
+
+            //open a new page
+            stage = (Stage) ((Node) event.getSource()).getScene().getWindow(); // first time stage takes value
+            GuiCommon guiCommon = GuiCommon.getInstance();
+            UserHomePageBoundary userHomePage = (UserHomePageBoundary) guiCommon.displayNextScreen("UserHomePage.fxml",
+                    "Community User Home Page", stage, true);  // Example for opening new screen
+            userHomePage.setLoggedInUser(loggedInUser);
+            EventBus.getDefault().unregister(this);
+        }else {
+            // Handle the case when no task is selected
+            System.out.println("Please select a task to pick.");
+            showEmptyMessageBoxAlert();
         }
-        //get manager id from community table using comunity id
-        /**Message message2 = new Message(1, LocalDateTime.now(), "get manager id", communityID);
-        System.out.println("Send to Manager getting Manager id");
-        try {
-            SimpleClient.getClient("",0).sendToServer(message2);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        //updating that the task is now Done and not in process
-        // Get the selected task from the ListView
-        String selectedTaskInfo = inProcess_LV.getSelectionModel().getSelectedItem();
-        // Parse the selected task information to get the task ID
-        int taskId = extractTaskId(selectedTaskInfo);
-        System.out.println("task id is : "+taskId);
-        // Update the task status in the database
-        updateTaskStatus(taskId, "Done");*/
-        // Implement logic to navigate back to the user's home page
-        //open a new page
-        stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
-        GuiCommon guiCommon = GuiCommon.getInstance();
-        UserHomePageBoundary userHomePage = (UserHomePageBoundary) guiCommon.displayNextScreen("UserHomePage.fxml",
-                "Community User Home Page", stage, true);  // Example for opening new screen
-        userHomePage.setLoggedInUser(loggedInUser);
-        EventBus.getDefault().unregister(this);
     }
     private void updateTaskStatus(int taskId, String status) {
         // Implement the logic to update the task status in the database
@@ -211,7 +204,12 @@ public class SendMessageToManager {
             managerID=(String)handledMessage.getData();
 
             //get the message from the text field
-            String message=message_TF.getText();
+            String message="[Task Done notification]: Task ";
+            String selectedTaskInfo = inProcess_LV.getSelectionModel().getSelectedItem();
+            if (selectedTaskInfo != null) {
+                int taskId = extractTaskId(selectedTaskInfo);
+                message += taskId +"\nContent: "+ message_TF.getText();
+            }
             //sending messages via CommunityMessageController
             System.out.println("Sending message to Manager about Done volunteering to task. \nMesaage: "+message);
             CommunityMessageController.send(loggedInUser.getUser_id(),managerID,message);
@@ -225,6 +223,7 @@ public class SendMessageToManager {
         }
         if(handledMessage.getMessage().equals("get unfinished tasks: Done")){
             List<Task> unfinishedTasks=(List<Task>) event.getMessage().getData();
+            unfinishedTasks.sort(Comparator.comparing(Task::getTime).reversed());
             System.out.println("I am handling theunfinished tasks being brought back from eventbus in Send to manager class");
             List<String> tasks_info = TasksController.getTasksInfo(unfinishedTasks);
             System.out.println(tasks_info);
