@@ -23,22 +23,17 @@ import java.util.TimerTask;
  * thread.start(); // Starts the background thread
  */
 public class NoVolunteerBGThread implements Runnable{
-    //private boolean isRunning = true; // Flag to control job execution
 
     private Timer timer;
     private SimpleServer server;
 
     private final int THREAD_CYCLE_SECONDS= 60;
-/*    private List<Task> alllOverDuePendingTasks = null;
-    private List<User> community_users = null;
-    private Task foundTask = null;
-    private User taskRequester = null;*/
+
     NoVolunteerBGThread(SimpleServer server){
         this.server = server;
     }
 
     public void stopJob() {
-        //isRunning = false;
         timer.cancel(); // Cancel the timer
     }
 
@@ -69,7 +64,6 @@ public class NoVolunteerBGThread implements Runnable{
                 //if (checkNoVolunteerYet(task)) {
                     // If no volunteer yet for this task, notify community users
                     User taskRequester = getTaskRequester(task);
-                    //List<User> community_users = getCommunityOfTaskRequester(taskRequester);
                     notifyCommunityUsers(taskRequester.getCommunityId(), task);
                 //}
             }
@@ -81,7 +75,6 @@ public class NoVolunteerBGThread implements Runnable{
         // Iterate through pending tasks
         if (allOverDueInProcessTasks != null) {
             for (Task task : allOverDueInProcessTasks) {
-                //if (checkNoVolunteerYet(task)) {
                 // If no volunteer yet for this task, notify community users
                 //User taskVolunteerer = getTaskVolunteer(task);
                 String managerID = server.getManagerID(task.getCommunity_id());
@@ -89,6 +82,7 @@ public class NoVolunteerBGThread implements Runnable{
                         "long time ago.\nDONT FORGET TO UPDATE MANAGER BY MESSAGE!!!";
                 CommunityMessage lateNotification = new CommunityMessage(managerID,task.getVolunteer_id(),msgContent );
                 server.saveMessage(lateNotification);
+                notifyUserInProcessOverDue(lateNotification);
             }
         }
     }
@@ -110,43 +104,14 @@ public class NoVolunteerBGThread implements Runnable{
         return SimpleServer.getAllCommunityMembers(task_requester.getCommunityId());
     }
 
-    /*private boolean checkNoVolunteerYet(Task task) {
-        // Get the current time
-        Instant currentTime = Instant.now();
-
-        // Get the task creation time
-        Instant taskCreationTime = task.getTime().atZone(ZoneId.systemDefault()).toInstant();
-
-        // Calculate the duration between the current time and the task creation time
-        Duration duration = Duration.between(taskCreationTime, currentTime);
-
-        // Check if the duration is greater than 20 seconds and the task has no volunteer assigned
-        return duration.getSeconds() > 10 && task.getVolunteer_id() == null;
-    }*/
-
     private void notifyCommunityUsers(int community_ID, Task overDueTask) {
         try {
             if (overDueTask != null) {
-                // Code to notify users about the yet not volunteered to task after a defined time
-                /*for (User user : community_users) {
-                    // Notify each user
-                    //systemNotify(user.getId(), "There is a pending task without volunteers.");
-                    String sendTo_ID = user.getUser_id();
-                    if(sendTo_ID.equals(overDueTask.getRequester_id()){
-                        systemNotify(sendTo_ID,
-                                "community members have been notified about your yet unassisted task");
-                    } else {
-                        systemNotify(sendTo_ID,"Task of ID= " + foundTask.getTask_id() +
-                                "is still unassisted yet");
-                    }
-                }*/
-
                 /**
                  * overDueTask has no volunteer, so we used volunteer_id field to send the community_id
                  **/
                 overDueTask.setVolunteer_id(community_ID + "");
                 Message msg = new Message(1, LocalDateTime.now(), "notify overdue task",overDueTask);
-                //System.out.println("Svetlana**************************");
                 server.sendToAllClients(msg);
             }
         } catch (Exception e) {
@@ -154,11 +119,19 @@ public class NoVolunteerBGThread implements Runnable{
             System.out.println(e.getMessage());
         }
     }
-
- /*   public static void systemNotify(String receiverID, String msg) {
-        String sender = "System";
-
-    }*/
-
+    private void notifyUserInProcessOverDue(CommunityMessage lateNotification) {
+        try {
+            if (lateNotification != null) {
+                /**
+                 * overDueTask has no volunteer, so we used volunteer_id field to send the community_id
+                 **/
+                Message msg = new Message(1, LocalDateTime.now(), "notify InProcess task took so long",lateNotification);
+                server.sendToAllClients(msg);
+            }
+        } catch (Exception e) {
+            //throw new RuntimeException(e);
+            System.out.println(e.getMessage());
+        }
+    }
 }
 
