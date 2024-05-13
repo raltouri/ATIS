@@ -166,18 +166,20 @@ public class ShowMessageBoxController {
         }
         if(handledMessage.getMessage().equals("get received messages: Done")){
             List<CommunityMessage> receivedMessages=(List<CommunityMessage>) handledMessage.getData();
-            receivedMessages.sort(Comparator.comparing(CommunityMessage::getTime).reversed());
-            System.out.println("I am handling the received messages being brought back from eventbus in showMessageBox class");
-            List<String> messages_info ;
-            //Code to get message sent
-            messages_info=getReceivedMessagesInfo(receivedMessages);
-            System.out.println(messages_info);
-            // Update ListView with received tasks
-            Platform.runLater(() -> {
-                received_LV.getItems().clear(); // Clear existing items
-                ObservableList<String> observableTasks = FXCollections.observableArrayList(messages_info);
-                received_LV.setItems(observableTasks); // Add received tasks
-            });
+            if (receivedMessages != null) {
+                receivedMessages.sort(Comparator.comparing(CommunityMessage::getTime).reversed());
+                System.out.println("I am handling the received messages being brought back from eventbus in showMessageBox class");
+                List<String> messages_info;
+                //Code to get message sent
+                messages_info = getReceivedMessagesInfo(receivedMessages);
+                System.out.println(messages_info);
+                // Update ListView with received tasks
+                Platform.runLater(() -> {
+                    received_LV.getItems().clear(); // Clear existing items
+                    ObservableList<String> observableTasks = FXCollections.observableArrayList(messages_info);
+                    received_LV.setItems(observableTasks); // Add received tasks
+                });
+            }
         }
         if(handledMessage.getMessage().equals("Decline Task and Send Decline message to Requester: Done")){
             getReceivedMessages(loggedInUser.getUser_id());
@@ -187,7 +189,15 @@ public class ShowMessageBoxController {
             getReceivedMessages(loggedInUser.getUser_id());
             getSentMessages(loggedInUser.getUser_id());
         }
-
+        if(handledMessage.getMessage().equals("notify InProcess task took so long")) {
+            CommunityMessage notification = (CommunityMessage) handledMessage.getData();
+            if (notification != null) {
+                if (loggedInUser.getUser_id().equals(notification.getSender_id()) || loggedInUser.getUser_id().equals(notification.getReceiver_id())) {
+                    getReceivedMessages(loggedInUser.getUser_id());
+                    getSentMessages(loggedInUser.getUser_id());
+                }
+            }
+        }
     }
     public static List<String> getSentMessagesInfo(List<CommunityMessage> messages) {
         List<String> messages_info = new ArrayList<>();

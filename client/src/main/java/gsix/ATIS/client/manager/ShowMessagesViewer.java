@@ -191,6 +191,15 @@ public class ShowMessagesViewer {
             getSentMessages(loggedInUser.getUser_id());
             getReceivedMessages(loggedInUser.getUser_id());
         }
+        if(handledMessage.getMessage().equals("notify InProcess task took so long")) {
+            CommunityMessage notification = (CommunityMessage) handledMessage.getData();
+            if (notification != null) {
+                if (loggedInUser.getUser_id().equals(notification.getSender_id()) || loggedInUser.getUser_id().equals(notification.getReceiver_id())) {
+                    getReceivedMessages(loggedInUser.getUser_id());
+                    getSentMessages(loggedInUser.getUser_id());
+                }
+            }
+        }
     }
 
     public static ArrayList<String> getSentMessagesInfo(ArrayList<CommunityMessage> messages) {
