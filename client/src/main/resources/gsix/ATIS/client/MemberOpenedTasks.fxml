@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -13,10 +14,11 @@
          <font>
             <Font name="System Bold" size="14.0" />
          </font></Button>
-      <Label layoutX="139.0" layoutY="14.0" prefHeight="36.0" prefWidth="182.0" text="Opened Tasks :" textAlignment="CENTER">
+      <Label layoutX="30.0" layoutY="14.0" prefHeight="36.0" prefWidth="182.0" text="Opened Tasks :" textAlignment="CENTER">
          <font>
             <Font name="System Bold" size="25.0" />
          </font>
       </Label>
+      <ComboBox fx:id="desired_cmbBox" layoutX="259.0" layoutY="20.0" prefHeight="25.0" prefWidth="171.0" promptText="Select desired status" />
    </children>
 </AnchorPane>

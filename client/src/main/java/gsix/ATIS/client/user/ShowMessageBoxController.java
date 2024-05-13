@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -149,6 +150,7 @@ public class ShowMessageBoxController {
         //ADDED BY AYAL
         if(handledMessage.getMessage().equals("get sent messages: Done")){
             List<CommunityMessage> sentMessages=(List<CommunityMessage>) handledMessage.getData();
+            sentMessages.sort(Comparator.comparing(CommunityMessage::getTime).reversed());
             System.out.println("I am handling the sent messages being brought back from eventbus in ShowMessageBox class");
             List<String> messages_info ;
             //Code to get message sent
@@ -164,6 +166,7 @@ public class ShowMessageBoxController {
         }
         if(handledMessage.getMessage().equals("get received messages: Done")){
             List<CommunityMessage> receivedMessages=(List<CommunityMessage>) handledMessage.getData();
+            receivedMessages.sort(Comparator.comparing(CommunityMessage::getTime).reversed());
             System.out.println("I am handling the received messages being brought back from eventbus in showMessageBox class");
             List<String> messages_info ;
             //Code to get message sent
@@ -177,6 +180,10 @@ public class ShowMessageBoxController {
             });
         }
         if(handledMessage.getMessage().equals("Decline Task and Send Decline message to Requester: Done")){
+            getReceivedMessages(loggedInUser.getUser_id());
+            getSentMessages(loggedInUser.getUser_id());
+        }
+        if(handledMessage.getMessage().equals("update task status Pending: Done")){
             getReceivedMessages(loggedInUser.getUser_id());
             getSentMessages(loggedInUser.getUser_id());
         }

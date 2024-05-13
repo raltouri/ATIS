@@ -8,6 +8,7 @@ package gsix.ATIS.client.user;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -88,6 +89,7 @@ public class Volunteer {
         //ADDED BY AYAL
         if(event.getMessage().getMessage().equals("get tasks for community: Done")){
             List<Task> communityTasks=(List<Task>) event.getMessage().getData();
+            communityTasks.sort(Comparator.comparing(Task::getTime).reversed());
             System.out.println("I am handling the tasks for community being brought back from eventbus in Volunteer class");
             List<String> tasks_info = TasksController.getTasksInfo(communityTasks);
             System.out.println(tasks_info);

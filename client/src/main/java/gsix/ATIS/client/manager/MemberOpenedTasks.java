@@ -22,6 +22,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import org.greenrobot.eventbus.EventBus;
@@ -41,18 +42,24 @@ public class MemberOpenedTasks {
     @FXML // fx:id="openedLV"
     private ListView<String> openedLV; // Value injected by FXMLLoader
 
+
+    @FXML
+    private ComboBox<String> desired_cmbBox;
     private Stage stage;
     private User loggedInManager = null;
     private String communityMemberID = null;
     ArrayList<Task> memberOpenedTasksArrayList; // from DB
     ArrayList<String> memberOpenedTasksInfoString; // for listView
 
+    private final String[] pickStatus = {"Request", "Pending","in process","Done","Declined"};
+    private String desiredStatusToView ="Request";
+
     public void setLoggedInUser(User loggedInManager) {
         this.loggedInManager = loggedInManager;
     }
     public void setCommunityMember(String communityMemberID) {
         this.communityMemberID = communityMemberID;
-        getRequestedTasks(communityMemberID);
+        //getRequestedTasks(communityMemberID);
     }
 
     private void showNoTasksToViewAlert() {
@@ -78,7 +85,8 @@ public class MemberOpenedTasks {
     }
 
     private void getRequestedTasks(String userId) {
-        Message message = new Message(1, LocalDateTime.now(), "get requested tasks", userId);
+        Task dummyTask = new Task(userId,"dummy operation",desiredStatusToView,0);
+        Message message = new Message(1, LocalDateTime.now(), "get requested tasks", dummyTask);
         //System.out.println("MyTasksPage:before send to server *Get Requested Tasks* command");
         try {
             SimpleClient.getClient("",0).sendToServer(message);
@@ -101,31 +109,34 @@ public class MemberOpenedTasks {
         Message handledMessage=event.getMessage();
 
         if(event.getMessage().getMessage().equals("get requested tasks: Done")) {
-          /*  Task declinedTask = (Task) event.getMessage().getData();
-            String requesterID = declinedTask.getRequester_id();
-            System.out.println(declinedTask.getTask_id()+" taskId before msg to user");
-            Platform.runLater(() -> {
-                GuiCommon guiCommon = GuiCommon.getInstance();
-                SendMessageToUser sendMessageToUser = (SendMessageToUser) guiCommon.displayNextScreen("SendMsgToUser.fxml",
-                        "Send Decline Message", stage, false);
-                sendMessageToUser.setRequesterID(requesterID);
-                sendMessageToUser.setLoggedInManager(loggedInManager);
-                sendMessageToUser.setTaskID(declinedTask.getTask_id());
-                sendMessageToUser.setRequestedTasks(this);
-                //System.out.println(declinedTask.getTask_id());
-
-            });*/
             memberOpenedTasksArrayList = (ArrayList<Task>) event.getMessage().getData();
+            memberOpenedTasksArrayList.sort(Comparator.comparing(Task::getTime).reversed());
             if(!memberOpenedTasksArrayList.isEmpty()){
                 memberOpenedTasksArrayList.sort(Comparator.comparing(Task::getTime).reversed());
                 Platform.runLater(() -> {
                     memberOpenedTasksInfoString = (ArrayList<String>) getOpenedTasksInfo(memberOpenedTasksArrayList);
+                    openedLV.getItems().clear();
                     openedLV.getItems().addAll(memberOpenedTasksInfoString);
                 });
             }else{
                 Platform.runLater(this::showNoTasksToViewAlert);
             }
 
+        }
+        if(event.getMessage().getMessage().equals("open request: Done")) {
+            getRequestedTasks(communityMemberID);
+        }
+        if(event.getMessage().getMessage().equals("start volunteering to task : Done")) {
+            getRequestedTasks(communityMemberID);
+        }
+        if(event.getMessage().getMessage().equals("Send Volunteering Task End and Update To Done: Done")) {
+            getRequestedTasks(communityMemberID);
+        }
+        if(event.getMessage().getMessage().equals("update task status Pending: Done")) {
+            getRequestedTasks(communityMemberID);
+        }
+        if(event.getMessage().getMessage().equals("Decline Task and Send Decline message to Requester: Done")) {
+            getRequestedTasks(communityMemberID);
         }
     }
 
@@ -136,6 +147,11 @@ public class MemberOpenedTasks {
 
         EventBus.getDefault().register(this);
 
+        desired_cmbBox.getItems().addAll(pickStatus);
+        desired_cmbBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            desiredStatusToView = newValue;
+            getRequestedTasks(communityMemberID);
+        });
     }
 
  /*   @Override

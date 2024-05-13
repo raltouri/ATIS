@@ -19,10 +19,7 @@ import gsix.ATIS.entities.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
@@ -61,6 +58,12 @@ public class OpenRequestBoundary {
     @FXML // fx:id="volunteer_id_Lbl"
     private Label volunteer_id_Lbl; // Value injected by FXMLLoader
 
+    @FXML
+    private ComboBox<String> selectedOP_cmbBx;
+
+    private final String[] pickOperation = {"Groceries", "Medications","Car Repair","Babysitting","Uber","other"};
+
+
     //  SOS
     @FXML
     private Button SoS_Btn;
@@ -92,7 +95,11 @@ public class OpenRequestBoundary {
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
         try {
-            Task task = new Task(this.requester.getUser_id(),this.requested_op_TxtFld.getText(),TaskStatus.Request,requester.getCommunityId());
+            String requestedOp = selectedOP_cmbBx.getValue();
+            if(requestedOp.equals("other")){
+                requestedOp = this.requested_op_TxtFld.getText();
+            }
+            Task task = new Task(this.requester.getUser_id(),requestedOp,TaskStatus.Request,requester.getCommunityId());
 
             Message message = new Message(1, LocalDateTime.now(), "open request", task);
             //System.out.println("before send to server GetAllTasks command");
@@ -133,7 +140,16 @@ public class OpenRequestBoundary {
         assert volunteer_id_Lbl != null : "fx:id=\"volunteer_id_Lbl\" was not injected: check your FXML file 'OpenRequest.fxml'.";
 
         this.status_Lbl.setText("Request");
+        requested_op_TxtFld.setDisable(true);
 
+        selectedOP_cmbBx.getItems().addAll(pickOperation);
+        selectedOP_cmbBx.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue != null && newValue.equals("other")) {
+                requested_op_TxtFld.setDisable(false);
+            } else {
+                requested_op_TxtFld.setDisable(true);
+            }
+        });
     }
 
 }

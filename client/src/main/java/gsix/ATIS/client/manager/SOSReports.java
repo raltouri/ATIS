@@ -162,6 +162,7 @@ public class SOSReports implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         comboBoxCommunity.getItems().addAll(pickCommunity);
+
         assert barChart != null : "fx:id=\"barChart\" was not injected: check your FXML file 'SOSReports.fxml'.";
         assert btnBack != null : "fx:id=\"btnBack\" was not injected: check your FXML file 'SOSReports.fxml'.";
         assert comboBoxCommunity != null : "fx:id=\"checkBoxCommunity\" was not injected: check your FXML file 'SOSReports.fxml'.";
@@ -194,7 +195,7 @@ public class SOSReports implements Initializable {
         // Wrap the update in Platform.runLater() to ensure it runs on the FX application thread
         Platform.runLater(() -> {
             // Process the received SOS requests
-            Map<LocalDate, Integer> dailySOSCount = new HashMap<>();
+            Map<LocalDate, Integer> dailySOSCount = new TreeMap<>();
 
             // Clear existing data from the BarChart
             barChart.getData().clear();

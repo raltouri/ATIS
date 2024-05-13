@@ -11,6 +11,7 @@ import gsix.ATIS.entities.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
@@ -40,11 +41,21 @@ public class SosBoundary {
     @FXML
     void Confirm(ActionEvent event) {
         SosController.sendSosRequest(requester);
-
+        showSuccessMessage();
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
     }
 
+
+    private void showSuccessMessage() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("SoS Call Message");
+        alert.setHeaderText(null);
+        alert.setContentText("Your SoS Call have been received successfully!");
+
+        // Show the alert dialog
+        alert.showAndWait();
+    }
 
     public User getRequester() {
         return requester;

@@ -292,11 +292,11 @@ public class RequestedTasks {
             requestedLV.getItems().addAll(requestedTasksInfoStrings);
             });
         }
-        if(event.getMessage().getMessage().equals("update task status Pending: Done")) {
+        /*if(event.getMessage().getMessage().equals("update task status Pending: Done")) {
             Task declinedTask = (Task) event.getMessage().getData(); // send msg to all that new task is online
             String requesterID = declinedTask.getRequester_id();
             //System.out.println("");
-        }
+        }*/
         if(event.getMessage().getMessage().equals("open request: Done")) {
             Task newTask = (Task) event.getMessage().getData(); // send msg to all that new task is online
 
