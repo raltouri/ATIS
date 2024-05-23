@@ -82,6 +82,7 @@ public class MemberOpenedTasks {
         communityMembers.setLoggedInUser(loggedInManager);
         EventBus.getDefault().unregister(this);*/
         stage.close();
+        EventBus.getDefault().unregister(this);
     }
 
     private void getRequestedTasks(String userId) {
@@ -109,13 +110,14 @@ public class MemberOpenedTasks {
         Message handledMessage=event.getMessage();
 
         if(event.getMessage().getMessage().equals("get requested tasks: Done")) {
+            openedLV.getItems().clear();
             memberOpenedTasksArrayList = (ArrayList<Task>) event.getMessage().getData();
             memberOpenedTasksArrayList.sort(Comparator.comparing(Task::getTime).reversed());
             if(!memberOpenedTasksArrayList.isEmpty()){
                 memberOpenedTasksArrayList.sort(Comparator.comparing(Task::getTime).reversed());
                 Platform.runLater(() -> {
                     memberOpenedTasksInfoString = (ArrayList<String>) getOpenedTasksInfo(memberOpenedTasksArrayList);
-                    openedLV.getItems().clear();
+                    //openedLV.getItems().clear();
                     openedLV.getItems().addAll(memberOpenedTasksInfoString);
                 });
             }else{

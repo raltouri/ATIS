@@ -83,6 +83,7 @@ public class MemberVolunteeredTasks {
         communityMembers.setLoggedInUser(loggedInManager);
         EventBus.getDefault().unregister(this);*/
         stage.close();
+        EventBus.getDefault().unregister(this);
     }
 
     private void getVolunteeredTasks(String userId) {
@@ -101,13 +102,14 @@ public class MemberVolunteeredTasks {
     public void handleTasksEvent(MessageEvent event){
         Message handledMessage=event.getMessage();
         if(event.getMessage().getMessage().equals("get volunteered tasks: Done")){
+            volunteeredLV.getItems().clear();
             memberVolunteeredTasksArrayList = (ArrayList<Task>) event.getMessage().getData();
             memberVolunteeredTasksArrayList.sort(Comparator.comparing(Task::getTime).reversed());
             if(!memberVolunteeredTasksArrayList.isEmpty()){
                 Platform.runLater(() -> {
                     memberVolunteeredTasksArrayList.sort(Comparator.comparing(Task::getTime).reversed());
                     memberVolunteeredTasksInfoString = (ArrayList<String>) TasksController.getTasksInfo(memberVolunteeredTasksArrayList);
-                    volunteeredLV.getItems().clear();
+                    //volunteeredLV.getItems().clear();
                     volunteeredLV.getItems().addAll(memberVolunteeredTasksInfoString);
                 });
             }else{
