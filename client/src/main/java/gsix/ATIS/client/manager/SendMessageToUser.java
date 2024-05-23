@@ -98,6 +98,7 @@ public class SendMessageToUser {
                 "Manager Home Page", stage, true);  // Example for opening new screen
         requestedTasks.setLoggedInUser(loggedInManager);*/
         stage.close();
+        EventBus.getDefault().unregister(this);
     }
 
     private void showEmptyMessageBoxAlert() {
@@ -135,7 +136,7 @@ public class SendMessageToUser {
 
             showDeclineMessageSentAlert();
             stage.close();
-
+            EventBus.getDefault().unregister(this);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

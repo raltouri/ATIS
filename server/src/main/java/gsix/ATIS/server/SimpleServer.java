@@ -906,7 +906,7 @@ public class SimpleServer extends AbstractServer {
         for (User user : communityMembers){
             currentUserID =user.getUser_id();
             if (currentUserID.equals(requesterID)){
-                String reqMsgContent = "[Task Approval notification]: Your Task has been approved";
+                String reqMsgContent = "[Task Approval notification]:Your Task (ID:"+pendingTask.getTask_id() +") has been approved";
                 CommunityMessage requesterMsg = new CommunityMessage(managerID,requesterID,reqMsgContent);
                 saveMessage(requesterMsg);
             }else{

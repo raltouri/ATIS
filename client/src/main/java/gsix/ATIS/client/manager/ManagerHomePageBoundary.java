@@ -121,6 +121,7 @@ public class ManagerHomePageBoundary {
                 "Community's Requested Tasks Page", null, false);  // Example for opening new screen
         requestedTasks.setLoggedInUser(loggedInUser);
         stage.close();
+        EventBus.getDefault().unregister(this);
     }
 
     @FXML

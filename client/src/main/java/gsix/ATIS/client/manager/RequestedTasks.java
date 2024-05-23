@@ -126,14 +126,6 @@ public class RequestedTasks {
 
             // Refresh the ListView to reflect the changes
             requestedLV.refresh();
-
-            // Implement logic to navigate back to the user's home page
-            //open a new page
-            /*stage = (Stage) ((Node)event.getSource()).getScene().getWindow(); // first time stage takes value
-            GuiCommon guiCommon = GuiCommon.getInstance();
-            UserHomePageBoundary userHomePage = (UserHomePageBoundary) guiCommon.displayNextScreen("UserHomePage.fxml",
-                    "Community User Home Page", stage, true);  // Example for opening new screen
-            userHomePage.setLoggedInUser(loggedInUser);*/
         } else {
             // Handle the case when no task is selected
             showNoSelectedItemMessage();
